@@ -1,3 +1,4 @@
+--Companies with the most job posts
 CREATE TABLE qjx AS
 SELECT job_postings_fact.*, company_dim.name, company_dim.link, company_dim.link_google, company_dim.thumbnail
 FROM job_postings_fact
