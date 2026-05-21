@@ -1,0 +1,438 @@
+\chapter{Diagonalization}
+Given a linear operator $T$ on a finite dimensional vector space $V$, the \emph{diagonalization problem} asks whether an ordered basis $\beta$ exists such that $[T]_\beta$ is diagonal, and how to find it if so.
+Since diagonal matrices are computationally simple, this helps us understand better how $T$ acts on $V$ and solve many practical problems that can be posed with linear algebra.
+Eigenvalues and eigenvectors are essential to the diagonalization problem and in their own right.
+In the study of mechanical systems, one must control unwanted vibrations to prevent failures, eg a bridge collapse. These involve eigenvalues and eigenvectors of the differential equations that model the system.
+Other applications are facial recognition, fingerprint authentication, and principal components analysis.
+
+\section{Eigenvalues and eigenvectors}
+Recall in Example \ref{e:reflect} that reflection across the line $y=2x$ is represented by a diagonal matrix with respect to the basis $\{ (1,2)^\top,(-2,1)^\top \}$.
+\begin{defn}
+A linear operator $T$ on a finite dimensional vector space $V$ is \emph{diagonalizable} if an ordered basis $\beta$ exists such that $[T]_\beta$ is diagonal. $A \in F^{n \times n}$ is diagonalizable if $L_A$ is.\\
+If $V$ is a (not necessarily finite dimensional) vector space, a nonzero $\mb{v}\in V$ is an \emph{eigenvector} of $T$ with \emph{eigenvalue} $\lambda$ if $T( \mb{v})= \lambda \mb{v}$. $A \in F^{n \times n}$ has (nonzero) eigenvector $\mb{v}\in F^n$ with eigenvalue $\lambda$ if $L_A$ does.\\
+Eigenvectors (resp values) are sometimes called characteristic or proper vectors (resp values).
+\end{defn}
+\begin{lem}\label{l:diagze-basis}
+A linear operator $T$ on a finite dimensional vector space $V$ is diagonalizable if and only if $V$ has an ordered basis $\beta = \{ \mb{v}_1, \ldots, \mb{v}_n \}$ consisting of eigenvectors of $T$. If so, $[T]_\beta$ is diagonal with the corresponding eigenvalues on its main diagonal.\\
+$A \in F^{n \times n}$ is diagonalizable if and only if it has an ordered basis $\beta = \{ \mb{v}_1, \ldots, \mb{v}_n \}$ consisting of eigenvectors of $A$. If these eigenvectors form the columns of $Q$, then $Q^{-1}AQ$ is diagonal with the corresponding eigenvalues on its main diagonal. $A$ is thus diagonalizable if and only if it is similar to a diagonal matrix.\\
+To \emph{diagonalize} $A$ is to find an eigenbasis and the corresponding eigenvalues.
+\end{lem}
+Here is our main tool for finding eigenvalues.
+\begin{lem}\label{l:chr-poly}
+$A \in F^{n \times n}$ has eigenvalue $\lambda \in F$ if and only if $\det (A- \lambda I_n)=0$. $t \mapsto \det (A-tI_n)$ is the \emph{characteristic polynomial} of $A$.\footnote{technically each entry of $A-tI_n$ is not a scalar, but a member of $F[t]$, the field of quotients of polynomials in $t$ with coefficients in $F$}
+If $A$ and $B$ are similar matrices, then $\det A= \det B$ (and hence have the same characteristic polynomial) and $\tr A= \tr B$.
+\end{lem}
+\begin{proof}%easy, short
+$A$ has eigenvalue $\lambda$ iff there exists nonzero $\mb{v}\in F^n$ with $A \mb{v}= \lambda \mb{v}$ (this $\mb{v}$ is an eigenvector) iff $\rank (A- \lambda I_n)<n$ (Lemma \ref{l:hom-ker}) iff $\det (A- \lambda I_n)=0$ (Lemma \ref{l:det-mult} part 2 and Lemma \ref{l:mat-inv-1to1}).\\
+Pick invertible $Q$ such that $B=Q^{-1}AQ$, then  $B- tI_n=Q^{-1}(A-tI_n)Q$ also, and $\tr B= \tr AQQ^{-1}= \tr A$ (Exercise \ref{e:tr-commute}), $\det B= \det Q \det A \det Q^{-1}= \det A$ (Lemma \ref{l:det-mult}), and likewise $\det(B- tI_n)= \det(A-tI_n)$.
+\end{proof}
+We can use the fact that similar matrices have the same determinant and characteristic polynomial to define those things for linear operators.
+\begin{defn}\label{d:op-det}
+Let $V$ be a vector space with $\dim V=n \in \bb{Z}^+$, $T$ a linear operator on $V$, $\beta$ any ordered basis of $V$. Then define $\det T:= \det [T]_\beta$ and the characteristic polynomial of $T$ to be $t \mapsto \det ([T]_\beta -I_n)$.
+\end{defn}
+These are well defined: if $\gamma$ is another ordered basis of $V$, then $[T]_\beta$ and $[T]_\gamma$ are similar (Lemma \ref{l:change-coord}).
+\begin{lem}\label{l:chrpoly-degn}
+For $A \in F^{n \times n}$, its characteristic polynomial has degree $n$ and lead coefficient $(-1)^n$. In fact, it has the form $\prod_{j=1}^n(a_{jj}-t)+q(t)$ where $q$ has degree $n-2$.
+$A$ thus has at most $n$ distinct eigenvalues. We also have the coefficient of $t^{n-1}$ as $(-1)^{n-1}\tr A$.
+$A$ and $A^\top$ have the same characteristic polynomial (and hence the same eigenvalues).
+\end{lem}
+\begin{proof}
+Put $\tilde{I}_n:=I_n- \mb{e}_1 \mb{e}_1^\top$ (the identity matrix, except with its 1,1 entry 0 instead of 1). We use induction on $n$.
+The base case $n=2$ is clear by direct computation: $\det (A-tI_2)=(a_{11}-t)(a_{22}-t)-a_{12}a_{21}$.
+For $n>2$ we have $\det (A-tI_n)=(a_{11}-t) \det \overline{(A-tI_n)}_{11}+ \sum_{k=2}^n(-1)^{k+1}a_{1k}\det \overline{(A-tI_n)}_{1k}$.
+The induction hypothesis applies directly to $\det \overline{(A-tI_n)}_{11}= \prod_{j=2}^n(a_{jj}-t)+ \tilde{q}(t)$ (where $\tilde{q}$ has degree $n-3$). And for $k>1$, $\overline{(A-tI_n)}_{1k}$ has the form $B-t \tilde{I}_{n-1}$ after rearranging rows which affects only the sign by Lemma \ref{l:det-elem} part 6.
+A parallel induction argument shows $\det (B-t \tilde{I}_{n-1})$ has degree $n-2$. Putting these together gives the claimed form that $\det (A-tI_n)$ takes.\\
+By Corollary \ref{c:polyn0}, this polynomial has at most $n$ distinct roots. By Lemma \ref{l:chr-poly}, $A$ has at most $n$ distinct eigenvalues.\\
+Finally, we have $\det (A^\top -tI_n)= \det (A-tI_n)^\top = \det (A-tI_n)$ by Lemma \ref{l:det-mult} part 3.
+\end{proof}
+\begin{example}
+Not all operators/ matrices are diagonalizable. By geometric intuition, the rotation operator by $\theta$ on $\bb{R}^2$ has no eigenvalues in $\bb{R}$ except when the rotation is by $0^\circ$ or $180^\circ$.
+The characteristic polynomial is $t^2-2t \cos \theta +1$, which has no roots in $\bb{R}$ when $0< \theta < \pi$.\\
+By Lemma \ref{l:diff-eq-dim1}, the differential operator $D$ on $C^\infty (\bb{R}, \bb{C})$ has any $\lambda \in \bb{C}$ as an eigenvalue, with eigenvector $t \mapsto e^{\lambda t}$.
+\end{example}
+We reduce the problem of finding eigenvectors of a linear operator tp that for a matrix.
+\begin{exer}
+Let $V$ be a vector space with $\dim V=n \in \bb{Z}^+$, $T$ a linear operator on $V$, $\beta$ any ordered basis of $V$.
+Then $\mb{v}\in V$ is an eigenvector of $T$ with eigenvalue $\lambda$ if and only if $[ \mb{v}]_\beta$ is an eigenvector of $[T]_\beta$ with eigenvalue $\lambda$.
+An equivalent restatemeht using $\phi_\beta:V \to F^n$, $\mb{v}\mapsto [ \mb{v}]_\beta$ is: $\mb{y}\in F^n$ is an eigenvector of $[T]_\beta$ with eigenvalue $\lambda$ if and only if $\phi_\beta^{-1}( \mb{y})$ is an eigenvector of $T$ with eigenvalue $\lambda$.
+\end{exer}
+\begin{proof}%easy, short
+By Lemma \ref{l:std-repr-iso}, $\phi_\beta$ is an isomorphism. We have $T( \mb{v})= \lambda \mb{v}$ $\leftrightarrow$ $[T( \mb{v})]_\beta =[ \lambda \mb{v}]_\beta$ $\leftrightarrow$ $[T]_\beta [ \mb{v}]_\beta = \lambda[ \mb{v}]_\beta$, where LHS uses Proposition \ref{p:transform-coordinate-vector} and RHS uses $\phi_\beta$ is an isomorphism (in particular, linear).
+We can replace $[ \mb{v}]_\beta$ with $\mb{y}$ and $\mb{v}$ with $\phi_\beta^{-1}( \mb{y})$.
+\end{proof}
+\begin{exer}\label{e:eig-poly}
+Let $T$ be a linear operator on a vector space $V$.
+\begin{itemize}
+\item $T$ is invertible if and only if 0 is not an eigenvalue, in which case $\mb{v}\in V$ is an eigenvector of $T$ with eigenvalue $\lambda$ if and only if $\mb{v}$ is an eigenvector of $T^{-1}$ with eigenvalue $1/ \lambda$.
+\item If $p \in P(F)$, and $\mb{v}\in V$ is an eigenvector of $T$ with eigenvalue $\lambda$, then $\mb{v}$ is an eigenvector of $p(T)$ with eigenvalue $p( \lambda)$.
+\item If $V$ is finite dimensional and $f$ is the characteristic polynomial of $T$, then $f(T)$ is the zero operator. \footnote{this is a special case of a powerful theorem we see later}
+\end{itemize}
+Analogous results for all of the above hold for matrices.
+\end{exer}
+\begin{proof}% easy, short
+Part 1: By definition, 0 is not an eigenvalue of $T$ $\leftrightarrow$ $\ker T= \{ \mb{0}_V \}$ $\leftrightarrow$ $T$ is invertible by Lemma \ref{l:inv-1to1-or-onto}.
+We have $\mb{v}=T^{-1}\circ T( \mb{v})= \lambda T^{-1}( \mb{v})$ by Lemma \ref{l:inv-linear} $leftrightarrow$ $T^{-1}( \mb{v})= \mb{v}/ \lambda$.\\
+Part 2: We 1st show the special case $T^m( \mb{v})= \lambda^m \mb{v}$ for $m \in \bb{Z}_{\geq 0}$ by induction. The base case $m=0$ is clear since $T^0=I_V$.
+When $m>0$, $T^m( \mb{v})=T \circ T^{m-1}( \mb{v})=T( \lambda^{m-1}\mb{v})= \lambda^m \mb{v}$ by the inductive hypothesis then linearity.
+For general $p \in P(F)$, say $p(t)= \sum_{j=0}^ma_jt^j$. Then $p(T)( \mb{v})= \sum_{j=0}^ma_jT^j( \mb{v})= \sum_{j=0}^ma_j \lambda^j \mb{v}=p( \lambda) \mb{v}$.\\
+Part 3: By Lemma \ref{l:diagze-basis}, we can pick a basis $\beta$ of $V$ of eigenvectors of $T$. Say $\mb{v}\in \beta$ with eigenvalue $\lambda$.
+Then by part 2, $f(T)( \mb{v})=f( \lambda)( \mb{v})= \mb{0}_V$ by Lemma \ref{l:chr-poly}. $f(T)$ is thus the zero operator by Corollary \ref{c:lin-map-basis}.
+\end{proof}
+When $V= \bb{R}^n$ and $F= \bb{R}$, and $T$ is a linear operator on $\bb{R}^n$ with eigenvector $\mb{v}$ and eigenvalue $\lambda$, we can describe geometrically how $T$ acts on $\Span \{  \mb{v}\}$.
+By linearity, for any $c \in \bb{R}$, $T(c \mb{v})=c \lambda \mb{v}$. Fix $\mb{w}\in \Span \{  \mb{v}\}$. When $\lambda>1$, $\mb{w}$ is moved farther from the origin by a factor of $\lambda$.
+When $\lambda =1$, $\mb{w}$ is unchanged ($T$ acts like the identity operator). When $0< \lambda <1$, $\mb{w}$ is moved closer to the origin by a factor of $\lambda$.
+When $\lambda =0$, $T$ acts like the zero operator. When $\lambda <0$, $T$ flips $\mb{w}$ about the origin and scales by $| \lambda |$ as previously described.
+
+\section{Diagonalizability}
+Though Lemma \ref{l:diagze-basis} gives a necessary and sufficient condition for diagonalizability, and Lemma \ref{l:chr-poly} helps find eigenvalues and their associated eigenvalues, we still need a test for diagonalizability, and a way to find an eigenvector basis in order to solve the diagonalization problem.
+While finding eigenvectors for each eigenvalue is not enough to result in a basis, they are at least LID.
+\begin{lem}\label{l:dnct-eval-lid}
+Let $T$ be a linear operator on vector space $V$. If $\lambda_1, \ldots, \lambda_k$ are distinct eigenvalues of $T$ and $S_r$ is a LID set of eigenvectors corresponding to $\lambda_r$ for $r=\ot{k}$, then $\cup_{r=1}^kS_r$ is LID.
+In particular, if $\dim V=n$ and $T$ has $n$ distinct eigenvalues, then $T$ is diagonalizable.
+\end{lem}
+\begin{proof}%rating 1/2
+Use induction on $k$. For the base case $k=1$, $S_1$ is LID by construction. For $k>1$, we assume the linear independence of $\cup_{r=1}^{k-1}S_r= \{ \mb{v}_1, \ldots, \mb{v}_n \}$ with corresponding eigenvalues $\lambda(j)$ for $j= \ot{n}$, none of which are $\lambda_k$.
+Say $S_k= \{ \mb{w}_1, \ldots, \mb{w}_m \}$, and suppose we have coefficients $a_j,b_j \in F$ such that $\sum_{j=1}^na_j \mb{v}_j+ \sum_{j=1}^mb_j \mb{w}_j= \mb{0}$, that is $\sum_{j=1}^na_j \mb{v}_j=- \sum_{j=1}^mb_j \mb{w}_j$.
+Then $T \big( \sum_{j=1}^mb_j \mb{w}_j \big) = \lambda_k \sum_{j=1}^mb_j \mb{w}_j=- \lambda_k \sum_{j=1}^na_j \mb{v}_j$. But also $T \big( \sum_{j=1}^mb_j \mb{w}_j \big) =T \big( - \sum_{j=1}^na_j \mb{v}_j \big) =- \sum_{j=1}^na_j \lambda(j) \mb{v}_j$.
+Putting these 2 pieces together, $\sum_{j=1}^na_j \{ \lambda_k- \lambda(j) \} \mb{v}_j= \mb{0}_V$. Since $\cup_{r=1}^{k-1}S_r$ is LID, we have each $a_j \{ \lambda_k- \lambda(j) \} =0$ and in fact each $a_j=0$ since $\lambda(j) \neq \lambda_k$.
+Since $S_k$ is LID, we also have each $b_j=0$, so $\cup_{r=1}^kS_r$ is LID.\\
+When $\dim V=n$ and $T$ has $n$ distinct eigenvalues, we can pick 1 eigenvector corresponding to each. This set of $n$ eigenvectors is LID, and hence a basis by Corollary \ref{c:extend-LID2basis}.
+\end{proof}
+Having $n$ distinct eigenvalues is not a necessary condition for diagonalizability. The identity operator/ matrix is diagonalizable, despite having just 1 distinct eigenvalue.
+\begin{defn}
+$p \in P(F)$ \emph{splits} over $F$ if there exist $c,a_1, \ldots,a_n \in F$, not necessarily distinct, such that $p(t)=c \prod_{j=1}^n(t-a_j)$.
+\end{defn}
+$p(t)=t^2+1$ splits over $\bb{C}$ but not $\bb{R}$.
+\begin{lem}
+If linear operator $T$ on vector space $V$ over field $F$ is diagonalizable, then its characteristic polynomial splits over $F$.
+\end{lem}
+\begin{proof}%easy, short
+By Lemma \ref{l:diagze-basis}, pick a basis $\beta$ for $V$ of eigenvectors of $T$. Then $[T]_\beta = \T{diag}( \lambda_1,..., \lambda_n)$ where each $\lambda_j$ is an eigenvalue of $T$.
+Then the characteristic polynomial is $t \mapsto \prod_{j=1}^n( \lambda_j-t)$.
+\end{proof}
+Thus, if $T$ is diagonalizable but does not have $n$ distinct eigenvalues, then some eigenvalue $\lambda$ shows up multiple times in the characteristic polynomial.
+\begin{example}\label{e:splits-not-diagle}
+The differential operator on $P_2( \bb{R})$ has characteristic polynomial $t \mapsto -t^3$, which splits over $\bb{R}$. Its only eigenvalue is 0, with the constant functions as eigenvectors, so it is not diagonalizable.
+\end{example}
+Since an eigenvector with eigenvalue $\lambda$ is a member of $\ker (T- \lambda I_V)$, this subspace is naturally of interest.
+\begin{defn}
+If $f$ is the characteristic polynomial for an operator $T$ on $V$ (or matrix) with eigenvalue $\lambda$, its \emph{(algebraic) multiplicity} is the largest $k \in \bb{Z}^+$ such that $t \mapsto (t- \lambda)^k$ divides $f$.\\
+The \emph{eigenspace} of $T$ for eigenvector $\lambda$ is $E_\lambda := \ker (T- \lambda I_V)$
+\end{defn}
+\begin{prop}\label{p:diagze-mult}
+Let $T$ be a linear operator on a vector space $V$ of dimension $n \in \bb{Z}^+$, with distinct eigenvalues $\lambda_1, \ldots, \lambda_k$.
+\begin{itemize}
+\item For any eigenvalue $\lambda \in \{ \lambda_1, \ldots, \lambda_k \}$ with multiplicity $m$, we have $1 \leq \dim E_\lambda \leq m$.
+\item When the characteristic polynomial splits over $F$, $T$ is diagonalizable if and only if $\dim E_\lambda =m$ for all $\lambda \in \{ \lambda_1, \ldots, \lambda_k \}$, where $m$ is its multiplicity.
+$T$ is also diagonalizable if and only if $\cup_{j=1}^k \beta_j$ is an eigenvector basis for $V$, where each $\beta_j$ is a basis for the eigenspace corresponding to $\lambda_j$.
+\end{itemize}
+\end{prop}
+\begin{proof}%easy, short
+Part 1: Put $s:= \dim E_\lambda$. Any eigenvector corresponding to $\lambda$ is a member of $E_\lambda$, so $s \geq 1$. Pick a basis $\{ \mb{v}_1, \ldots, \mb{v}_s \}$ of $E_\lambda$, extend it to a basis $\beta = \{ \mb{v}_1, \ldots, \mb{v}_n \}$ of $V$ (Corollary \ref{c:extend-LID2basis}).
+Then $[T]_\beta$ has the form as in Exercise \ref{e:block-det}. The characteristic polynomial is
+\[ \det ([T]_\beta -tI_n)= \det \tbtm{( \lambda -t)I_s}{O}{*}{*}\]
+So $t \mapsto (\lambda -t)^s$ divides the characteristic polynomial, so $s \leq m$.\\
+Part 2: "$\to$" Use Lemma \ref{l:diagze-basis} to pick a basis $\beta = \{ \mb{v}_1, \ldots, \mb{v}_n \}$ of eigenvectors of $T$.
+Without loss of generality, the 1st $m$ correspond to eigenvalue $\lambda$, and are LID in $E_\lambda$, so $s \geq m$ (Corollary \ref{c:extend-LID2basis}).
+"$\leftarrow$ Since the characteristic polynomial splits and it has degree $n$ (Lemma \ref{l:chrpoly-degn}), the sum of all multiplicities over $\lambda_1, \ldots, \lambda_k$ is $n$.
+By hypothesis, this is also the sum of the eigenspaces' dimensions, so $\cup_{j=1}^k \beta_j$ has $n$ LID eigenvectors (Lemma \ref{l:dnct-eval-lid}), hence is a basis of $V$ (Corollary \ref{c:extend-LID2basis}). This also shows $T$ is diagonalizable (Lemma \ref{l:diagze-basis}).
+\end{proof}
+Proposition \ref{p:diagze-mult} gives the way to solve the diagonalization problem. To summarize, find the characteristic polynomial (sometimes there is a convenient 'starting' basis). If it splits, check for each repeated eigenvalue whether $\dim E_\lambda$ is its multiplicity $m$ (this is automatically true when $m=1$).
+If so, then $T$ is diagonalizable. Find bases for each eigenspace and take the union to get an eigenvector basis for $T$.
+It is easy to take powers of diagonalizable operators/ matrices since to find $D^m$ for diagonal $D \in F^{n \times n}$ we just take powers along the main diagonal. $[T^m]_\beta=([T]_\beta)^m$ (Lemma \ref{l:matrix-compose} and induction) is easy to compute when $[T]_\beta$ is diagonal.
+By Lemma \ref{l:diagze-basis}, if $A \in F^{n \times n}$ is diagonalizable, then we can write $D=Q^{-1}AQ$ $\leftrightarrow$ $A=QDQ^{-1}$ where $Q$ has eigenvectors of $A$ as its columns and $D$ is diagonal with the corresponding eigenvalues along its main diagonal. Induction shows $A^m=QD^mQ^{-1}$.
+\begin{prop}
+If $A \in \bb{C}^{n \times n}$ is diagonalizable and $\mb{y}: \bb{R}\to \bb{C}^n$ is differentiable, then the general solution to the system of differential equations $\mb{y}'=A \mb{y}$ has the form $\mb{y}(t)= \sum_{j=1}^n \mb{u}_j \exp( \lambda_jt)$, where each $\mb{u}_j$ can be any vector from the $\lambda_j$ eigenspace.\footnote{so $\mb{u}_j= \mb{0}_n$ is allowed}
+When $A \in \bb{R}^{n \times n}$, if $\lambda = \alpha + \beta i$ is an eigenvalue with eigenvector $\mb{u}= \mb{a}+ \mb{b}i$, then $\bar{\lambda}$ is also an eigenvalue with eigenvector $\bar{\mb{u}}$, and we can replace the 2 terms corresponding to them in the general form with $c_1e^{\alpha t}( \mb{a}\cos \beta t- \mb{b}\sin \beta t)+c_2e^{\alpha t}( \mb{a}\sin \beta t+ \mb{b}\cos \beta t)$ for any $c_1, c_2 \in \bb{R}$.
+\end{prop}
+\begin{proof}%see also Nagle, sections 9.5 and 9.6
+Use Lemma \ref{l:diagze-basis} to write $D=Q^{-1}AQ$ where $Q$ has eigenvectors $\mb{u}_j$ of $A$ as its columns and $D$ is diagonal with the corresponding eigenvalues $\lambda_j$ along its main diagonal.\footnote{the only difference from the general solution is that here $\mb{u}_j \neq \mb{0}_n$}
+Left multiply both sides by $Q^{-1}$ and use the linearity of the derivative to get $\mb{y}'=A \mb{y}$ $\leftrightarrow$ $(Q^{-1}\mb{y})'=Q^{-1}\mb{y}'=DQ^{-1} \mb{y}$.
+Put $\mb{s}:=Q^{-1}\mb{y}$. Then we have $s'_j= \lambda s_j$ for $j=\ot{n}$. All solutions have the form $s_j(t)=c_j \exp( \lambda_jt)$ for $c_j \in \bb{C}$ (Lemma \ref{l:diff-eq-dim1}).
+Using  $\mb{y}=Q \mb{s}$, all solutions have the form $\mb{y}(t)= \sum_{j=1}^nc_j \mb{u}_j \exp( \lambda_jt)$, and each $c_j \mb{u}_j$ is in the $\lambda_j$ eigenspace.
+The functions $\mb{u}_j \exp( \lambda_jt)$ span the solution space. They are also LID since the $\mb{u}_j$ are and $\exp( \lambda_jt) \neq 0$.\\
+When $A \in \bb{R}^{n \times n}$, 1st note that taking complex conjugates on both sides of $A \mb{u}= \lambda \mb{u}$ gives $A \bar{\mb{u}}= \bar{\lambda}\bar{\mb{u}}$, so eigenvalues and eigenvectors come in conjugate pairs.
+We can replace $\{ \mb{u}e^{ \lambda t}, \bar{\mb{u}}e^{ \bar{\lambda}t}\}$ with $\{ \Re \mb{u}e^{ \lambda t}, \Im \mb{u}e^{ \lambda t}\} = \{ e^{\alpha t}( \mb{a}\cos \beta t- \mb{b}\sin \beta t), e^{\alpha t}( \mb{a}\sin \beta t+ \mb{b}\cos \beta t) \}$.
+\end{proof}
+\begin{example}
+For the system $y'_1=y_1+y_2$, $y'_2=2y_1+2y_2$, the general solution is
+\[ \vect{y_1(t)}{y_2(t)}=c_1 \vect{1}{2}e^{3t}+c_2 \vect{1}{-1}\]
+so $A$ need not be invertible, in which case there are additive constant terms.\\
+For the system $y'_1=y_1-y_2$, $y'_2=y_1+y_2$, the coefficient matrix has eigenvalue $1-i$ with eigenvector $(1,i)^\top$ (and their complex conjugates), so the general solution is
+\[ \vect{y_1(t)}{y_2(t)}=e^t \big\{ c_1 \vect{\cos t}{\sin t}+c_2 \vect{\sin t}{- \cos t}\big\} \]
+For the system $y'_1=y_1$, $y'_2=y_2$, the coefficient matrix is $I_2$. We can pick any 2 LID vectors to construct the general solution
+\[ \vect{y_1(t)}{y_2(t)}=c_1 \vect{1}{0}e^t+c_2 \vect{1}{1}e^t \]
+While not a very interesting example, this is just to reassure that it does not matter what basis is used in the case of repeating eigenvalues.
+\end{example}
+\begin{defn}
+If $V$ is a vector space with subspaces $W_1, \ldots,W_k$, we define their \emph{sum} to be $\sum_{j=1}^kW_j:= \{ \sum_{j=1}^k \mb{v}_j: \mb{v}_j \in W_j \}$. It is a \emph{direct sum}, written $\bigoplus_{j=1}^kW_j$, if it is a sum, and $W_j \cap \sum_{s \neq j}W_s= \{ \mb{0}_V \}$ for all $j= \ot{k}$.
+\end{defn}\label{l:directsum}
+Several characterizations of the direct sum are useful.
+\begin{lem}
+In the above definition, $V= \bigoplus_{j=1}^kW_j$ is equivalent to any of:
+\begin{itemize}
+\item $V= \sum_{j=1}^kW_j$, and if $\mb{v}_j \in W_j$ and $\sum_{j=1}^k \mb{v}_j= \mb{0}_V$, then each $\mb{v}_j= \mb{0}_V$.
+\item Any $\mb{v} \in V$ can be uniquely written $\mb{v}= \sum_{j=1}^k \mb{v}_j$ where $\mb{v}_j \in W_j$.
+\item If $\gamma_j$ is a basis for $W_j$, then $\cup_{j=1}^k \gamma_j$ is a basis for $V$. Equivalently, $\dim V= \sum_{j=1}^k \dim W_j$.
+\item For each $j= \ot{k}$ there exists a basis $\gamma_j$ for $W_j$ such that $\cup_{j=1}^k \gamma_j$ is a basis for $V$.
+\end{itemize}
+\end{lem}
+\begin{proof}
+Direct sum $\to$ 1: We have $- \mb{v}_1 \in W_1 \cap \sum_{j=2}^kW_j$, so $\mb{v}_j= \mb{0}_V$, same with the other indices.
+1 $\to$ 2: if $\mb{v}_j, \mb{w}_j \in W_j$ are such that $\sum_{j=1}^k \mb{v}_j= \sum_{j=1}^k \mb{w}_j$, then $\sum_{j=1}^k( \mb{v}_j- \mb{w}_j)= \mb{0}_V$. Since each $\mb{v}_j- \mb{w}_j \in W_j$, we have $\mb{v}_j= \mb{w}_j$.
+2 $\to$ 3: Clearly $\Span( \cup_{j=1}^k \gamma_j)=V$. To see $\cup_{j=1}^k \gamma_j$ is LID, say they are $\mb{w}_1, \ldots \mb{w}_n$, the 1st $m$ are in $\gamma_1$, and $\sum_{s=1}^na_s \mb{w}_s= \mb{0}_V$.
+Then $\sum_{s=1}^ma_s \mb{w}_s \in W_1$ and sums of groups of the rest are in $W_2, \ldots W_k$, resp. Thus each group sum is $\mb{0}_V$, in particular $\sum_{s=1}^ma_s \mb{w}_s= \mb{0}_V$. But since $\gamma_1$ is LID, we have $a_j=0$ for $j= \ot{m}$. The other coefficients are likewise 0.
+3 $\to$ 4 is immediate. 4 $\to$ direct sum: clearly $V= \sum_{j=1}^kW_j$. If $\mb{v}\in W_1 \cap \sum_{j=2}^kW_j$, then it is a linear combination, both of $\gamma_1$ and $\cup_{j=2}^k \gamma_j$. Since $\cup_{j=1}^k \gamma_j$ is a basis, this is not possible unless all coefficients are 0, ie $\mb{v}_j= \mb{0}_V$.
+\end{proof}
+\begin{prop}\label{p:sum-espace}
+A linear operator $T$ on a finite dimensional vector space $V$ is diagonalizable if and only if $V$ is the direct sum of its eigenspaces.
+\end{prop}
+\begin{proof}%easy, short
+By Proposition \ref{p:diagze-mult}, $T$ is diagonalizable if and only if $\cup_{j=1}^k \beta_j$ is an eigenvector basis for $V$, where each $\beta_j$ is a basis for an eigenspace. By Lemma \ref{l:directsum}, this is if and only if $V$ is the direct sum of those eigenspaces.
+\end{proof}
+\begin{exer}\label{e:split-ut}
+Let $A \in F^{n \times n}$. Analogous results hold for linear operators.
+\begin{itemize}
+\item For any eigenvalue $\lambda$ of $A$, that eigenspace is the same as the eigenspace of $1/ \lambda$ for $A^{-1}$. $A$ is thus diagonalizable if and only if $A^{-1}$ is.
+\item $A$ and $A^\top$ have the same set of eigenvalues (with the same multiplicities), and their eigenspaces for the same eigenvalue have the same dimension. $A$ is thus diagonalizable if and only if $A^\top$ is.
+\item $A$ is similar to an upper triangular matrix if and only if its characteristic polynomial splits.
+\item If the characteristic polynomial of $A$ splits, and it has (not necessarily distinct) eigenvalues $\lambda_1, \ldots, \lambda_n$, then $\tr A= \sum_{j=1}^n \lambda_j$ and $\det A= \prod_{j=1}^n \lambda_j$.
+\end{itemize}
+\end{exer}
+\begin{proof}
+Part 1: We can use the matrix version of Exercise \ref{e:eig-poly}, but it is also easy to see directly that $\{ \mb{v}\in F^n: A \mb{v}= \lambda \mb{v}\} = \{ \mb{v}\in F^n: A^{-1}\mb{v}= \mb{v}/ \lambda \}$, and that any basis of $F^n$ of eigenvectors of $A$ also consists of eigenvectors of $A^{-1}$.\\
+Part 2: $A$ and $A^\top$ have the same characteristic polynomial (Lemma \ref{l:chrpoly-degn}), so they have the same eigenvalues with the same multiplicities, and 1 splits if and only if the other does.
+Using the dimension formula (Lemma \ref{l:dim-formula}) and Corollary \ref{c:rank-transpose}, we have $\dim \ker(A^\top - \lambda I_n)= \dim \ker(A- \lambda I_n)^\top =n- \rank(A- \lambda I_n)^\top =n- \rank(A- \lambda I_n)= \dim \ker (A- \lambda I_n)$.
+ $A$ is thus diagonalizable if and only if $A^\top$ is by Proposition \ref{p:diagze-mult}.\\
+Part 3: "$\to$" If $A$ is similar to upper triangular $U$, then they have the same characteristic polynomial (Lemma \ref{l:chr-poly}), which is $t \mapsto \prod_{j=1}^n(u_{jj}-t)$, which splits.
+"$\leftarrow$" We use induction on $n$. The base case $n=1$ is immediate. When $n>1$, the fact that the characteristic polynomial splits means we can pick an eigenvalue $\lambda$ and eigenvector $\mb{v}_1$ of $A$.
+Extend it to a basis $mb{v}_1, \ldots, mb{v}_n$ of $F^n$ (Corollary \ref{c:extend-LID2basis}). If $P$ is a matrix with these vectors as columns, then
+\[ P^{-1}AP= \tbtm{\lambda}{\mb{0}_{n-1}}{*}{B}\]
+The characteristic polynomial of $A$ is the characteristic polynomial of the RHS (Lemma \ref{l:chr-poly}), which is $( \lambda -t)$ times the characteristic polynomial of $B$ (Exercise \ref{e:block-det}), which must split.
+By inductive hypothesis, there exists $R \in F^{(n-1) \times(n-1)}$ such that $R^{-1}BR$ is upper triangular, and
+\[ \tbtm{1}{\mb{0}_{n-1}}{\mb{0}_{n-1}^\top}{R}^{-1}P^{-1}AP \tbtm{1}{\mb{0}_{n-1}}{\mb{0}_{n-1}^\top}{R}= \tbtm{\lambda}{\mb{0}_{n-1}}{*}{R^{-1}BR}\]
+So $A$ is similar to an upper triangular matrix.
+Part 4: By part 3, there exists $P$ invertible such that $U:= P^{-1}AP$ is upper triangular, with $\lambda_1, \ldots, \lambda_n$ along its main diagonal. By Lemma \ref{l:chr-poly}, $\tr A= \tr U= \sum_{j=1}^n \lambda_j$, and $\det A= \det U= \prod_{j=1}^n \lambda_j$.
+\end{proof}
+\begin{defn}
+Let $V$ be a vector space, $W_1,W_2$ subspaces such that $V=W_1 \oplus W_2$. The \emph{projection} of $V$ on $W_1$ along $W_2$ is $T:V \to V$, $\mb{x}\mapsto \mb{x}_1$, where $\mb{x}= \mb{x}_1+ \mb{x}_2$, $\mb{x}_1 \in W_1$, $\mb{x}_2 \in W_2$.
+\end{defn}
+\begin{exer}\label{e:projection}
+In the setting of the above definition
+\begin{itemize}
+\item $T$ is linear, $W_1= \{ \mb{x}\in V:T( \mb{x})= \mb{x}\} = \img T$, $W_2= \ker T$. In particular, $V= \img T \oplus \ker T$, and no ambiguity arises from simply calling $T$ a projection.\footnote{It is the projection of $V$ on its image along its kernel}
+\item $T \in \cl{L}(V)$ is a projection if and only if $T^2=T$.
+\end{itemize}
+\end{exer}
+\begin{proof}%rating 1/2
+Part 1: Fix $\mb{x}, \mb{y}\in V$, $c \in F$. Write $\mb{x}= \mb{x}_1+ \mb{x}_2$, $\mb{y}= \mb{y}_1+ \mb{y}_2$, where $\mb{x}_1, \mb{y}_1 \in W_1$, $\mb{x}_2, \mb{y}_2 \in W_2$.
+Then $c \mb{x}+ \mb{y}=(c \mb{x}_1+ \mb{y}_1)+(c \mb{x}_2+ \mb{y}_2)$, where $c \mb{x}_1+ \mb{y}_1 \in W_1$, $c \mb{x}_2+ \mb{y}_2 \in W_2$.
+Thus, $T(c \mb{x}+ \mb{y})=c \mb{x}_1+ \mb{y}_1= c \cdot T( \mb{x})+T( \mb{y})$, so $T$ is linear.
+Next, the 3 inclusions $W_1 \subseteq \{ \mb{x}\in V:T( \mb{x})= \mb{x}\} \subseteq \img T \subseteq W_1$ are all immediate, as is $W_2 \subseteq \ker T$.
+If $\mb{x}\in \ker T$, write $\mb{x}= \mb{x}_1+ \mb{x}_2$, $\mb{x}_1 \in W_1$, $\mb{x}_2 \in W_2$. Then $\mb{0}_V=T( \mb{x})= \mb{x}_1$, so $\mb{x}= \mb{x}_2 \in W_2$.
+Part 2: "$\to$" For $\mb{x}\in V$, write $\mb{x}= \mb{x}_1+ \mb{x}_2$, $\mb{x}_1 \in W_1$, $\mb{x}_2 \in W_2$. Then $T^2( \mb{x})=T( \mb{x}_1)= \mb{x}_1=T( \mb{x})$.
+"$\leftarrow$" For $\mb{x}\in V$, write $\mb{x}=T( \mb{x})+ \{ \mb{x}-T( \mb{x})\}$. Since $T \in \cl{L}(V)$ and $T^2=T$, $T \big( \mb{x}-T( \mb{x}) \big)= \mb{0}_V$, so $V= \img T+ \ker T$.
+If $\mb{x}\in \img T \cap \ker T$, then $\mb{x}=T( \mb{y})$ for some $\mb{y}\in V$, and $\mb{0}_V=T( \mb{x})=T^2( \mb{y})=T( \mb{y})= \mb{x}$. Thus, $\img T \cap \ker T= \{ \mb{0}_V \}$, and in fact $V= \img T \oplus \ker T$.
+\end{proof}
+
+\section{Matrix limits and Markov chains*}
+We study $\lim_{m \to \infty}A^m$ for $A \in \bb{C}^{n \times n}$, which has applications in the natural and social sciences.
+Recall that a sequence $(z_n)$ in $\bb{C}$ converges if $( \Re z_n)$ and $( \Im z_n)$ do. A sequence $(A_m)$ in $\bb{C}^{n \times p}$ converges if each entry does.
+Using $\lim_{n \to \infty}(ca_n+b_n)=c \lim_{n \to \infty}a_n+ \lim_{n \to \infty}b_n$ for sequences $(a_n)$ and $(b_n)$ in $\bb{C}$ when the limits exist, we have:
+\begin{lem}\label{l:lin-lmt}
+For a sequence $(A_m)$ in $\bb{C}^{n \times p}$, and compatible matrices $B,C$, we have $\lim_{m \to \infty}BA_m=B \lim_{m \to \infty}A_m$ and $\lim_{m \to \infty}A_mC=( \lim_{m \to \infty}A_m)C$. In particular, when $A,Q \in \bb{C}^{n \times n}$ and $Q$ is invertible, then $\lim_{m \to \infty}(QAQ^{-1})^m= Q( \lim_{m \to \infty}A^m)Q^{-1}$.
+\end{lem}
+This is a set we frequently encounter:
+\begin{lem}\label{l:mat-power0}
+Put $S:= \{ z \in \bb{C}: \lim_{n \to \infty}z^n \T{ exists}\} = B_1(0) \cup {1}$. For $A \in \bb{C}^{n \times n}$, if both:
+\begin{itemize}
+\item Each eigenvalue of $A$ is in $S$.
+\item $A$ is diagonalizable.
+\end{itemize}
+Then $\lim_{m \to \infty}A^m$ exists. Condition 1 is also necessary.
+\end{lem}
+We later show that if we replace condition 2 with: $\dim E_1$ is the multiplicity of eigenvalue $E_1$, then the 2 conditions are also necessary. As an illustration,
+\[ \tbtm{1}{0}{1}{1}^m= \tbtm{1}{0}{m}{1}\]
+\begin{proof}
+If $|z|<1$, then $\lim_{n \to \infty}z^n=0$. If $|z|>1$, then $\lim_{n \to \infty}z^n= \infty$. If $|z|=1$, write $z=e^{si}$ for some $0 \leq s <2 \pi$.
+Then $\lim_{n \to \infty}z^n= \lim_{n \to \infty}e^{nsi}$, which only exists when $s=0$ since that is the only value of $s$ where $(ns \bmod 2 \pi)$ converges.
+Use Lemma \ref{l:diagze-basis} to write $D=Q^{-1}AQ$ $\leftrightarrow$ $A=QDQ^{-1}$ where $Q$ has eigenvectors of $A$ as its columns and $D$ is diagonal with the corresponding eigenvalues $\lambda_j$ along its main diagonal.
+By Lemma \ref{l:lin-lmt}, $\lim_{m \to \infty}(QDQ^{-1})^m= Q( \lim_{m \to \infty}D^m)Q^{-1}$, which exists if and only if each $\lambda_j \in S$.
+Condition 1 is necessary since if $A \mb{v}= \lambda \mb{v}$ for some $\lambda \notin S$ and nonzero $\mb{v}\in \bb{C}^n$, then $( \lim_{m \to \infty}A^m) \mb{v}= \lim_{m \to \infty}A^m \mb{v}= \lim_{m \to \infty}\lambda^m \mb{v}$, which does not exist, so neither does $\lim_{m \to \infty}A^m$.
+\end{proof}
+\begin{defn}
+$P \in \bb{R}^{n \times n}$ is a \emph{transition matrix} (or stochastic matrix) If each entry $p_{jk}\geq 0$ and $P \mb{1}_n= \mb{1}_n$ (all rows sum to 1).
+Each $p_{jk}$ is interpreted as the probability to move from state j to state k in 1 stage.\footnote{Friedberg uses $P^\top$ as the transition matrix, hence his column sums are 1 and he interprets $p_{jk}$ as state k to j}
+$\mb{u}\in \bb{R}^n$ is a \emph{probability vector} if each $u_j \geq 0$ and $\mb{1}_n^\top \mb{u}=1$.\footnote{the set of all probability vectors is often denoted $\Delta^{n-1}$, the n-1 dimensional probability simplex}
+\end{defn}
+\begin{lem}\label{l:tm-def}
+Let $P,Q \in \bb{R}^{n \times n}$ be transition matrices, $\mb{u}\in \bb{R}^n$ a probability vector.
+\begin{itemize}
+\item $PQ$ and $P^m$ for $m \in \bb{Z}_{\geq 0}$ are transition matrices.
+\item If $u_j$ is interpreted as the initial probability of being in state j, and $P$ is interpreted as in the definition, then the jth entry of $\mb{u}^\top P^m$ is the probability of being in state j after m stages.
+\item If $L:= \lim_{m \to \infty}P^m$, then $\mb{u}^\top LP= \mb{u}^\top L$. The jth entry of $\mb{u}^\top L$ is the long term probability of being in state j.
+\end{itemize}
+\end{lem}
+\begin{proof}%east, short
+Part 1: Clearly each $(PQ)_{jk}\geq 0$ and $PQ \mb{1}_n= P \mb{1}_n= \mb{1}_n$. It follows that each $P^m$ is a transition matrix by induction.
+Part 2: For the probability of being in state j after 1 stage, consider initially being in state k for $k= \ot{n}$. In symbols, this is $\sum_{k=1}^nu_kp_{jk}$, the jth entry of $\mb{u}^\top P$. Applying this m times, we get $\mb{u}^\top P^m$.
+Part 3: Applying Lemma \ref{l:lin-lmt} twice, we have $\mb{u}^\top( \lim_{m \to \infty}P^m)P= \mb{u}^\top \lim_{m \to \infty}P^{m+1}= \mb{u}^\top L$.
+\end{proof}
+\begin{defn}
+A \emph{stochastic process} is a sequence $(X_m \in \cl{S}:m \in \bb{Z}_{\geq 0})$ of random variables. $\cl{S}$ is the set of possible states.
+A \emph{Markov process} is a stochastic process where the transition probability to 1 state depends only on the previous state and not on the stage.
+A \emph{Markov chain} is a Markov process where $\cl{S}$ is finite.\footnote{more often, countable}
+\end{defn}
+For later: using refined version of Lemma \ref{l:mat-power0}, if $P$ is a transition matrix, then $\lim_{m \to \infty}P^m$ exists if and only if all its eigenvalues are in $S$. An illustrative example is
+\[ \lim_{m \to \infty}\tbtm{0}{1}{1}{0}^m \]
+does not exist (the sequence alternates between that matrix and $I 2$) since -1 is an eigenvalue.
+Even when $\lim_{m \to \infty}P^m$ exists, it can be hard to compute. We study conditions where it is easily computed.
+\begin{defn}
+A transition matrix $P$ is \emph{regular} if there exists $m \in \bb{Z}^+$ such that each entry of $P^m$ is positive.\footnote{A Markov chain with a regular transition matrix is irreducible and aperiodic}
+\end{defn}
+\begin{example}
+A state j of a Markov chain is \emph{absorbing} if it can never be left once entered. The jth row of the transition matrix (and its powers) is then $\mb{e}_j$, so it is not regular.
+The entire chain is called \emph{absorbing} if it is possible to go from any state into an absorbing one. We do not study absorbing states or chains.
+\end{example}
+\begin{defn}
+For $A \in \bb{C}^{n \times p}$, its \emph{row sum} is $\rho(A):= \max_{j= \ot{n}}\rho_j(A)$, where $\rho_j(A):= \sum_{k=1}^p|a_{jk}|$. Likewise, its \emph{column sum} is $\nu(A):= \max_{k= \ot{p}}\nu_j(A)$, where $\nu_j(A):= \sum_{j=1}^n|a_{jk}|$.\footnote{$\rho(A)= \max \{ \| A \mb{x}\|_\infty : \| \mb{x}\|_\infty \leq 1 \}$ and $\nu(A)= \max \{ \| A \mb{x}\|_1 : \| \mb{x}\|_1 \leq 1 \}$}
+\end{defn}
+\begin{thm}[Gershgorin Circle Theorem]
+For $A \in \bb{C}^{n \times n}$, its jth \emph{Gershgorin disc} is $C_j:= \{ z \in \bb{C}: |z-a_{jj}| \leq \rho_j(A)-|a_{jj}| \}$. All eigenvalues of $A$ are contained in $\cup_{j=1}^nC_j$.
+\end{thm}
+While not ours, 1 use case for this theorem is to show if 0 is not in any Gershgorin disc, then $A$ is invertible (Exercise \ref{e:eig-poly}).
+\begin{proof}%easy, short
+Let $\lambda$ be an eigenvalue, pick nonzero $\mb{v}\in \bb{C}^n$ such that $A \mb{v}= \lambda \mb{v}$. Pick j that maximizes $|v_j|$, then $v_j \neq 0$, and $\sum_{k=1}^na_{jk}v_k= \lambda v_j$.
+Then $\lambda -a_{jj}= \sum_{k \neq j}a_{jk}v_k/v_j$, so $| \lambda -a_{jj}| \leq \sum_{k \neq j}|a_{jk}|= \rho_j(A)- |a_{jj}|$.
+\end{proof}
+\begin{corollary}\label{c:gershgorin}
+For $A \in \bb{C}^{n \times n}$, all its eigenvalues $\lambda$ satisfy $| \lambda| \leq \rho(A) \wedge \nu(A)$.
+For a transition matrix $P \in \bb{R}^{n \times n}$, 1 is an eigenvalue, and all eigenvalues $\lambda$ satisfy $| \lambda| \leq 1$.
+\end{corollary}
+\begin{proof}%easy, short
+By Gershgorin's circle theorem, there exists $j \in \{ \ot{n}\}$ such that $| \lambda| \leq | \lambda -a_{jj}|+|a_{jj}| \leq \rho_j(A)-|a_{jj}|+|a_{jj}| \leq \rho(A)$.
+By Exercise \ref{e:split-ut}, $A$ and $A^\top$ have the same set of eigenvalues, so we also have $| \lambda| \leq \rho(A^\top)= \nu(A)$.
+The assertions about transition matrices follow immediately from $P \mb{1}_n= \mb{1}_n$ and $\rho(P)=1$.
+\end{proof}
+\begin{prop}\label{p:rowsum-evec}
+If $A \in \bb{R}^{n \times n}$ with each $a_{jk}>0$ and $\lambda$ is an eigenvslue with $| \lambda|= \rho(A)$, then $\lambda= \rho(A)$ and the eigenspace is $E_{\rho(A)}= \Span \{ \mb{1}_n \}$.
+If $\lambda$ is an eigenvslue with $| \lambda|= \nu(A)$, then $\lambda= \nu(A)$ and $\dim E_{\nu(A)}=1$.
+\end{prop}
+\begin{proof}
+We start the same way as we did in proving Gershgorin's Circle Theorem. Let $\mb{v}$ be an eigenvector for $\lambda$, then $A \mb{v}= \lambda \mb{v}$.
+Pick j to maximize $|v_j|$. Then $v_j \neq 0$, and $\sum_{k=1}^na_{jk}v_k= \lambda v_j$. Then $| \lambda| \cdot|v_j|=| \lambda v_j|=| \sum_{k=1}^na_{jk}v_k| \leq \sum_{k=1}^na_{jk}|v_k| \leq |v_j| \sum_{k=1}^na_{jk}\leq |v_j| \rho(A)$.
+But by hypothesis $| \lambda|= \rho(A)$, and all the inequalities in this chain are actually equalities. In particular, $| \sum_{k=1}^na_{jk}v_k|= \sum_{k=1}^na_{jk}|v_k|$ and each $a_{jk}>0$ means all the $\{ v_k \}$ point in the same direction in the complex plane, so each $v_k=|v_k|e^{si}$ for some universal $0 \leq s<2 \pi$.
+Next, $\sum_{k=1}^na_{jk}|v_k|=|v_j| \sum_{k=1}^na_{jk}$ means $|v_1|= \ldots=|v_n|$ and so $v_1= \ldots=v_n$. This shows that $\mb{1}_n$ is an eigenvector for $\lambda$, and (since $\mb{v}\in E_\lambda$ was arbitrary) that $E_\lambda= \Span \{ \mb{1}_n \}$.
+The final inequality that is actually an equality is $\sum_{k=1}^na_{jk}= \rho(A)$. Combine this with $\sum_{k=1}^na_{jk}v_k= \lambda v_j$ and $v_1= \ldots=v_n$ to get $\lambda= \rho(A)$ and thus $\mb{v}\in \bb{R}^n$.
+We now apply this result to $A^\top$ (Exercise \ref{e:split-ut}) to get the statement with $\nu(A)$.
+\end{proof}
+\begin{corollary}\label{c:rowsum-evec}
+If $P$ is a transition matrix and each $p_{jk}>0$, then 1 is an eigenvalue with eigenspace $E_1= \Span \{ \mb{1}_n \}$, and all other eigenvalues $\lambda$ satisfy $| \lambda|<1$. The same conclusions hold if $P$ is regular.
+\end{corollary}
+\begin{proof}%easy, short
+When each $p_{jk}>0$, all the conclusions follow from Proposition \ref{p:rowsum-evec} since by definition $\rho(P)=1$ for transition matrices.
+If $P$ is regular, pick $m \in \bb{Z}^+$ such that all entries of $P^m$ are positive.
+Then so are all entries of $P^{m+1}$ ($P^{m+1}=PP^m$, and all rows of $P$ sum to 1), and both are transition matrices (Lemma \ref{l:tm-def}), so Proposition \ref{p:rowsum-evec} applies to both.
+In particular, if $\lambda$ is an eigenvalue of $P$ with $| \lambda|=1$ (rule out $| \lambda|>1$ with Corollary \ref{c:gershgorin}) and eigenvector $\mb{v}$, then $\lambda^m$ and $\lambda^{m+1}$ are eigenvalues of $P^m$ and $P^{m+1}$ with eigenvector $\mb{v}$.
+Since $| \lambda^m|=| \lambda^{m+1}|=1$ we actually have $\lambda^m= \lambda^{m+1}=1$ and hence $\lambda=1$. Further, $\mb{v}\in \Span \{ \mb{1}_n \}$.
+\end{proof}
+\begin{prop}
+If $P$ is a diagonalizable regular transition matrix, then $L:= \lim_{m \to \infty}P^m$ exists.\footnote{diagonalizability is not needed. All other assertions remain true with their proofs unchanged} Further:
+\begin{itemize}
+\item $L$ is a transition matrix, and $PL=LP=L$.
+\item All rows of $L$ are identical, and the eigenspace of $P^\top$ for eigenvalue 1 is $\Span \{ L^\top \mb{e}_1 \}$.
+\item For all probability vectors $\mb{u}$, we have $\lim_{m \to \infty}\mb{u}^\top P^m= \mb{e}_1^\top L$. We call $L^\top \mb{e}_1$ the \emph{stationary vector} (or fixed probability vector) of $P$. 
+\end{itemize}
+\end{prop}
+Based on part 2, a good way to find the stationary vector is to sole $(P^\top -I_n) \mb{v}= \mb{0}_n$ for $\mb{v}$.
+\begin{proof}%easy, short
+The limit exists by Corollary \ref{c:rowsum-evec} and Lemma \ref{l:mat-power0}.\\
+Part 1: Each $P^m$ is a transition matrix (Lemma \ref{l:tm-def}), so each $L_{jk}= \lim_{m \to \infty}(P^m)_{jk}\geq 0$ and $\sum_{k=1}^nL_{jk}= \sum_{k=1}^n \lim_{m \to \infty}(P^m)_{jk}= \lim_{m \to \infty}\sum_{k=1}^n(P^m)_{jk}=1$.
+Also, $PL=LP= \lim_{m \to \infty}P^{m+1}=L$ by Lemma \ref{l:lin-lmt}.
+Part 2: Since $PL=L$, all columns of $L$ are in the eigenspace of $P$ with eigenvalue 1. They are thus each a scalar multiple of $\mb{1}_n$, so each row is identical.
+$LP=L$ $\leftrightarrow$ $P^\top L^\top =L^\top$ (Exercise \ref{e:transpose-inv}), so al rows of $L$ (WLOG the 1st) are in the eigenspace of $P^\top$ with eigenvalue 1, so $L^\top \mb{e}_1$ spans that space.
+Part 3: By Lemma \ref{l:lin-lmt}, $\lim_{m \to \infty}\mb{u}^\top P^m= \mb{u}^\top L= \mb{e}_1^\top L$ since $\mb{u}$ is a probability vector and all rows of $L$ are the same.
+\end{proof}
+\begin{example}[Hardy Weinberg Law]
+Let the initial distribution of genotypes GG, Gg, and gg in a population be given by a probability vector $\mb{v}\in \bb{R}^3$. Assume the population is big, and that gender/ mating/ survival is random with respect to genotype.
+Then in just 1 generation, the distribution will reach equilibrium with probability vector $\mb{u}:= \big( p^2,2p(1-p),(1-p)^2 \big)^\top$, where $p:=v_1+v_2/2$ is the frequency of allele G ($1-p=v_2/2+v_3$ is the frequency of allele g).
+The initial transition matrix based on $\mb{v}$ is
+\[ P_0:= \begin{pmatrix} v_1+v_2/2 & v_2/2+v_3 & 0 \\
+v_1+v_2/4 & (v_1+v_2+v_3)/2 & v_2/4+v_3/2 \\
+0 & v_1+v_2/2 & v_2/2+v_3 \end{pmatrix}= \begin{pmatrix} p & 1-p & 0 \\
+p/2 & 1/2 & (1-p)/2 \\
+0 & p & 1-p \end{pmatrix}\]
+Each entry is computed by $P_0$(offspring has x|1 parent has y)=$\sum_zP_0(z)P_0$(offspring has x|parents have y,z) for $x,y,z \in \{ GG, Gg, gg \}$.
+In particular, the matrix $P_0$ depends on $\mb{v}$ only thru $p$. Provided $p$ does not change per generation, the transition matrix from any generation to the next is $P=P_0$.
+The distribution for generation 1 is $\mb{v}^\top P_0= \big( p(v_1+v_2/2),(1-p)v_1+v_2/2+pv_3,(1-p)(v_2/2+v_3) \big) = \big( p^2,2p(1-p),(1-p)^2 \big) = \mb{u}^\top$.
+Since $u_1+u_2/2=p$, we have $P_1=P_0$ and $\mb{u}^\top P_1= \mb{u}^\top$.
+\end{example}
+
+\section{Invariant subspaces}
+We have seen that if $T$ has eigenvector $\mb{v}$, then $T$ maps $\Span \{ \mb{v}\}$ into itself. This kind of behavior is important for linear operators.
+\begin{defn}
+Let $V$ be a vector space and $T \in \cl{L}(V)$. A subspace $W$ is T-\emph{invariant} if $T(W) \subseteq W$.
+If $\mb{x}\in V$, $\mb{x}\neq \mb{0}_V$, call $\Span \{ T^m( \mb{x}): m \in \bb{Z}_{\geq 0}\}$ the T-\emph{cyclic} subspace generated by $\mb{x}$.
+If $W$ is a subspace of $V$, define the \emph{restriction} of $T$ to $W$ by $T_W:W \to V$, $\mb{v}\mapsto T( \mb{v})$.
+\end{defn}
+\begin{exer}\label{e:smallest-tcyclic}
+These subspaces are always T-invariant: $\{ \mb{0}_V \}$, $V$, $\img T$, $\ker T$, any eigenspace $E_\lambda$ and the T-cyclic subspace generated by $\mb{x}$. It is the smallest T-invariant subspace containing $\mb{x}$.
+We have $T_W \in \cl{L}(V,W)$, and when $W$ is T-invariant, $T_W \in \cl{L}(W)$.
+\end{exer}
+\begin{proof}
+Let $W_x$ denote this T-cyclic subspace. For any $m \in \bb{Z}_{\geq 0}$ we have $T \circ T^m( \mb{x})= T^{m+1}( \mb{x}) \in W_x$, that is $T(W_x) \subseteq W_x$, so it is T-invariant.
+If $W$ is any T-invariant subspace containing $\mb{x}$ then it must contain each $T^m( \mb{x})$ by induction, so it contains their span $W_x$ (Lemma \ref{l:span-minimal}).
+\end{proof}
+Naturally, $T_W$ inherits many properties of $T$.
+\begin{lem}\label{l:restrict-chrpoly}
+If $V$ is a finite dimensional vector space, $T \in \cl{L}(V)$, and $W$ is a T-invariant subspace, then the characteristic polynomial of $T_W$ divides that of $T$.
+\end{lem}
+\begin{proof}
+Let $\beta:= \{ \mb{v}_1, \ldots, \mb{v}_n \}$ be a basis for $V$ where the 1st m vectors are a basis $\gamma$ for $W$ (Corollary \ref{c:extend-LID2basis}). For $j= \ot{m}$, the coordinates of $T( \mb{v}_j)=T_W( \mb{v}_j)$ with respect to $\beta$ are 0 except for possibly the 1st m, so
+\[ [T]_\beta = \tbtm{[T_W]_\gamma}{O}{*}{B}\]
+so $\det ([T]_\beta -tI_n)= \det ([T_W]_\gamma -tI_m) \det (B-tI_{n-m})$ (Exercise \ref{e:block-det}).
+\end{proof}
+The characteristic polynomial of $T_W$ thus gives insight into that of $T$. If $W$ is also T-cyclic, then this polynomial is easy to compute.
+\begin{prop}\label{p:tcyclic-poly}
+If $V$ is a finite dimensional vector space, $T \in \cl{L}(V)$, $\mb{v}\in V$, and $W$ is the T-cyclic subspace generated by $\mb{v}$. Pick the smallest $m \in \bb{Z}^+$ such that $\beta_m:= \{ T^j( \mb{v}):j=0, \ldots,m \}$ is LD.
+Then $\beta_{m-1}$ is a basis for $W$, and if $\sum_{j=0}^ma_jT^j( \mb{v})= \mb{0}_V$ with $a_m=1$, then $t \mapsto (-1)^m \sum_{j=0}^ma_jt^j$ is the characteristic polynomial of $T_W$.
+\end{prop}
+\begin{proof}%rating 1/2
+Such an $m$ exists and $m \leq \dim V$ (Corollary \ref{c:bases-n-same}). Put $Z:= \Span \beta_{m-1}$. Then $\beta_{m-1}$ is a basis for $Z$ and $T^m( \mb{v}) \in Z$ (Lemma \ref{l:span-LD}).
+We claim that $Z$ is T-invariant. Indeed, if $\mb{w}\in Z$, then $\mb{w}= \sum_{j=0}^{m-1}b_jT^j( \mb{v})$ for some $b_0, \ldots, b_{m-1}\in F$, so $T( \mb{w})= \sum_{j=0}^{m-1}b_jT^{j+1}( \mb{v})$.
+Since $\mb{v}\in Z$ too, $W \subseteq Z$ (Exercise \ref{e:smallest-tcyclic}), so in fact $W=Z$. Put $\beta:= \beta_{m-1}$. Then
+\[ [T_W]_\beta= \tbtm{\mb{0}_{m-1}^\top}{I_{m-1}}{-a_0}{\begin{matrix}\vdots \\ -a_{m-1}\end{matrix}}\]
+The characteristic polynomial has the stated form by induction on m. For the base case $m=2$, $\det ([T_W]_\beta -tI_2)=-t(-a_1-t)+a_0=(-1)^2 \sum_{j=0}^2a_jt^j$ ($a_2=1$).
+For $m>2$, cofactor expansion along the 1st row gives $\det ([T_W]_\beta -tI_m)=-t \det \{ ( \overline{[T_W]_\beta})_{11}-tI_{m-1}\})+(-1)^{m+1}(-a_0)=-t(-1)^{m-1} \sum_{j=1}^{m-1}a_jt^{j-1}+(-1)^ma_0= (-1)^m \sum_{j=0}^ma_jt^j$, where we used the inductive hypothesis on the 1,1 cofactor.
+\end{proof}
+This is the key tool that proves the famous result that a linear operator/ matrix is annihilated by its own characteristic polynomial.
+\begin{thm}[Cayley Hamilton]
+If $V$ is a finite dimensional vector space, $T \in \cl{L}(V)$, and $f$ is its characteristic polynomial, then $f(T) \equiv \mb{0}_V$.
+\end{thm}
+\begin{proof}%easy, short
+Fix $\mb{v}\in V$. If $\mb{v}= \mb{0}_V$, then $f(T)( \mb{v})= \mb{0}_V$. Else, let $W$ be the T-cyclic subspace generated by $\mb{v}$. Construct the characteristic polynomial $g(t):=(-1)^m \sum_{j=0}^ma_jt^j$ of $T_W$ as in Proposition \ref{p:tcyclic-poly}, which also states that $g(T)( \mb{v})=g(T_W)( \mb{v})= \mb{0}_V$.
+By Lemma \ref{l:restrict-chrpoly}, $g$ divides $f$, so $f(T)( \mb{v})= \mb{0}_V$.
+\end{proof}
+If we can decompose a finite dimensional vector space into a direct sum of T-invariant subspaces, then we can infer the behavior of $T$ based on those direct summands.
+\begin{defn}
+The \emph{direct sum} of square matrices $B_1, \ldots,B_k$ is the block diagonal matrix they form, denoted $\bigoplus_{j=1}^kB_k$.
+\end{defn}
+\begin{exer}\label{e:dirsum-mat}
+If $V$ is a vector space with $\dim V=n$ then $T \in \cl{L}(V)$ is diagonalizable if and only if $V$ can be written as the direct sum of 1 dimensional T-invariant subspaces.\\
+If $W_1, \ldots,W_k$ are T-invariant subspaces with ordered bases $\beta_1, \ldots, \beta_k$, $\beta:= \cup_{j=1}^k \beta_j$, $V= \bigoplus_{j=1}^kW_j$, then $[T]_\beta= \bigoplus_{j=1}^k[T_{W_j}]_{\beta_j}$.
+\end{exer}
+\begin{proof} %easy, short
+Part 1: "$\to$" Let $\{ \mb{v}_1, \ldots, \mb{v}_n \}$ be a basis of $V$ of eigenvectors of $T$. For $j= \ot{n}$, put $W_j:= \Span \{ \mb{v}_j \}$. Then $V= \bigoplus_{j=1}^nW_j$, each $W_j$ is T-invariant, and $\dim W_j=1$.
+"$\leftarrow$" If $V= \bigoplus_{j=1}^nW_j$, each $W_j$ is T-invariant, and $\dim W_j=1$, then for $j= \ot{n}$, pick nonzero $\mb{v}_j \in W_j$. Then $T( \mb{v}_j) \in W_j$, so $T( \mb{v}_j)= \lambda_j \mb{v}_j$ for some $\lambda_j \in F$.\\
+Part 2: $\beta$ is indeed a basis (Lemma \ref{l:directsum}).%We show it for $k=2$, the general case follows by induction (since $\bigoplus_{j=1}^{k-1}W_j$ is T-invariant and $V=( \bigoplus_{j=1}^{k-1}W_j) \oplus W_k$). 
+For $j= \ot{k}$ and any $\mb{v}\in W_j$, we have $T( \mb{v}) \in W_j$, so it is a linear combination of $\beta_j$. It follows that $[T]_\beta= \bigoplus_{j=1}^k[T_{W_j}]_{\beta_j}$.
+\end{proof}
+\begin{lem}
+If $V$ is a vector space with $\dim V=n$, $T \in \cl{L}(V)$, $V= \bigoplus_{j=1}^kW_j$ where each $W_j$ is T-invariant, and $f,f_j$ are the characteristic polynomials of $T,T_{W_j}$, then $f= \prod_{j=1}^kf_j$. In particular, $\det T= \prod_{j=1}^k \det T_{W_j}$.
+\end{lem}
+This is close to Lemma \ref{l:restrict-chrpoly}. Unfortunately, given a T-invariant subspace $W_1$, at this point we do not 'know' there exists another $W_2$ such that $V=W_1 \oplus W_2$.
+\begin{proof}%easy, short
+Set things up as in Exercise \ref{e:dirsum-mat}. Then $[T]_\beta= \bigoplus_{j=1}^k[T_{W_j}]_{\beta_j}$, so $\det([T]_\beta -tI_n)= \det \big\{ \bigoplus_{j=1}^k([T_{W_j}]_{\beta_j}-tI_{m_j} \big\} = \prod_{j=1}^k \det ([T_{W_j}]_{\beta_j}-tI_{m_j})$ by Exercise \ref{e:block-det} and induction, where $m_k$ is the number of vectors in $\beta_k$.
+Take $t=0$ to get the claim about determinants.
+\end{proof}
+%\{}

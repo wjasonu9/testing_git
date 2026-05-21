@@ -1,0 +1,275 @@
+\chapter{Vector Spaces}
+The purpose of including material from Friedberg is that Hubbard's treatment of linear algebra focuses too much on $\bb{R}^n$ and many results can be stated and proved in greater generality with less redundancy and little extra effort.
+\section{Definition and Examples}
+For our purposes, the field we usually use is $\bb{R}$. But $\bb{C}$ and $\bb{Q}$ are common fields also.
+\begin{defn}
+A \emph{vector space} $V$ over a field $F$ is a space where vector addition and scalar multiplication are defined and the result is still in $V$: for any $\mb{v}, \mb{w}\in V$ and $a,b \in F$, we have $\mb{v}+ \mb{w}, a \mb{v}\in V$. Additionally, 8 axioms must be satisfied: vector addition is commutative and associative, there is an additive identity denoted $\mb{0}$, there is an additive inverse, scalar and field multiplication are compatible $(ab) \mb{v}=a(b \mb{v})$, identity of scalar multiplication $1 \mb{v}= \mb{v}$, distributivitiy of scalar multiplication with respect to vector addition $a( \mb{v}+ \mb{w})=a \mb{v}+ a \mb{w}$, and the distributivity of scalar multiplication with respect to field addition $(a+b) \mb{v}=a \mb{v}+b \mb{v}$.\footnote{if it's not already clear from the language, elements of $V$ are generally called 'vectors', while those of $F$ are generally called 'scalars'}
+\end{defn}
+As the language of the definition suggests, elements of a vector space are called 'vectors' (even if they might not have both magnitudes and directions as they do in $\bb{R}^n$), while those of its field are called 'scalars.' Most of the time, the field won't be explicitly stated.
+A complete description of a vector space includes not only the set $V$, but also what addition and scalar multiplication are.
+The motivation for the vector space axioms is that $\bb{R}^2$ with the usual notions of addition and scalar multiplication satisfy them.
+Due to the associativity of vector addition, we can unambiguously add any finite number of vectors without the use of parentheses.
+\begin{example}
+The set of \emph{n-tuples} $F^n$ and matrices $F^{m \times n}$ with addition and scalar multiplication occurring entry by entry is a vector space. The \emph{diagonal entries} of $A \in F^{m \times n}$ are $a_{ii}$.\\
+If $S$ is a nonempty set and $F$ is a field, let $\cl{F}(S,F)$ denote the set of functions $f:S \to F$. This is a vector space with the addition and scalar multiplication of functions defined the usual way: $(f+g)(s)=f(s)+g(s)$ and $(cf)(s)=c \cdot f(s)$.\\
+The set $P(F)$ of all polynomials (of any degree), with addition and scalar multiplication defined as for functions, is a vector space.\\
+The set of sequences with terms in $F$ with addition and scalar multiplication defined term by term is a vector space.
+\end{example}
+As might already be evident, addition can't be defined arbitrarily. Eg, in $\bb{R}^2$ if $(a_1,a_2)+(b_1,b_2)$ is defined as $(a_1+b_1,a_2-b_2)$ or $(a_1+b_1,0)$, then we don't have a vector space.\footnote{in the former, commutativity fails to hold. In the latter, there fails to be an additive identity}
+\begin{exer}[Elementary properties of vector spaces]
+Let $V$ be a vector space, $\mb{x},\mb{y},\mb{z}\in V$, $a \in F$.
+\begin{itemize}
+\item Cancellation law: if $\mb{x}+ \mb{z}= \mb{y}+ \mb{z}$, then $\mb{x}= \mb{y}$.
+\item The additive identity is unique.
+\item $\mb{x}$ has a unique additive inverse, customarily denoted $- \mb{x}$.
+\item $0 \cdot \mb{x}= \mb{0}$.
+\item $(-a) \mb{x}=-(a \mb{x})=a(- \mb{x})$ is the additive inverse of $a \mb{x}$.
+\item $a \mb{0}= \mb{0}$.
+\end{itemize}
+\end{exer}
+
+\section{Subspaces}
+In the study of any algebraic structure, it's of interest to examine subsets that possess the same structure as the set under consideration.
+\begin{defn}
+If $V$ is a vector space over a field $F$, then $W \subseteq V$ is a \emph{subspace} of $V$ if it's a vector space over the field $F$ with addition and scalar multiplication as defined on $V$.
+\end{defn}
+$V$ and $\{ \mb{0}\}$ are subspaces of $V$.
+\begin{lem}\label{l:check-subspace}
+$W$ is a subspace of $V$ iff $\mb{0}\in W$, and for $\mb{x}, \mb{y}\in W$ and $c \in F$ we have $\mb{x}+ \mb{y},c \mb{x}\in W$.
+\end{lem}
+\begin{proof}
+Rating 2/1.
+We need for $W$ to be closed under addition and scalar multiplication. Since $W \subseteq V$ and $V$ is a vector space, all the axioms except the existence of an additive identity and additive inverses automatically carry over to $W$. The additive identity is in fact $\mb{0}$, and the additive inverse of any $\mb{x}\in W$ is $(-1) \mb{x}$.
+\end{proof}
+The requirement that $\mb{0}\in W$ can be replaced with $W$ being nonempty, but to show the latter it's usually easiest to show $\mb{0}\in W$.
+\begin{example}
+The set $\cl{S}^n(F)$ of symmetric matrices is a subspace of $F^{n \times n}$, as are the set of diagonal matrices, or the set of matrices with vanishing \emph{trace} $\tr A:= \sum_{i=1}^na_{ii}$. The set of polynomials $P_n(F)$ of degree at most $n$ is a subspace of $P(F)$. The set $C( \bb{R})$ of continuous functions $f: \bb{R}\to \bb{R}$ is a subspace of $\cl{F}( \bb{R}, \bb{R})$.
+\end{example}
+\begin{lem}
+Any intersection of subspaces of a vector space $V$ is a subspace of $V$. If $V_1,V_2$ are 2 subspaces of $V$, then $V_1 \cup V_2$ is a subspace iff 1 contains the other.
+\end{lem}
+\begin{proof}
+Easy, short: use Lemma \ref{l:check-subspace}.
+\end{proof}
+
+\section{Linear combinations}
+As a motivating example, given 3 noncollinear vectors $\bvec{a}, \bvec{b}, \bvec{c}\in \bb{R}^3$ (or really $\bb{R}^n$), the plane determined by them is $\{ \mb{a}+s( \mb{b}- \mb{a})+t( \mb{c}- \mb{a}): s,t \in \bb{R}\}$.
+\begin{defn}
+If $V$ is a vector space and $S \subseteq V$ is nonempty, then $\mb{v}\in V$ is a \emph{linear combination} of vectors in $S$ if there exists $\mb{u}_1, \ldots, \mb{u}_n \in S$ and \emph{coefficients} $a_1, \ldots,a_n \in F$ such that $\mb{v}= \sum_{i=1}^na_i \mb{v}_i$.
+The \emph{span} of $S$ is the set of all linear combinations of vectors in $S$ and is denoted $\Span S$. It's convenient to define $\Span \emptyset:= \{ \mb{0}\}$. We say that $S$ (or its vectors) spans $V$ if $\Span S=V$.\footnote{Friedberg also says $S$ generates $V$ if so}
+\end{defn}
+Note that $\mb{u}_1, \ldots, \mb{u}_n$ need not all be distinct.
+\begin{lem}\label{l:span-minimal}
+If $V$ is a vector space and $W$ is a subspace of $V$, $\mb{u}_1, \ldots, \mb{u}_n \in W$ and $a_1, \ldots,a_n \in F$, then $\sum_{i=1}^na_i \mb{u}_i\in W$. If $S \subseteq V$, then $S \subseteq \Span S$, and $\Span S$ is a subspace of $V$. If $S \subseteq W$, then $\Span S \subseteq W$.
+\end{lem}
+\begin{proof}
+$\sum_{i=1}^na_i \mb{u}_i\in W$ is basically a restatement of 'closed under addition and scalar multiplication.' It can be seen with induction.\textcolor{red}{Friedberg has a link to prove this}
+The rest of the statement clearly holds when $S= \emptyset$, so assume it's nonempty. Lemma \ref{l:check-subspace} verifies that $\Span S$ is a subspace of $V$. $\Span S$ contains $S$ since for any $\mb{v}\in S$, $1 \cdot \mb{v}\in \Span S$. Finally, $\Span S \subseteq W$ by the first part ($\sum_{i=1}^na_i \mb{u}_i\in W$).
+\end{proof}
+
+\section{Linear (in)dependence}
+Motivating remarks: if $V$ is a vector space over an infinite field and $W$ is a subspace of $V$, then $W$ is an infinite set unless $W= \{ \mb{0}\}$. We'd like a finite and as small as possible set $S$ to span $W$: this costs us the fewest possible computations to represent an arbitrary vector in $W$.
+Given vectors $\mb{u}_1, \ldots, \mb{u}_n \in W$, to see if any vector is a linear combination of the rest, 1 approach (assuming $W$ is in Euclidean space) is to try to solve for $\mb{u}_j$ using the remaining vectors, but this could require solving $n$ linear systems.
+A more economical approach is to note that some vector is a linear combination of the rest iff a nontrivial linear combination of $\mb{u}_1, \ldots, \mb{u}_n$ results in $\mb{0}$ (this is formally stated in Lemma \ref{l:LID-no-lincomb3}).
+\begin{defn}
+Let $V$ be a vector space, then $S \subseteq V$ (or the vectors of $S$) is \emph{linearly dependent} (LD) if there exists $\mb{u}_1, \ldots, \mb{u}_n \in S$, $a_1, \ldots,a_n \in F$, not all 0, such that $\sum_{j=1}^na_j \mb{u}_j= \mb{0}$, in which case we call $\sum_{j=1}^na_j \mb{u}_j$ a \emph{nontrivial representation} of $\mb{0}$. If $S$ (or its vectors) isn't linearly dependent, then we call it \emph{linearly independent} (LID).
+\end{defn}
+It's immediate that, if $\mb{0}\in S$, then $S$ is linearly dependent, $\emptyset$ is vacuously linearly independent. Note that in the above definition, we can without loss of generality allow all of $a_1, \ldots,a_n$ to be nonzero.
+\begin{lem}\label{l:subset-LID}
+If $V$ is a vector space and $\mb{v}\in V$ with $\mb{v}\neq \mb{0}$, then $\{ \mb{v}\}$ is linearly independent.\\
+If $S_1 \subseteq S_2 \subseteq V$, then the linear dependence of $S_1$ implies the linear dependence of $S_2$. The contrapositive is that the linear independence of $S_2$ implies the linear independence of $S_1$.
+\end{lem}
+\begin{proof}
+Easy, short.\\
+For the 1st part, if $a \mb{v}= \mb{0}$ for some $a \neq 0$, then $\mb{v}=a^{-1}a \mb{v}=a^{-1}\mb{0}= \mb{0}$.\\
+For the 2nd part, a nontrivial representation of $\mb{0}$ using a finite set of vectors from $S_1$ would also be a nontrivial representation of $\mb{0}$ using a finite set of vectors from $S_2$.
+\end{proof}
+The next result helps us get at the idea of a 'minimal' spanning set.
+\begin{lem}\label{l:span-LD}
+If $V$ is a vector space, $S \subseteq V$ is linearly independent, and $\mb{v}\in V$, then $S \cup \{ \mb{v}\}$ is linearly dependent iff $\mb{v}\in \Span S$. 
+\end{lem}
+\begin{proof}
+Easy, short.\\
+"$\leftarrow$" If $\mb{v}\in \Span S$, then we can pick $\mb{u}_1, \ldots, \mb{u}_n \in S$, and $a_1, \ldots,a_n \in F$ such that $\mb{v}= \sum_{j=1}^na_j \mb{u}_j$. Then $\mb{v}- \sum_{j=1}^na_j \mb{u}_j$ is a nontrivial representation of $\mb{0}$ using a finite set of vectors in $S \cup \{ \mb{v}\}$.
+"$\to$" If $S \cup \{ \mb{v}\}$ is linearly dependent, pick $\mb{u}_1, \ldots, \mb{u}_n \in S$ and $a,a_1, \ldots,a_n \in F$, all nonzero, such that $a \mb{v}+ \sum_{j=1}^na_j \mb{u}_j= \mb{0}$. Note that the $\mb{v}$ must be included since the linear independence of $S$ precludes a nontrivial representation of $\mb{0}$ using only vectors in $S$. Then $\mb{v}=a^{-1}\sum_{j=1}^na_j \mb{u}_j \in \Span S$.
+\end{proof}
+\begin{lem}\label{l:LD-lincomb}%Not yet in Friedberg
+$\mb{v}_1, \ldots, \mb{v}_k$ in a vector space $V$ are linearly independent iff none of the $\mb{v}_i$ is a linear combination of the others iff none of them is a linear combination of the preceding.\\
+\end{lem}
+\begin{proof}
+Easy, short. The proof is easier if we negate the 3 pieces.\\
+"$2 \to 3$" is obvious. "$3 \to 1$" If the vectors are linearly dependent, e can find coefficients, not all 0, such that $\sum_{i=1}^ka_i \mb{v}_i= \mb{0}$. Let $m$ be the largest index where $a_m \neq 0$. Then clearly $\mb{v}_m$ is a linear combination of the preceding.
+"$1 \to 2$" If $\mb{v}_1= \sum_{i=2}^ka_i \mb{v}_i$, then $\mb{v}_1- \sum_{i=2}^ka_i \mb{v}_i= \mb{0}$, with not all the coefficients 0 (eg, the 1 in front of $\mb{v}_1$).
+\end{proof}
+
+\section{Basis and dimension}
+\begin{defn}
+A \emph{basis} for a vector space $V$ is a linearly independent subset of $V$ that spans $V$.
+\end{defn}
+$\emptyset$ is vacuously a basis for $\{ \mb{0}\}$.
+\begin{lem}\label{l:basis-unique-lincomb}
+If $V$ is a vector space, then $\beta:= \{\mb{v}_1, \ldots, \mb{v}_n \}\subseteq V$ are linearly independent iff each $\mb{w}\in V$ can be written as a linear combination of them in at most 1 way. $\beta$ is a basis for $V$ iff each $\mb{w}\in V$ can be uniquely expressed as a linear combination of them.
+\end{lem}
+\begin{proof}
+Easy, short.\\
+Linearly independent part "$\leftarrow$" if $\mb{0}= \sum_{j=1}^n0 \mb{v}_j$ is the only way to write $\mb{0}$ as a linear combination of vectors in $\beta$, then it's linearly independent. "$\to$" If $\sum_{j=1}^na_j \mb{v}_j= \sum_{j=1}^nb_j \mb{v}_j$, then $\sum_{j=1}^n(a_j-b_j) \mb{v}_j= \mb{0}_n$. Linear independence now gives us that each $a_j=b_j$.\\
+The basis part just combines the linear independence part with the fact that $\beta$ spans $V$ iff each $\mb{w}\in V$ may be written as a linear combination of vectors in $\beta$. 
+\end{proof}
+This is perhaps the most useful property of bases, and makes them the building blocks of vector spaces. Since any $\mb{w}\in V$ may be uniquely identified by the coefficients $a_1, \ldots,a_n$ if $\mb{w}= \sum_{j=1}^na_j \mb{v}_j$, this suggests that $V$ is 'like' $F^n$: we show this formally later.
+\begin{lem}\label{l:reduce-span-to-basis}
+If a vector space $V$ is spanned by a finite set $S$, then some subset of $S$ is a basis for $V$.
+\end{lem}
+\begin{proof}
+Rating 2/2.\\
+If $S= \emptyset$ or $\{ \mb{0}\}$, then $\beta= \emptyset$ works as a basis for $V= \{ \mb{0}\}$. Else, $S= \{ \mb{v}_1, \ldots, \mb{v}_n \}$ consists of nonzero vectors in $V$. Starting with $\beta= \emptyset$, we sequentially add $\mb{v}_j$ to $\beta$ if doing so maintains the linear independence of $\beta$. Thus, $\beta$ is linearly independent by construction.
+Since $S$ is finite, this process must eventually stop, and it does so in 1 of 2 ways. The 1st possibility is $\beta=S$, in which case it's both linearly independent and spans $V$, so $\beta$ is the desired basis.
+The 2nd possibility is that we can't add another $\mb{v}_j$ to $\beta$ without breaking linear independence. We need only show $S \subseteq \Span \beta$, for then $V= \Span S \subseteq \Span \beta$, by Lemma \ref{l:span-minimal}. For $j=\ot{n}$, either $\mb{v}_j \in \beta$, or if not, then by construction, $\beta \cup \{ \mb{v}_j \}$ is linearly dependent for any $\mb{v}_j$ not already in $\beta$, so $\mb{v}_j \in \Span \beta$ by Lemma \ref{l:span-LD}. This shows $S \subseteq \Span \beta$.
+\end{proof}
+The proof also suggests a way to reduce a spanning set into a basis. Later, we will see an easier way to do so by solving a linear system.
+Friedberg is primarily concerned with vector spaces that have finite bases. This result identifies a large class of vector spaces where this is the case.
+\begin{prop}[Replacement Theorem]\label{p:replacement}
+If $V$ is a vector space spanned by a set $G$ of size $n$, and $L \subseteq V$ is a linearly independent set of size $m$, then $m \leq n$, and there exists a set $H \subseteq G$ of size $n-m$ such that $L \cup H$ spans $V$.
+\end{prop}
+\begin{proof}
+Rating 3/2.\\
+The idea is to do induction on $m$, though it might seem counterintuitive (if $m-1 \leq n$, how do we know $m \leq n$?). The base case is $m=0$, in which case $L= \emptyset$, and we can take $H=G$.
+If $L= \{ \mb{v}_1, \ldots, \mb{v}_m \}$, then $L':= \{ \mb{v}_1, \ldots, \mb{v}_{m-1}\}$ is still linearly independent by Lemma \ref{l:subset-LID}, so the inductive hypothesis says that $m-1 \leq n$, and there exists $H'= \{ u_1, \ldots,u_{n-m+1}\}\subseteq G$ such that $L' \cup H'$ spans $V$.
+In particular, $\mb{v}_m \in \Span(H' \cup L')$, so we have $\mb{v}_m= \sum_{j=1}^{m-1}a_j \mb{v}_j+ \sum_{j=1}^{n-m+1}b_j \mb{u}_j$. Note that both $n-m+1>0$ and some $b_j \neq 0$, lest $\mb{v}_m \in \Span L'$, which would then imply $L$ is linearly dependent by Lemma \ref{l:span-LD}.
+Without loss of generality, say $b_1 \neq 0$. Put $H:= \{ \mb{u}_2, \ldots, \mb{u}_{n-m+1}\}$. Then $\mb{u}_1 \in \Span(L \cup H)$, as are all the vectors in $L' \cup H$. Thus $V= \Span(L' \cup H') \subseteq \Span(L \cup H)$ by Lemma \ref{l:span-minimal}.
+\end{proof}
+Friedberg calls the corollaries of this Proposition among the most important results of the chapter.
+\begin{corollary}\label{c:bases-n-same}
+If $V$ is a vector space that has a basis $\beta$ of $n$ vectors, then all linearly independent subsets of $V$ have at most $n$ vectors, and all bases for $V$ have $n$ vectors.
+\end{corollary}
+\begin{proof}
+Rating 2/1.\\
+Let $\gamma$ be a linearly independent subset of $V$. We don't a priori know that $\gamma$ is finite. Assume for contradiction that $\gamma$ has more than $n$ vectors. Then we can pick $S \subseteq \gamma$ having $n+1$ vectors.
+Then $S$ is linearly independent by Lemma \ref{l:subset-LID}. Since $\beta$ spans $V$, Proposition \ref{p:replacement} then says $n+1<n$, which is a contradiction.
+Thus $\gamma$ has at most $n$ vectors. If we further know that $\gamma$ is a basis, then switching the roles of $\gamma$ and $\beta$, we also see that assuming $\gamma$ has fewer than $n$ vectors results in a contradiction, so it in fact has exactly $n$ vectors.
+\end{proof}
+This result asserts that the number of vectors in any basis for a vector space is an intrinsic property:
+\begin{defn}
+A vector space $V$ is \emph{finite-dimensional} if it has a basis consisting of $n$ vectors, for some $n \in \bb{Z}^+$, which we call the \emph{dimension} of $V$, and write $\dim V=n$. A vector space that isn't finite-dimensional is \emph{infinite-dimensional}, write $\dim V= \infty$.
+\end{defn}
+\begin{example}\label{ex:dim-basis}
+We have $\dim \{ \mb{0}\}=0$.
+If $\bvec{e}_j \in F^n$ has jth entry 1 and all other entries 0, then $\bvec{e}_1, \ldots, \bvec{e}_n$ is the \emph{standard basis} for $F^n$, hence $\dim F_n=n$.
+If $E_{ij}\in F^{m \times n}$ has ij entry 1 and all other entries 0, then $\{ E_{ij}:i=\ot{m},j=\ot{n}\}$ is a basis for $F^{m \times n}$, hence $\dim F^{m \times n}=mn$.\\
+$\{ E_{11}, \ldots, E_{nn}\}$ is a basis for the diagonal matrices in $F^{n \times n}$, which thus has dimension $n$. $\{ E_{ij}+E_{ji}:i= \ot{n},j=i, \ldots,n \}$ is a basis for the symmetric matrices in $F^{n \times n}$, which has dimension $n(n+1)/2$.
+The dimension of a vector space does, however, depend on the field of scalars. For instance, the vector space $V= \bb{C}$ over the field $F= \bb{C}$ has $\dim \bb{C}=1$ (a basis is $\{ 1\}$), but the same vector space over the field $F= \bb{R}$ has $\dim \bb{C}=2$ (a basis is $\{ 1,i\}$).
+\end{example}
+\begin{corollary}\label{c:extend-LID2basis}
+Let $V$ be a vector space with $\dim V=n \in \bb{Z}^+$.
+\begin{itemize}
+\item If $S$ is a finite set that spans $V$, then $S$ has at least $n$ vectors. If $S$ has exactly $n$ vectors, then it's a basis.
+\item If $L \subseteq V$ is a linearly independent, then $L$ has at most $n$ vectors, and there is a basis $\beta$ for $V$ such that $L \subseteq \beta$. In particular, if $L$ has exactly $n$ vectors, then $L$ is a basis for $V$.
+\end{itemize}
+\end{corollary}
+\begin{proof}
+Easy, short.\\
+By Lemma \ref{l:reduce-span-to-basis}, we know that some $H \subseteq S$ is a basis for $V$, and by Corollary \ref{c:bases-n-same}, we know that $H$ has $n$ vectors. Thus, $S$ has at least $n$ vectors, and if it had exactly $n$ vectors, then $H=S$.\\
+Let $L$ have $m$ vectors. If $\beta'$ is a basis for $V$ (which exists by definition of a finite-dimensional vector space), then it has $n$ vectors, and $m \leq n$ by Corollary \ref{c:bases-n-same}.
+Further, we can pick $H \subseteq \beta'$ with $n-m$ vectors such that $L \cup H$ spans $V$, by Proposition \ref{p:replacement}. Since $L \cup H$ has $n$ vectors, we know it's a basis by part 1. If $m=n$, then $H= \emptyset$, so $L$ itself spans $V$, hence is a basis for $V$.
+\end{proof}
+\begin{lem}\label{l:polynomial-std-basis}
+If $p_j(x):=x^j$ for $j \in \bb{Z}_{\geq 0}$, then $\{ p_0, \ldots, p_n \}$ is the \emph{standard basis} for $P_n(F)$, so $\dim P_n(F)=n+1$, and $P(F)$ is infinite-dimensional, with basis $\{ p_j:j \in \bb{Z}_{\geq 0}\}$.
+\end{lem}
+\begin{proof}
+Easy, short.\\
+To show $\{ p_0, \ldots,p_n \}$ is linearly independent and spans $P_n(F)$ is an exercise in Friedberg. If $\sum_{j=0}^na_jx^j=0$ for all $x \in F$, then each $a_j=0$ since Definition \ref{d:polynomial} says polynomials are equal if their coefficients match.
+It's also clear that any polynomial in $P_n(F)$ (resp $P(F)$) can be written as a linear combination of $\{ p_0, \ldots,p_n \}$ (resp $\{ p_j:j \in \bb{Z}_{\geq 0}\}$).
+If $S \subseteq \{ p_j:j \in \bb{Z}_{\geq 0}\}$ is finite, then there exists $N \in \bb{Z}^+$ such that $S \subseteq \{ p_j:j=0, \ldots,N \}$, the latter of which we just showed is linearly independent, so $S$ itself must be by Lemma \ref{l:subset-LID}. 
+We can see that there are arbitrarily large independent subsets of $P(F)$, eg $\{ p_j:j=0, \ldots,n \}$ for any $n \in \bb{Z}^+$. We thus have that $P(F)$ is infinite dimensional by Corollary \ref{c:bases-n-same} (if $\dim P(F)=n \in \bb{Z}^+$, then any linearly independent subset must have at most $n$ vectors, precluding the existence of, say, a linearly indepedent subset of size $n+1$).
+\end{proof}
+At this point we're unable to prove that every infinite-dimensional vector space has a basis (note that, by definition, a finite-dimensional vector space has a  basis).
+\begin{lem}\label{l:subspace-dim}
+If $V$ is a vector space with $\dim V=n \in \bb{Z}^+$, and $W \subseteq V$ is a subspace, then $\dim W \leq \dim V$: in particular, $W$ is finite-dimensional. Any basis for $W$ can be extended into one for $V$. If $\dim W= \dim V$, then $W=V$.
+\end{lem}
+\begin{proof}
+Rating 2/1: we can't a priori assume $W$ is finite-dimensional, 'obvious' as it is.\\
+If $W= \{ \mb{0}\}$, then its basis is $\emptyset$, so it's finite-dimensional, and $\dim W=0 \leq n$.
+Else, there exists $\mb{x}_1 \in W$ (any $\mb{x}_1 \neq \mb{0}$ will do) such that $\{ \mb{x}_1 \}$ is linearly independent . At step $k \in \bb{Z}^+$, $\{ \mb{x}_1, \ldots, \mb{x}_{k-1}\}$ is linearly independent. If there exists $x_k \in W$ such that $\{ \mb{x}_1, \ldots, \mb{x}_k \}$ is linearly independent, move onto step $k+1$.
+This process must stop at step $k \leq n$ since we can't have a linearly independent subset of $W \subseteq V$ with more than $n$ vectors by Corollary \ref{c:bases-n-same}.
+If once we have $\beta:= \{ \mb{x}_1, \ldots, \mb{x}_k \}$, we'd have that for all $\mb{w}\in W$, $\beta \cup \{ \mb{w}\}$ is linearly dependent, then $\mb{w}\in \Span \beta$ by Lemma \ref{l:span-LD}. This shows that $\beta$ is a basis for $W$. Thus, $\dim W=k \leq n$.
+If $\beta'$ is any basis for $W$, then it's a set of linearly independent vectors in $V$, so it can be extended to a basis of $V$ by Corollary \ref{c:extend-LID2basis}.
+If $k=n$, then $\beta$ is a set of $n$ linearly independent vectors in $V$, so it must be a basis for $V$ by Corollary \ref{c:extend-LID2basis}, ie $V \subseteq \Span \beta =W$ by Lemma \ref{l:span-minimal}.
+\end{proof}
+\begin{lem}
+Let $V$ be a vector space with $\dim V=n \in \bb{Z}^+$, $S$ a set that spans $V$. Then $S$ has at least $n$ vectors, and there exists $\beta \subseteq S$ such that $\beta$ is a basis for $V$.
+\end{lem}
+\begin{proof}
+Easy, short: the proof closely mimics that of Lemma \ref{l:subspace-dim}.\\
+If $V= \{ \mb{0}\}$, then $S$ vacuously has at least 0 vectors, and $\beta:= \emptyset \subseteq S$ is a basis for $V$. Else, there exists $\mb{x}_1 \in S$ (any $\mb{x}_1 \neq \mb{0}$ will do) such that $\{ \mb{x}_1 \}$ is linearly independent.
+At step $k \in \bb{Z}^+$, $\{ \mb{x}_1, \ldots, \mb{x}_{k-1}\}$ is linearly independent. If there exists $x_k \in S$ such that $\{ \mb{x}_1, \ldots, \mb{x}_k \}$ is linearly independent, move onto step $k+1$.
+This process must stop at step $k \leq n$ since we can't have a linearly independent subset of $S \subseteq V$ with more than $n$ vectors by Corollary \ref{c:bases-n-same}.
+Once the process stops, we claim $\beta:= \{ \mb{x}_1, \ldots, \mb{x}_k \}$ is a basis for $V$. Indeed, it's linearly independent by construction, and for all $\mb{w}\in S$, we have $\beta \cup \{ \mb{w}\}$ is linearly dependent, so $\mb{w}\in \Span \beta$ by Lemma \ref{l:span-LD}. This shows $S \subseteq \Span \beta$, hence $V= \Span S \subseteq \Span \beta$ by Lemma \ref{l:span-minimal}.
+Thus, we know $k=n$ by Corollary \ref{c:bases-n-same}, so $\beta \subseteq S$ implies $S$ has at least $n$ (possibly infinite) vectors.
+\end{proof}
+This result is a stronger version Lemma \ref{l:reduce-span-to-basis}, where we have removed the restriction that $S$ must be finite to begin with.\\
+To give a geometric interpretation, in $\bb{R}^2$, the only subspace $W$ with $\dim W=0$ is $\{ \bvec{0}_2\}$, ie the origin. If $\dim W=1$, then $W= \{ a \bvec{w}:a \in \bb{R}\}$ for some nonzero $\bvec{w}\in \bb{R}^2$: $W$ is a line thru the origin. If $\dim W=2$, then $W= \bb{R}^2$: the whole Euclidean plane.
+If $W$ is a subspace of $\bb{R}^3$, then $\dim W=0$ implies $W$ is the origin and $\dim W=1$ implies a line thru the origin as before. $\dim W=2$ implies a plane thru the origin, and $\dim W=3$ implies $W= \bb{R}^3$.
+\begin{prop}\label{p:Lagrange-poly}
+Let $F$ be an infinite field with $c_0, \ldots,c_n \in F$ distinct. For $j=0, \ldots,n$, put $S(j):= \{0, \ldots,n \}\setminus \{ j\}$, $f_j(x):= \prod_{k \in S(j)}(x-c_k)/(c_j-c_k)$, which are \emph{Lagrange polynomials} associated with $c_0, \ldots,c_n$.
+Then $\{ f_0, \ldots,f_n \}$ form a basis for $P_n(F)$, and any $g \in P_n(F)$ can be written $g= \sum_{j=0}^ng(c_j)f_j$, the \emph{Lagrange interpolation formula}. Conversely, for all $d_0, \ldots,d_n \in F$, there exists unique $g \in P_n(F)$ such that $g(c_j)=d_j$ for $j=0, \ldots,n$. In particular, if $g \in P_n(F)$ and each $g(c_j)=0$, then $g \equiv 0$.
+\end{prop}
+\begin{proof}
+Easy, short.\\
+Note $f_j(c_k)=1(j=k)$. If $\sum_{j=0}^na_jf_j \equiv 0$, then $0= \sum_{j=0}^na_jf_j(c_k)=a_k$ for $k=0, \ldots,n$, so $\{ f_0, \ldots,f_n \}$ are $n+1$ linearly independent vectors. Since we also have $\dim P_n(F)=n+1$ by Lemma \ref{l:polynomial-std-basis}, we know $\{ f_0, \ldots,f_n \}$ is in fact a basis for $P_n(F)$ by Corollary \ref{c:extend-LID2basis}.
+Hence, any $g \in P_n(F)$ may be written $g= \sum_{j=0}^nb_jf_j$. Note $g(c_k)= \sum_{j=0}^nb_jf_j(c_k)=b_k$ for $k=0, \ldots,n$, so we in fact have $g= \sum_{j=0}^ng(c_j)f_j$.
+\end{proof}
+The process of estimating intermediate values of a variable from known values is \emph{interpolation}. For any $k>10$, say, Lagrange interpolation is a dreadful way to recover the polynomial: Bernstein polynomials, developed in the 20th century, are far better.
+As an example of how they fail, consider interpolating $x \mapsto 1/(x^2+0.1)$ in the interval $[-1,1]$, sampled at 21 points that are evenly spaced by 0.1. Near the endpoints, Lagrange interpolation does a terrible job.
+Interpolation is fundamental in the communications and computer industry, where a function that fits a dataset, or (in the other direction) a way to encode a function as $k$ sampled values is desired.
+
+\section{Maximal Linearly Independent Subsets*}
+The goal here is to try, to the extent possible, to extend results from the previous section to infinite-dimensional vector spaces, chiefly to prove that every vector space has a basis.
+This is important for in the case of infinite dimensions since it's often hard to construct an explicit basis. As an example, $\bb{R}$ is a vector space over the field $\bb{Q}$, but there's no obvious way to construct a basis for it.
+Many proofs in the previous section relied on induction, which will no longer be adequate in the case of infinite dimension.
+\begin{defn}
+Let $\cl{F}$ be a family of sets. $M \in \cl{F}$ is \emph{maximal} (with respect to set inclusion) if $M' \in \cl{F}$ and $M \subseteq M'$ implies $M=M'$, ie $M$ is contained in no set of $\cl{F}$ except itself.\\
+The family of sets $\cl{C}$ is a \emph{chain} or \emph{tower} if $A,B \in \cl{C}$ implies $A \subseteq B$ or $B \subseteq A$.
+\end{defn}
+\begin{example}
+For a nonempty set $S$, define its \emph{power set} $\cl{P}(S)$ to be the family of all subsets of $S$. Then $S$ is maximal in $\cl{P}(S)$. If $S$ and $T$ are disjoint and nonempty, then both are maximal in $\cl{P}(S) \cup \cl{P}(T)$.\\
+If $S$ is an infinite set and $\cl{F}$ is the family of finite subsets of $S$, then $S$ has no maximal element: indeed, for any $A \in \cl{F}$, there exists $s \in S \setminus A$, so $A \subseteq A \cup \{ s \} \in \cl{F}$, hence $A$ can't be maximal.
+For $n \in \bb{Z}^+$, put $A_n:= \{\ot{n}\}$. Then $\{ A_n:n \in \bb{Z}^+ \}$ is a chain.
+\end{example}
+\begin{axiom}[Hausdorff Maximal Principle]
+Let $\cl{F}$ be a family of sets. If for all chains $\cl{C}\subseteq \cl{F}$ there exists $B \in \cl{F}$ such that $A \subseteq B$ for all $A \in \cl{C}$, then $\cl{F}$ has a maximal element.
+\end{axiom}
+The Hausdorff Maximal Principle is logically equivalent to the \emph{Axiom of Choice}, and it motivates reformulating the definition of a basis in terms of a maximal property.
+\begin{defn}
+Let $V$ a vector space, $S \subseteq V$. A \emph{maximal linearly independent subset} (MLID) $B$ of $S$ is linearly independent, and $A \subseteq S$ is linearly independent and $B \subseteq A$ implies $A=B$.
+\end{defn}
+\begin{example}
+Any subset of $\{ \mb{e}_1, \mb{e}_2, \mb{e}_1+\mb{e}_2\} \subseteq F^n$ of size 2 is maximally linearly independent, so maximal linearly independent subsets need not be unique.
+\end{example}
+\begin{prop}
+Let $V$ be a vector space and $S$ span $V$. Then $\beta$ is a maximal linearly independent subset of $S$ iff it's a basis for $V$.
+\end{prop}
+\begin{proof}
+Easy, short.\\
+"$\leftarrow$" $\beta$ is linearly independent, and for all $\mb{v}\in S \subseteq V$, we have that $\beta \cup \{ \mb{v}\}$ is linearly dependent by Lemma \ref{l:span-LD} (since $\beta$ spans $V$), so $\beta$ can't be a proper subset of any linearly independent $A \subseteq S$.
+"$\to$" $\beta$ is linearly independent, for contradiction assume $S \nsubseteq \Span \beta$. Then for any $\mb{v}\in S \setminus \Span \beta$, we have that $\beta \cup \{ \mb{v}\} \subseteq S$ is linearly independent, contradicting that $\beta$ is maximally linearly independent.
+Since $S \subseteq \Span \beta$, it follows from Lemma \ref{l:span-minimal} that $V= \Span S \subseteq \Span \beta$.
+\end{proof}
+\begin{thm}\label{t:basis-exists}
+If $V$ is a vector space and $L \subseteq V$ is linearly independent, then there exists a maximally linearly independent $\beta \subseteq V$ such that $L \subseteq \beta$. In particular, every vector space has a basis.
+\end{thm}
+\begin{proof}
+Rating 1/2.\\
+Put $\cl{F}:= \{ A \subseteq V:A \T{ is linearly independent and }L \subseteq A \}$. To apply the Hausdorff Maximal Principle, we need to show that if $\cl{C}\subseteq \cl{F}$ is a chain, then there exists $U \in \cl{F}$ such that $B \subseteq U$ for all $B \in \cl{C}$.
+If $\cl{C}= \emptyset$, then any $U \in \cl{F}$ works, eg $U=L$, else put $U:= \cup_{B \in \cl{C}}B$. We claim $U \in \cl{F}$: clearly $L \subseteq U$. To show it's linearly independent, fix $\mb{u}_1, \ldots,\mb{u}_n \in U$ and suppose $\sum_{j=0}^na_j \mb{u}_j= \mb{0}$.
+Each $\mb{u}_j \in B_j$ for some $B_j \in \cl{C}$. Since $\cl{C}$ is a chain, we have that $B':= \cup_{j=1}^nB_j \in \cl{C}$. Thus, $B'$ is linearly independent, and $\mb{u}_1, \ldots, \mb{u}_n \in B'$, hence each $a_j=0$. The Hausdorff Maximal Principal now applies to give the desired conclusion.
+\end{proof}
+\begin{exer}
+\begin{itemize}
+Let $V$ be a vector space.
+\item The vector space $\bb{R}$ over the field $\bb{Q}$ is infinite-dimensional, which can be deduced from the existence of a transcendental number, eg $\pi$.
+\item (Generalize Lemma \ref{l:subspace-dim}) If $W$ is a subspace of $V$, then any basis of $W$ is a subset of some basis of $V$.
+\item (Generalize Lemma \ref{l:basis-unique-lincomb}, Friedberg has online solution) $\beta$ is a basis for $V$ iff for all $\mb{v}\in V$, there exists unique $\mb{u}_1, \ldots, \mb{u}_n \in \beta$, $c_1, \ldots,c_n \in F$, all nonzero, such that $\mb{v}= \sum_{j=1}^nc_j \mb{u}_j$.
+\item (Generalize Lemma \ref{l:reduce-span-to-basis}) If $S_1 \subseteq S_2 \subseteq V$, $S_1$ is linearly independent and $S_2$ spans $V$, then there exists a basis $\beta$ for $V$ such that $S_1 \subseteq \beta \subseteq S_2$.\footnote{Hint: mimic the proof of Theorem \ref{t:basis-exists} to $\cl{F}$, which consists of linearly independent $L$ such that $S_1 \subseteq L \subseteq S_2$}
+\item (Generalize Proposition \ref{p:replacement}) If $\beta$ is a basis for $V$ and $L \subseteq V$ is linearly independent, then there exists $H \subseteq \beta$ such that $L \cup H$ is a basis for $V$.
+\end{itemize}
+\end{exer}
+%()9

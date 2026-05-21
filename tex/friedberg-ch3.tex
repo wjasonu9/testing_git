@@ -1,0 +1,176 @@
+\chapter{Elementary Matrix Operations and Linear Systems}
+The 2 objectives are to study 'rank preserving' matrix operations, and applying them to solve systems of linear equations, perhaps Linear Algebra's most important application. In so doing, we obtain a simple way to find the rank of a linear transformation.
+A linear system can be represented with a single matrix equation. 3 elementary row operations on this system provide the computational method to find all its solutions.
+
+\section{Elementary Matrices and Matrix Operations}
+\begin{defn}
+For $A \in F^{m \times n}$, there are 3 \emph{elementary row operations}:
+\begin{itemize}
+\item Interchange any 2 rows
+\item Multiply any row by a nonzero constant
+\item Add a multiple of 1 row to another
+\end{itemize}
+We say the operations are of \emph{type} 1, 2, or 3. \emph{Elementary column operations} are likewise defined on the columns. An \emph{elementary matrix} is any matrix $E \in F^{n \times n}$ obtained from $I_n$ by a single elementary operation.\footnote{WLOG a row operation} Elementary matrices are also classified as type 1, 2, or 3.
+\end{defn}
+We will use elementary row operations more often than column ones.
+\begin{lem}\label{l:ero}
+Let $A \in F^{m \times n}$. Then $B$ is obtained from $A$ by an elementary row operation if and only if there exists an elementary matrix $E \in F^{m \times m}$ such that $B=EA$, in which case $E$ is obtained from $I_m$ by the same operation.\\
+Likewise, $B$ is obtained from $A$ by an elementary column operation if and only if there exists an elementary matrix $E \in F^{n \times n}$ such that $B=AE$, in which case $E$ is obtained from $I_n$ by the same operation.\\
+The following are helpful intermediate steps to get the result about column operations from the corresponding one for rows: $E$ is obtained from $I_n$ by an elementary row operation if and only if $E^\top$ is obtained from $I_n$ by an elementary column operation of the same type. $B$ is obtained from $A$ by an elementary column operation if and only if $B^\top$ is obtained from $A^\top$ by an elementary row operation of the same type.
+\end{lem}
+\begin{proof}%Rating 1/3
+Based on the 3 row operations that can be performed on $I_n$, we know the entries of any elementary matrix $E$. Matrix multiplication then verifies that $EA$ is the result of performing the same type of operation on $A$.
+\end{proof}
+\begin{lem}\label{l:elem-inverse}
+Any elementary matrix $E \in F^{n \times n}$ is invertible, and $E^{-1}$ is an elementary matrix of the same type.
+\end{lem}
+\begin{proof}
+By reversing whatever row operation that turned $I_n$ into $E$, we obtain $I_n$ from $E$ by a row operation of the same type, so $I_n= \bar{E}E$ by Lemma \ref{l:ero}. By Exercise \ref{e:comp1to1}, $\bar{E}=E^{-1}$.
+\end{proof}
+\begin{exer}\label{e:ero-equiv-col}
+Any elementary matrix $E \in F^{n \times n}$ can be obtained from $I_n$ by either an elementary row or column operation.\\
+If $P,Q \in F^{m \times n}$ where $Q$ can be obtained from $P$ by an elementary row operation, then $P$ can be obtained from $Q$ by an elementary row operation of the same type.
+\end{exer}
+
+\section{Matrix Rank and Inverse}
+\begin{defn}
+The \emph{rank} of $A \in F^{m \times n}$ is $\rank A:= \rank L_A$.
+\end{defn}
+Many facts about matrix ranks thus extend immediately from facts about linear transformations. Eg, some immediate consequences of Lemma \ref{l:inv-1to1-or-onto} and Exercise \ref{e:comp1to1} are
+\begin{lem}\label{l:mat-inv-1to1}
+For $A \in F^{n \times n}$, the following are equivalent: $A$ is invertible, $\rank A=n$, $L_A$ is one-to-one, $L_A$ is onto.\\ 
+For any $A \in F^{m \times n}$ and $B \in F^{n \times k}$, we have $\rank AB \leq \rank A \wedge \rank B$.\\
+If $\beta$ and $\gamma$ are finite ordered bases of $V$ and $W$ (they need not have the same dimension), then $\rank T= \rank [T]_\beta^\gamma$.
+\end{lem}
+\begin{proof}
+By Lemma \ref{l:left-mult-transform} and then Exercise \ref{e:comp1to1}, we have $\rank AB:= \rank L_{AB}= \rank L_A \circ L_B \leq \rank L_A \wedge \rank L_B= \rank A \wedge \rank B$.
+\end{proof}
+The next result lets us perform rank preserving operations on matrices.
+\begin{lem}\label{l:rank-preserve}
+If $A \in F^{m \times n}$, $P \in F^{k \times m}$ satisfies $L_P$ is one-to-one, and $Q \in F^{n \times r}$ satisfies $L_Q$ is onto, then $\rank A= \rank PA= \rank AQ= \rank PAQ$. In particular, this holds when $P$ and $Q$ are invertible, and elementary row and column operations are rank preserving.
+\end{lem}
+\begin{proof}%easy, short.
+We have $\rank PA= \dim L_P(\img L_A)= \dim \img L_A= \rank A$. The second '=' is by Exercise \ref{e:comp1to1}. We also have $\rank AQ= \dim L_A(\img L_Q)= \dim L_A(F^n)= \rank A$. Finally, $\rank A= \rank PAQ$ is obtained from combining these 2.
+\end{proof}
+We next come to ways to ascertain a matrix's rank by examining it.
+\begin{lem}\label{l:rank-colspace}
+The rank of $A \in F^{m \times n}$ is the maximal number of LID columns it has, which is the dimension of the subspace spanned by its columns.
+\end{lem}
+\begin{proof}%easy, short
+By Exercise \ref{e:col-space}, $\img L_A$ is the span of the columns of $A$. A subset of the columns of $A$ thus forms a basis for $\img L_A$ by Lemma \ref{l:reduce-span-to-basis}.
+\end{proof}
+Using the above Lemma is usually postponed until $A$ has been suitably modified by elementary row and column operations, eg by introducing entries that are 0. 
+\begin{lem}\label{l:rank-diag}
+Let $A \in F^{m \times n}$ with rank $r$. Then finitely many elementary row and column operations can transform $A$ into $D$, where $D_{jj}=1$ for $j=\ot{r}$, and $D_{jk}=0$ otherwise. In particular, $r \leq m \wedge n$, and there exist $P \in F^{m \times m}$ and $Q \in F^{n \times n}$, both invertible, such that $D=PAQ$. A key intermediate result is that performing finitely many elementary row (resp column) operations is equivalent to left (resp right) multiplying by an invertible matrix.
+\end{lem}
+\begin{proof}
+Quite tedious, but it is intuitive how to apply elementary operations to turn $A$ into $D$. When $A=\mb{0}_{m \times n}$, it is clear that $A=D$ and $r=0$. So for the rest of the proof assume some $A_{jk}\neq 0$. Use induction on $m$. For the base case $m=1$, do these elementary column operations: find a $A_{1k}\neq 0$, scale it if needed to 1, make an interchange if needed to put it in column 1, and add/ subtract scalar multiples of it to zero out all subsequent entries. We obtain $D= \mb{e}_1^\top$. Since both $A$ and $D$ have a nonzero entry, their columns span $F$, so $r=\dim F=1$ by Lemma \ref{l:rank-colspace}.\\
+For $m>1$, the case $n=1$ is handled just like the base case, except with elementary row (as opposed to column) operations. When $n>1$, find a $A_{jk}\neq 0$, scale row j if needed to make that entry 1, make a row and column interchange if needed to put it in entry (1,1), and do row operations of type 3 to zero out the rest of the 1st column, and column operations of type 3 to zero out the rest of the 1st row. We obtain
+\[ B=\tbtm{1}{\mb{0}_m}{\mb{0}_m^\top}{B'}\]
+Since column 1 is not a linear combination of the other columns, it must be included in any subset of columns that span $\img B$, so $\rank B'= \rank B-1=r-1$ since $B$ is obtained from $A$ by elementary operations. By the inductive hypothesis, elementary operations can turn $B'$ into $D'$, where $D'_{jj}=1$ for $j=\ot{r-1}$, $D'_{jk}=0$ otherwise. Elementary operations on $B' \in F^{(m-1) \times (n-1)}$ correspond to elementary operations on $B \in F^{m \times n}$, and when preceded by those that turned $A$ into $B$, give us a sequence that turn $A$ into $D$.\\
+By Lemma \ref{l:ero}, there exist elementary matrices $G_1, \ldots,G_M$, $H_1, \ldots,H_N$ (all invertible by Lemma \ref{l:elem-inverse}) such that $D= \prod_{j=M}^1G_jA \prod_{j=1}^NH_j$. We can thus take $P=\prod_{j=M}^1G_j$ and $Q=\prod_{j=1}^NH_j$. Both are invertible by Exercise \ref{e:transpose-inv}.
+\end{proof}
+\begin{corollary}\label{c:rank-transpose}
+For any $A \in F^{m \times n}$, we have $\rank A=\rank A^\top$. This is the maximal number of LID rows $A$ has, which is the dimension of the subspace spanned by its rows. The row space and column space thus have the same dimension.
+\end{corollary}
+\begin{proof}
+Start with Lemma \ref{l:rank-diag} to write $D=PAQ$, where $P \in F^{m \times m}$ and $Q \in F^{n \times n}$ are both invertible, and $D_{jj}=1$ for $j=\ot{r}$, $D_{jk}=0$ otherwise. By Exercise \ref{e:transpose-inv}, $D^\top =Q^\top A^\top P^\top$, and $Q^\top$ and $P^\top$ are both invertible. By Lemma \ref{l:rank-preserve}, $\rank D^\top =\rank A^\top$. The only nonzero columns of $D^\top$ are the first $r$ standard basis vectors of $F^n$. It follows by Lemma \ref{l:rank-colspace} that $\rank D^\top =r$ as desired.\\
+Having proved that $\rank A=\rank A^\top$, what Lemma \ref{l:rank-colspace} says about the columns of $A^\top$ gives the desired claim about the rows of $A$.
+\end{proof}
+\begin{corollary}\label{c:inv-prod-elem}
+Any invertible $A \in F^{n \times n}$ is the product of elementary matrices. Without loss of generality, these can all correspond to elementary row (or column) operations.\footnote{by Exercise \ref{e:ero-equiv-col}}
+\end{corollary}
+\begin{proof}
+Start with Lemmas \ref{l:rank-diag} and \ref{l:ero} to pick elementary matrices $G_1, \ldots,G_M$, $H_1, \ldots,H_N$ (all invertible by Lemma \ref{l:elem-inverse}, where the inverses are themselves elementary matrices) such that $I_n= \prod_{j=M}^1G_jA \prod_{j=1}^NH_j$ ($\rank A=n$ by Lemma \ref{l:mat-inv-1to1}, which forces $D=I_n$). We thus have $A= \prod_{j=1}^MG_j^{-1}\prod_{j=N}^1H_j^{-1}$, the desired result.
+\end{proof}
+We are now able to check if a square matrix is invertible by computing its rank. The next topic is a way to compute the inverse itself.
+\begin{defn}
+Given $A \in F^{m \times n}$ and $B \in F^{m \times p}$, we can form an \emph{augmented matrix} $(A|B) \in F^{m \times (n+p)}$, whose first $n$ columns come from $A$ and last $p$ columns come from $B$.
+\end{defn}
+\begin{lem}
+$A \in F^{n \times n}$ is invertible if and only if there exists $B \in F^{n \times n}$ such that we can turn $(A|I_n)$ into $(I_n|B)$ via finitely many elementary row operations, in which case $B=A^{-1}$.\footnote{If $A$ is not invertible, then any attempt to reach $(I_n|B)$ will result in a row whose first $n$ entries are all 0}
+\end{lem}
+\begin{proof}
+'$\to$' Use Corollary \ref{c:inv-prod-elem} to write $A^{-1}= \prod_{j=p}^1E_j$ where each $E_j$ is an elementary matrix that corresponds to a elementary row operation (Exercise \ref{e:ero-equiv-col}). Applying these row operations to $(A|I_n)$ is the same as left multiplying by $A^{-1}$, so we get $(I_n|A^{-1})$ by Lemma \ref{l:mat-mult-col}.
+'$\leftarrow$' Let $M:= \prod_{j=p}^1E_j$ represent the elementary row operations such that $M(A|I_n)=(I_n|B)$. By Lemma \ref{l:mat-mult-col}, $MA=I_n$ and $M=B$. By Exercise \ref{e:comp1to1}, $A$ is invertible and $A^{-1}=B$.
+\end{proof}
+\begin{example}
+Consider the linear operator $T(f)=f+f'+f''$ on $P_2(\bb{R})$. Is it invertible, and if so find an expression for $T(f)$ when $f(x)=a_0+a_1x+a_2x^2$.
+\end{example}
+
+\section{Linear Systems Theory}
+We can now apply our theory so far to describe the solution sets to linear systems as subsets of a vector space. In the next section we use elementary row operations to find all such solutions.
+\begin{defn}
+A \emph{system} of $m$ linear equations in $n$ unknowns over a field $F$ has the form $\sum_{k=1}^na_{jk}x_k=b_j$ for $j=\ot{m}$. The \emph{coefficient matrix} $A \in F^{m \times n}$ has jk entry $a_{jk}$. Letting $\mb{x}:=(x_1, \ldots,x_n)^\top$ and $\mb{b}:=(b_1, \ldots,b_m)^\top$, the system is represented as a single matrix equation $A \mb{x}=\mb{b}$. The system's \emph{solution set} is $\{ \mb{x}\in F^{n}:A \mb{x}=\mb{b}\}$, and a \emph{solution} is any element. The system is \emph{consistent} if the solution set is nonempty, else it is \emph{inconsistent}. The system is \emph{homogeneous} if $\mb{b}=\mb{0}_m$, else it is \emph{nonhomogeneous}.
+\end{defn}
+We want to recognize if a linear system is consistent, and describe the solution set if so. We start with homogeneous linear systems, which are consistent since $\mb{x}=\mb{0}_n$ is a solution.
+\begin{lem}\label{l:hom-ker}
+For $A \in F^{m \times n}$, the solution set of a homogeneous linear system $A \mb{x}=\mb{0}_m$ is $\ker L_A$, which has dimension $n- \rank A$. When $m<n$, it has a nonzero solution.
+\end{lem}
+\begin{proof}%easy, short
+By definition, $\ker L_A= \{ \mb{x}\in F^n:A \mb{x}=\mb{0}_m \}$. Its dimension comes from the Dimension Formula. By Lemma \ref{l:rank-diag}, $\rank A \leq m \wedge n$, so $m<n$ implies $\dim \ker L_A>0$, ie a nonzero solution exists.
+\end{proof}
+Since a homogeneous linear system's solution set is a subspace of $F^n$, we can apply our theory, eg to find a basis and express any solution as a linear combination of vectors in that basis. The computations for this are discussed in the next section.
+\begin{lem}\label{l:particular+hom}
+If $A \mb{x}=\mb{b}$ is a consistent linear system and $\mb{s}\in F^n$ is any solution, then the solution set is $\mb{s}+\ker L_A:= \{ \mb{s}+\mb{x}:A \mb{x}=\mb{0}_m \}$. $A \mb{x}= \mb{0}_m$ is the \emph{corresponding homogeneous linear system}.
+\end{lem}
+\begin{proof}%easy, short
+'$\subseteq$' If $\mb{w}$ is a solution, then $\mb{w}= \mb{s}+(\mb{w}- \mb{s}) \in \mb{s}+ \ker L_A$. '$\supseteq$' If $\mb{x}$ satisfies $A \mb{x}=\mb{0}_m$, then $A(\mb{s}+\mb{x})= \mb{b}$.
+\end{proof}
+\begin{lem}\label{l:inv-sys}
+If $A \in F^{n \times n}$, then the following are equivalent: $A$ is invertible, the system $A \mb{x}=\mb{b}$ has exactly 1 solution for all $\mb{b}\in F^m$, there exists $\mb{b}\in F^m$ such that the system has exactly 1 solution. When any of these hold, the unique solution is $A^{-1}\mb{b}$.
+\end{lem}
+\begin{proof}%easy, short
+1$\to$2: Fix $\mb{b}\in F^m$, then $A(A^{-1}\mb{b})=\mb{b}$ and if $A \mb{x}=\mb{b}$ then left multiplying by $A^{-1}$ gives $\mb{x}=A^{-1}\mb{b}$. 2$\to$3 is obvious. 3$\to$1 Let $\mb{s}$ be the unique solution. By Lemma \ref{l:particular+hom}, the solution set is $\mb{s}+\ker L_A$, so $\ker L_A= \{ \mb{0}_n \}$, so $L_A$ is one-to-one by Lemma \ref{l:1to1-ker0}, so $A$ is invertible by Lemma \ref{l:mat-inv-1to1}.
+\end{proof}
+\begin{lem}\label{l:system-augment}
+The system $A \mb{x}=\mb{b}$ is consistent if and only if $\rank A= \rank(A|\mb{b})$, where $(A|\mb{b})$ is the \emph{augmented matrix} for the system.
+\end{lem}
+\begin{proof}
+Let $\mb{a}_1, \ldots,\mb{a}_n$ denote the columns of $A$. The system is consistent if and only if $\mb{b}\in \img L_A= \Span \{ \mb{a}_1, \ldots,\mb{a}_n \}$ by Exercise \ref{e:col-space}, which is if and only if $\Span \{ \mb{a}_1, \ldots,\mb{a}_n \}= \Span \{ \mb{a}_1, \ldots,\mb{a}_n, \mb{b}\}$. Taking the dimension of both sides and using Lemma \ref{l:rank-colspace}, this is equivalent to $\rank A= \rank(A|\mb{b})$.
+\end{proof}
+\begin{example}
+{\color{red} A highly simplified special case of the \emph{input-output model}, for which Wassily Leontief won the 1973 Nobel Prize in Economics. There is a linear system, but even for the highly simplified special case Friedberg has not developed the needed theory. He cites other places}
+\end{example}
+
+\section{Linear Systems Computations}
+Lemma \ref{l:system-augment} gave a necessary and sufficient condition for a linear system to be consistent. Due to Lemma \ref{l:particular+hom}, we can characterize the solution set with a particular solution and a basis for the corresponding homogeneous linear system. Elementary row operations can achieve both these objectives.
+\begin{defn}
+2 linear systems are \emph{equivalent} if they have the same solution set.
+\end{defn}
+\begin{lem}
+For $C \in F^{m \times m}$ invertible, the linear systems $A \mb{x}=\mb{b}$ and $CA \mb{x}=C \mb{b}$ are equivalent. In particular, $A \mb{x}=\mb{b}$ and $A' \mb{x}=\mb{b}'$ are equivalent if and only if $(A'|\mb{b}')$ is obtainable from $(A|\mb{b})$ by finitely many elementary row operations.
+\end{lem}
+\begin{proof}
+If $\mb{x}$ solves $A \mb{x}=\mb{b}$, then it clearly solves $CA \mb{x}=C \mb{b}$. If it solves $CA \mb{x}=C \mb{b}$, then (left multiplying both sides by $C^{-1}$) it solves $A \mb{x}=\mb{b}$. By the , $(A'|\mb{b}')$ is obtainable from $(A|\mb{b})$ by finitely many elementary row operations if and only if there exists $C \in F^{m \times m}$ invertible such that $(A'|\mb{b}')=C(A|\mb{b})$ (1 direction is the intermediate result stated in Lemma \ref{l:rank-diag}, the other is Corollary \ref{c:inv-prod-elem}).
+\end{proof}
+\begin{defn}
+\emph{Gaussian Elimination}, done exclusively via elementary row operations, consists of 2 parts:
+\begin{itemize}
+\item (\emph{Forward pass}) a. In the leftmost nonzero column, ensure its 1st entry is nonzero, by a row interchange if needed, and scale the row so the 1st entry is 1. This entry is a \emph{pivot}, and its column is a \emph{pivotal column}. b. Use the 1st entry to zero out the remainder of that column. c. Ensure a nonzero entry in the leftmost possible column of the next row, without using previous rows, again possibly by a row interchange, and scaling the row so the 1st entry is 1. Again, this produces a pivot/ pivotal column. d. Use that entry to zero out all entries below it. e. Repeat c-d on each succeeding row until no nonzero rows remain.
+\item (\emph{Backward pass/ back substitution}) f. Work upward starting at the last nonzero row. Zero out the column above its 1st nonzero entry (which should be 1). g. Repeat for each preceding row until after it is done for the 2nd row. 
+\end{itemize}
+The resulting matrix should be in \emph{reduced row echelon form}(RREF), meaning\footnote{We can include a lemma that Gaussian Elimination indeed transforms a matrix into RREF, but it should be clear by examining its steps}
+\begin{itemize}
+\item Any nonzero row is above any row of all zeros.
+\item The 1st nonzero entry (if any) in each row is a 1, is the only nonzero entry in its column, and occurs to the right of the previous row's 1st nonzero entry.
+\end{itemize}
+\end{defn}
+Of all algorithms to obtain the RREF, Gaussian Elimination uses the fewest arithmetic operations (by contrast, the Gauss Jordan method zeros out both above and below the 1st nonzero entry in steps b and d, and hence does not require a backward pass. It can require almost double the amount of arithmetic operations as Gaussian Elimination). In practice, linear systems solvers use a modified version of Gaussian Elimination that also minimizes rounding errors.
+\begin{lem}\label{l:rref-unique}
+If $B$ is any RREF obtainable by finitely many elementary row operations from $A \in F^{m \times n}$ with $r:= \rank A$, then only the 1st $r$ rows of $B$ are not all 0. Further, for $j=\ot{r}$, let $k(j)$ be the 1st column of $B$ such that $\mb{b}_{k(j)}= \mb{e}_j$, then the corresponding columns $\mb{a}_{k(j)}$ form a basis for $\img L_A$. If any column of $B$ is $\sum_{j=1}^rd_j \mb{e}_j$, then the corresponding column of $A$ is $\sum_{j=1}^rd_j \mb{a}_{k(j)}$.
+Thus, the RREF of matrix $A$ is unique, and the pivotal columns are indexed by $k(1), \ldots,k(r)$.
+\end{lem}
+\begin{proof}
+Since $B$ is obtained from $A$ by finitely many elementary row operations, we can write $B=MA$ for some $M \in F^{m \times m}$ inveritble by Lemma \ref{l:rank-diag}, and $r= \rank B$ by Lemma \ref{l:rank-preserve}. By definition of RREF, all nonzero rows of $B$ must be LID and are above the zero rows. By Corollary \ref{c:rank-transpose}, there must be precisely $r$ of them.
+Thus, any column of $B$ has the form $\sum_{j=1}^rd_j \mb{e}_j$. Using $\mb{b}_{k(j)}= \mb{e}_j$ then Lemma \ref{l:mat-mult-col}, the corresponding column of $A$ is $M^{-1}\big( \sum_{j=1}^rd_j \mb{e}_j \big)= \sum_{j=1}^rd_j M^{-1}\mb{b}_{k(j)}= \sum_{j=1}^rd_j \mb{a}_{k(j)}$. By Exercise \ref{e:1to1-preserve-LID}, $\{ M^{-1}\mb{e}_1, \ldots,M^{-1}\mb{e}_r \}= \{ \mb{a}_{k(1)}, \ldots,\mb{a}_{k(r)}\}$ is LID in $\img L_A$, so is a basis for $\img L_A$ by Corollary \ref{c:extend-LID2basis}.
+Any column of $A$ is thus a unique linear combination of $\{ \mb{a}_{k(1)}, \ldots,\mb{a}_{k(r)}\}$. The corresponding column of $B$ has those coefficients in its 1st $r$ entries, and is hence uniquely determined by $A$. From this unique RREF we can read off that the pivotal columns are indexed by $k(1), \ldots,k(r)$.
+\end{proof}
+Gaussian Elimination is thus also a way to obtain a maximal set of LID vectors from any finite collection, by representing them as columns of a matrix and finding the pivotal columns. It can also be used to extend a LID set of vectors $L$ to a basis for a vector space $V$, provided a basis $\beta$ is already known, by doing the same on $L \cup \beta$.
+\begin{exer}
+A linear system $A \mb{x}=\mb{b}$ is consistent if and only if the last column of $(A|\mb{b})$ is not pivotal.
+\end{exer}
+\begin{proof}
+By Lemma \ref{l:system-augment}, the system is consistent if and only if $\rank A= \rank(A|\mb{b})$, which is if and only if the last column is not pivotal.
+\end{proof}
+When the system is consistent, it is easy from the RREF to write each pivotal variable in terms of the nonpivotal variables, denoted $t_1, \ldots,t_{n-r}$, from which a basis for $\ker L_A$ can be read off. A particular solution is obtained by setting $t_1= \ldots=t_{n-r}=0$.

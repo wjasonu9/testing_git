@@ -1,0 +1,484 @@
+\chapter{Linear Transformations and Matrices}
+After developing the theory of abstract vector spaces, it's natural to consider functions defined on vector spaces that 'preserve' their structure, ie linear transformations, which abound in pure and applied mathematics.
+In calculus, differentiation and integration are 2 of the most important examples of linear transformations, which allow us to reformulate many calculus problems in terms of linear algebra.
+A later chapter will showcase the wide and varied applications of linear algebra to geometry. This is the case since the most important geometrical transformations are linear, eg rotations, reflections and projections. In a later chapter they're used to study rigid motions in $\bb{R}^n$.
+
+\section{Linear transformations, kernels, images}
+\begin{defn}
+If $V$ and $W$ are vector spaces over a field $F$, then a function $T:V \to W$ is a \emph{linear transformation} from $V$ to $W$ if for all $\mb{x}, \mb{y}\in V$ and $c \in F$ we have $T( \mb{x}+ \mb{y})=T( \mb{x})+T( \mb{y})$ and $T(c \mb{x})=c \cdot T( \mb{x})$. When $V=W$, we call $T$ a \emph{linear operator}.
+\end{defn}
+\begin{exer}
+\begin{itemize}
+\item If $F= \bb{Q}$, then the 2nd requirement that $T(c \mb{x})=c \cdot T( \mb{x})$ is redundant, ie implied by the 1st.
+\item $T( \mb{0}_V)= \mb{0}_W$ and $T( \mb{x}- \mb{y})=T( \mb{x})-T( \mb{y})$.
+\item $T$ is linear iff $T(c \mb{x}+ \mb{y})=c \cdot T( \mb{x})+T( \mb{y})$\footnote{this is what's most commonly checked to prove a function is linear} for all $\mb{x}, \mb{y}\in V$ and $c \in F$ iff $T \big( \sum_{j=1}^nc_j \mb{x}_j \big)= \sum_{j=1}^nc_j T( \mb{x}_j)$ for all $\mb{x}_1, \ldots, \mb{x}_n \in V$, and $c_1, \ldots,c_n \in F$.
+\end{itemize}
+\end{exer}
+\begin{defn}
+Let $V$ and $W$ be vector spaces over a field $F$, $T:V \to W$ be linear. Its \emph{kernel} (or \emph{null space}) is $\ker T:=T^{-1}\{ \mb{0}_W \}= \{ \mb{x}\in V: T( \mb{x})= \mb{0}_W \}$, and its \emph{image} (or \emph{range}) is $\img T:= \{ T( \mb{x}): \mb{x}\in V \}$.\footnote{Friedberg uses the notation $N(T)$ and $R(T)$}
+\end{defn}
+The determination of these 2 sets helps us study the intrinsic properties of a linear transformation.
+We introduce examples of linear transformations that are studied in more detail later.
+\begin{example}
+2 particular linear transformations are important enough to merit their own notation. For vector spaces $V$ and $W$ over a field $F$, the \emph{identity transformation} is $I_V:V \to V$, $\mb{x}\mapsto \mb{x}$, and the \emph{zero transformation} is $T_0:V \to W$, $\mb{x}\mapsto \mb{0}_W$.
+Then we have $\ker I_V= \{ \mb{0}_V \}$, $\img I_V=V$, $\ker T_0=V$, and $\img T_0= \{ \mb{0}_W \}$.\\
+The \emph{rotation} by $\theta$ (CCW about the origin) is $T:\bb{R}^2 \to \bb{R}^2$, $(x,y) \mapsto (x \cos \theta-y \sin \theta, x \sin \theta+y \cos \theta)$.
+To see this, it clearly works for $(x,y)= \bvec{0}_2$, other points can be written $(x,y)=(r \cos \alpha,r \sin \alpha)$, which gets mapped to $\big( r \cos( \alpha+ \theta),r \sin( \alpha+\theta) \big)$, where we can apply trigonometric identities for sums of angles.\\
+The \emph{reflection} about the x axis is $T: \bb{R}^2 \to \bb{R}^2$, $(x,y) \mapsto (x,-y)$. The \emph{projection} onto the x axis is $(x,y) \mapsto (x,0)$.\\
+$C^\infty ( \bb{R})$ (the set of all functions $f: \bb{R}\to \bb{R}$ that have derivatives of all orders) is a vector space over $\bb{R}$, and $T:C^\infty ( \bb{R}) \to C^\infty ( \bb{R})$, $f \mapsto f'$ is linear.\\
+$C( \bb{R})$ (the set of all continuous functions $f: \bb{R}\to \bb{R}$) is a vector space over $\bb{R}$, and $T:C( \bb{R}) \to \bb{R}$, $f \mapsto \int_a^b f$ is linear.\\
+$T:F^{m \times n}\to F^{n \times m}$, $A \mapsto A^\top$ is linear.
+\end{example}
+\begin{lem}\label{l:ker-img-linear}
+Let $V$ and $W$ be vector spaces over a field $F$, $T:V \to W$ be linear. Then $\ker T$ is a subspace of $V$, and $\img T$ is a subspace of $W$. If $S \subseteq V$ and $\Span S=V$, then $\img T= \Span T(S):= \Span \{ T( \mb{x}): \mb{x}\in S \}$.
+\end{lem}
+\begin{proof}
+Easy, short.\\
+$T( \mb{0}_V)= \mb{0}_W$ gives $\mb{0}_V \in \ker T$, $\mb{0}_W \in \img T$. For $\mb{x}, \mb{y}\in \ker T$ and $c \in F$, we clearly have $\mb{x}+ \mb{y}, c \mb{x}\in \ker T$.
+For $\mb{x}, \mb{y}\in \img T$ and $c \in F$, there exists $\mb{v}, \mb{w}\in V$ such that $T( \mb{v})= \mb{x}$ and $T( \mb{w})= \mb{y}$, so $T( \mb{v}+ \mb{w})= \mb{x}+ \mb{y}$ and $T(c \mb{v})=c \mb{x}$, so $\mb{x}+ \mb{y},c \mb{x}\in \img T$.
+Now that we know $\img T$ is a subspace, we clearly have $\Span T(S) \subseteq \img T$ by Lemma \ref{l:span-minimal}. To show the other inclusion, fix $\mb{w}\in \img T$, then $T( \mb{v})= \mb{w}$ for some $\mb{v}\in V$, so $\mb{v}= \sum_{j=1}^na_j \mb{x}_j$ for some $\mb{x}_1, \ldots, \mb{x}_n \in S$, and $a_1, \ldots,a_n \in F$. Then $\mb{w}= \sum_{j=1}^na_jT( \mb{v}_j) \in \Span T(S)$.
+\end{proof}
+The kernel and image are important enough as subspaces that we have special names for their dimensions, ie how we measure their 'size.'
+\begin{defn}
+Let $V$ and $W$ be vector spaces over a field $F$, $T:V \to W$ be linear. Then the \emph{rank} of $T$ is $\rank T:= \dim( \img T)$ and the \emph{nullity} of $T$ is $\dim( \ker T)$.
+\end{defn}
+If we think about the action of linear transformations, the more vectors that are carried to $\mb{0}_W$, the smaller the image, and vice versa. There is indeed a balance of the rank and nullity.
+\begin{lem}[Dimension Formula]\label{l:dim-formula}
+Let $V$ and $W$ be vector spaces over a field $F$, $T:V \to W$ be linear. If $\dim V=n \in \bb{Z}^+$, then $\rank T+ \dim( \ker T)=n$.
+\end{lem}
+\begin{proof}
+Rating 2/2.\\
+Let $\mb{v}_1, \ldots, \mb{v}_k$ be a basis for $\ker T$. By Corollary \ref{c:extend-LID2basis}, we may extend it to a basis of $V$, say by adding $\mb{v}_{k+1}, \ldots, \mb{v}_n$. Put $S:= \{ T( \mb{v}_{k+1}), \ldots, T( \mb{v}_n)\}$, which we claim is a basis for $\img T$, from which the result would follow.
+First note that $\img T= \Span \{ T( \mb{v}_1), \ldots, T( \mb{v}_n)\}= \Span S$ by Lemma \ref{l:ker-img-linear}, then noting that $T( \mb{v}_j)= \mb{0}_W$ for $j=\ot{k}$. Next, suppose that $\sum_{j=k+1}^nb_jT( \mb{v}_j)= \mb{0}_W$.
+Since $T$ is linear, this says that $T \big( \sum_{j=k+1}^nb_j \mb{v}_j \big) = \mb{0}_W$, ie that $\sum_{j=k+1}^nb_j \mb{v}_j \in \ker T$. Thus, there exist $c_1, \ldots,c_k \in F$ such that $\sum_{j=k+1}^nb_j \mb{v}_j= \sum_{j=1}^kc_j \mb{v}_j$ by Lemma \ref{l:basis-unique-lincomb}.
+Equivalently, $\sum_{j=k+1}^nb_j \mb{v}_j- \sum_{j=1}^kc_j \mb{v}_j= \mb{0}_V$. Since $\mb{v}_1, \ldots, \mb{v}_n$ is a basis for $V$, we in fact have that all the coefficients vanish: in particular, $b_j=0$ for $j=k+1, \ldots,n$, so $S$ is also linearly independent. We've thus shown that $S$ is indeed a basis for $\img T$.
+\end{proof}
+The next results show that for a linear transformation, the concepts of 1 to 1 and onto are intimately connected to the rank and nullity.
+\begin{lem}\label{l:1to1-ker0}
+Let $V$ and $W$ be vector spaces over a field $F$, $T:V \to W$ be linear. Then $T$ is 1 to 1 iff $\ker T= \{ \mb{0}_V \}$.
+\end{lem}
+\begin{proof}
+Easy, short.\\
+"$\to$" Since $T$ is linear, $T( \mb{0}_V)= \mb{0}_W$, and if it's 1 to 1, then nothing else maps to $\mb{0}_W$.
+"$\leftarrow$" If there exist $\mb{x}, \mb{y}\in V$ such that $T( \mb{x})=T( \mb{y})$, then by linearity $\mb{0}_W= T( \mb{x})-T( \mb{y})=T( \mb{x}- \mb{y})$. Hence, by hypothesis, $\mb{x}= \mb{y}$.
+\end{proof}
+\begin{exer}\label{e:1to1-preserve-LID}
+Let $V$ and $W$ be vector spaces over a field $F$, $T:V \to W$ be linear.
+\begin{itemize}
+\item If for $\mb{v}_1, \ldots, \mb{v}_k \in V$ we have that $T(\mb{v}_1), \ldots,T(\mb{v}_k)$ are LID, then so are $\mb{v}_1, \ldots, \mb{v}_k$.
+\item $T$ is 1 to 1 iff it preserves linear independence.
+\item If $T$ is 1 to 1 and $S \subseteq V$, then $S$ is linearly independent iff $T(S)$ is.
+\item $T$ is onto iff it preserves spanning.
+\item If $\beta:= \{ \mb{v}_1, \ldots, \mb{v}_n \}$ is a basis for $V$, and $T$ is invertible, then $T( \beta)$ is a basis for $W$. 
+\end{itemize}
+\end{exer}
+\begin{lem}\label{l:lin-map-basis}
+Let $V$ and $W$ be vector spaces over a field $F$, $\beta:= \{ \mb{v}_1, \ldots, \mb{v}_n \}$ be a basis for $V$. Then for any $\mb{w}_1, \ldots, \mb{w}_n \in W$, there exists a unique linear transformation $T: V \to W$ such that $T( \mb{v}_j)= \mb{w}_j$ for $j=\ot{n}$.
+\end{lem}
+\begin{proof}
+Easy, short.\\
+For any $\mb{x}\in V$, there exist unique $a_1, \ldots,a_n \in F$ such that $\mb{x}= \sum_{j=1}^na_j \mb{v}_j$ by Lemma \ref{l:basis-unique-lincomb}. Put $T( \mb{x}):= \sum_{j=1}^na_j \mb{w}_j$.
+Then $T$ is clearly linear: if $\mb{x}$ is as above and $\mb{y}\in V$, then there exist unique $b_1, \ldots,b_n \in F$ such that $\mb{y}= \sum_{j=1}^nb_j \mb{v}_j$. Then for any $c \in F$, we have $T(c \mb{x}+ \mb{y})=T \big( \sum_{j=1}^n(c \cdot a_j+b_j) \mb{v}_j \big)=c \cdot T( \mb{x})+T( \mb{y})$.
+It's also clear that $T( \mb{v}_j)= \mb{w}_j$ for $j=\ot{n}$. If $S$ is another linear trnasformation with this property, then $S( \mb{x})= \sum_{j=1}^na_jS( \mb{v}_j)=T( \mb{x})$, so $S=T$.
+\end{proof}
+\begin{corollary}\label{c:lin-map-basis}
+Let $V$ and $W$ be vector spaces over a field $F$, $\beta:= \{ \mb{v}_1, \ldots, \mb{v}_n \}$ be a basis for $V$, $S,T:V \to W$ be linear. If $S( \mb{v}_j)=T( \mb{v}_j)$ for $j=\ot{n}$, then $S=T$.
+\end{corollary}
+We have thus shown 1 of the most important properties of a linear transformation: it's fully determined by its action on a basis.
+
+\section{Matrix Representation of a Linear Transformation}
+We have thus far studied linear transformations mainly by their kernels and images. Now we  develop a 1 to 1 correspondence between linear transformations and matrices that allow us to use properties of 1 to study the other.
+\begin{defn}
+An \emph{ordered basis} $\beta:= \{ \mb{v}_1, \ldots, \mb{v}_n \}$ for a finite-dimensional vector space $V$ is simply a basis endowed with a specific order. For any $\mb{x}\in V$, there exist unique $a_1, \ldots,a_n \in F$ such that $\mb{x}= \sum_{j=1}^na_j \mb{v}_j$.
+Then $[ \mb{x}]_\beta:=(a_1, \ldots,a_n)^\top$ is the \emph{coordinate vector} of $\mb{x}$ relative to $\beta$.\\
+If $W$ is another finite-dimensional vector space with ordered basis $\gamma:= \{ \mb{w}_1, \ldots, \mb{w}_m \}$, then there exist unique $a_{ij}\in F$ (for $i= \ot{m}$, $j=\ot{n}$) such that $T( \mb{v}_j)= \sum_{i=1}^ma_{ij}\mb{w}_i$.
+The \emph{matrix representation} of $T$ in the ordered bases $\beta$ and $\gamma$ is $[T]_\beta^\gamma \in F^{m \times n}$ with ij entry $a_{ij}$. In the case $V=W$ and $\beta= \gamma$, we may simply write $[T]_\beta$.
+\end{defn}
+In particular, in the above definition we have that $[ \mb{v}_j]_\beta= \bvec{e}_j$, for $j=\ot{n}$. It's also clear (Lemma \ref{l:mat-represent-linear} below)\footnote{exercise in Friedberg} that $\mb{x}\mapsto [ \mb{x}]_\beta$ is a linear transformation from $V$ to $F^n$.
+Note that the jth column of $[T]_\beta^\gamma$ is $[T( \mb{v}_j)]_\gamma$. If $S:V \to W$ is also a linear transformation and $[S]_\beta^\gamma =[T]_\beta^\gamma$, then $S=T$ by Corollary \ref{c:lin-map-basis}.
+\begin{example}
+If $T:P_3( \bb{R}) \to P_2( \bb{R})$, $f \mapsto f'$, and $\beta$ and $\gamma$ are standard ordered bases for the domain and codomain, then
+\[ [T]_\beta^\gamma = \begin{bmatrix}0 & 1 & 0 & 0 \\
+0 & 0 & 2 & 0 \\
+0 & 0 & 0 & 3 \end{bmatrix}\]
+Note that it's the (j+1)st column of $[T]_\beta^\gamma$ that actually corresponds to $T(x^j)$.
+\end{example}
+\begin{defn}
+The \emph{Kronecker delta} is $\delta_{ij}=1(i=j)$. The n by n \emph{identity matrix} is $I_n \in F^{n \times n}$ with ij entry $\delta_{ij}$.
+\end{defn}
+If $V,W$ are vector spaces with dimensions $m,n$ and ordered bases $\beta, \gamma$, then $[T_0]_\beta^\gamma= \mb{0}_{m \times n}$, and $[I_V]_\beta=I_n$.
+\begin{defn}
+Let $V$ and $W$ be vector spaces over a field $F$, if we define addition and scalar multiplication of linear transformations the usual way, we have that the set of all linear transformations from $V$ to $W$ is a vector space over $F$, denoted $\cl{L}(V,W)$. We often write $\cl{L}(V)$ for $\cl{L}(V,V)$.
+In particular, if $S,T:V \to W$ are linear transformations, then so is $a \cdot S+T$ for any $a \in F$.
+\end{defn}
+If $\dim V=n$ and $\dim W=m$, then we later describe a complete identification of $\cl{L}(V,W)$ with $F^{m \times n}$. Here is the key result to do so:
+\begin{lem}\label{l:mat-represent-linear}
+Let $V$ and $W$ be finite-dimensional vector spaces with ordered bases $\beta$ and $\gamma$. If $S,T:V \to W$ are linear transformations, then $[c \cdot S+T]_\beta^\gamma =c[S]_\beta^\gamma +[T]_\beta^\gamma$ for all $c \in F$.
+We also have $[c \mb{x}+ \mb{y}]_\beta =c[ \mb{x}]_\beta +[ \mb{y}]_\beta$ for any $\mb{x}, \mb{y}\in V$.
+\end{lem}
+\begin{proof}
+Easy, short.\\
+Let $\beta= \{ \mb{v}_1, \ldots, \mb{v}_n \}$ and $\gamma= \{ \mb{w}_1, \ldots, \mb{w}_m \}$, and the ij entries of $[S]_\beta^\gamma$ and $[T]_\beta^\gamma$ be $a_{ij}$ and $b_{ij}$.
+Then for $j=\ot{n}$ we have $S( \mb{v}_j)= \sum_{i=1}^ma_{ij}\mb{w}_i$ and $T( \mb{v}_j)= \sum_{i=1}^mb_{ij}+ \mb{w}_i$. Then $(a \cdot S+T)( \mb{v}_j)= \sum_{i=1}^m(c \cdot a_{ij}+b_{ij}) \mb{w}_i$, so the ij entry of $[c \cdot S+T]_\beta^\gamma$ is $c \cdot a_{ij}+b_{ij}$.\\
+Put $\bvec{a}:=[ \mb{x}]_\beta$ and $\bvec{b}:=[ \mb{y}]_\beta$. Then $\mb{x}= \sum_{j=1}^na_j \mb{v}_j$ and $\mb{y}= \sum_{j=1}^nb_j \mb{v}_j$, so $c \mb{x}+ \mb{y}= \sum_{j=1}^n(c \cdot a_j+b_j) \mb{v}_j$. It's now clear that $[c \mb{x}+ \mb{y}]_\beta =c[ \mb{x}]_\beta +[ \mb{y}]_\beta$.
+\end{proof}
+\begin{exer}\label{e:ut-repr}
+If $V$ is a vector space with basis $\beta= \{ \mb{v}_1, \ldots, \mb{v}_n \}$ and $T \in \cl{L}(V)$, then $[T]_\beta$ is upper triangular if and only if $T( \mb{v}_j) \in \Span \{ \mb{v}_1, \ldots, \mb{v}_j \}$ for $j=\ot{n}$.
+If $\gamma= \{ \mb{w}_1, \ldots, \mb{w}_n \}$ is another basis, then $[I_V]_\beta^\gamma$ is upper triangular if and only if $\mb{w}_j \in \Span \{ \mb{v}_1, \ldots, \mb{v}_j \}$ for $j=\ot{n}$.
+\end{exer}
+
+\section{Composition of Linear transformations and matrix multiplication}
+We have just seen how to associate a matrix with a linear transformation in a way that 'preserves' sums and scalar multiplication.
+We now look at how the matrix representation of a composite of linear transformations relates to the matrix representation of each of the associated linear transformations. This leads us to the definition of matrix multiplication.
+\begin{lem}
+Let $V$, $W$ and $Z$ be vector spaces over $F$, and $T:V \to W$ and $S:W \to Z$ be linear transformations. Then $S \circ T:V \to Z$ is linear. 
+\end{lem}
+\begin{proof}
+Easy, short.\\
+Fix $\mb{x}, \mb{y}\in V$, $c \in F$. Then $S \circ T(c \mb{x}+ \mb{y})=S \big( c \cdot T( \mb{x})+T( \mb{y}) \big)=c \cdot S \circ T( \mb{x})+S \circ T( \mb{y})$.
+\end{proof}
+\begin{exer}\label{e:compose-lin}
+Let $V$ be a vector space over $F$, $T,S_1,S_2 \in \cl{L}(V)$. {\color{red} A more general result holds for $\cl{L}(V,W)$} Then $T \circ (S_1+S_2)=T \circ S_1+T \circ S_2$, $(S_1+S_2) \circ T=S_1 \circ T+S_2 \circ T$, $T \circ (S_1 \circ S_2)=(T \circ S_1) \circ S_2$, $T \circ I_V=I_V \circ T=T$.
+For any $c \in F$, we have $c \cdot (S_1 \circ S_2)=(c \cdot S_1) \circ S_2=S_1 \circ (c \circ S_2)$.
+\end{exer}
+\begin{defn}
+The \emph{product} of $A \in F^{m \times n}$ and $B \in F^{n \times p}$ is $AB \in F^{m \times p}$, with ij entry $\sum_{k=1}^nA_{ik}B_{kj}$.
+\end{defn}
+Note that there are restrictions on the relative sizes of $A$ and $B$ for their product to be defined. As with composition of functions, matrix multiplication isn't commutative: $AB \neq BA$ in general. In fact, they need not even have the same dimensions.
+\begin{lem}\label{l:matrix-compose}
+If $V$, $W$ and $Z$ are finite-dimensional vector spaces with ordered bases $\alpha$, $\beta$, and $\gamma$ respectively, and $T:V \to W$ and $S:W \to Z$ are linear transformations, then $[S \circ T]_\alpha^\gamma =[S]_\beta^\gamma [T]_\alpha^\beta$.
+\end{lem}
+\begin{proof}
+Rating 1/2.\\
+For concreteness, say $\alpha= \{ \mb{v}_1, \ldots, \mb{v}_m \}$, $\beta= \{ \mb{w}_1, \ldots, \mb{w}_n \}$, and $\gamma= \{ \mb{z}_1, \ldots, \mb{z}_p \}$. Then $A:=[S]_\beta^\gamma \in F^{m \times n}$, and $B:=[T]_\alpha^\beta \in F^{n \times p}$.
+Then for $j= \ot{m}$ we have $S \circ T( \mb{v}_j)=S \big( \sum_{k=1}^mB_{kj}\mb{w}_k \big) = \sum_{k=1}^mB_{kj}S( \mb{w}_k)= \sum_{k=1}^mB_{kj}\sum_{i=1}^pA_{ik}\mb{z}_i= \sum_{i=1}^p(AB)_{ij}\mb{z}_i$.
+\end{proof}
+Matrix multiplication was defined in a way to make this result true.
+\begin{corollary}
+If $V$ is a finite-dimensional vector space with ordered basis $\beta$, and $S,T \in \cl{L}(V)$, then $[S \circ T]_\beta =[S]_\beta [T]_\beta$.
+\end{corollary}
+\begin{lem}
+Let $A \in F^{m \times n}$, $B,C \in F^{n \times p}$ and $D,E \in F^{q \times m}$, $c \in F$. Then $A(B+C)=AB+AC$, $(D+E)A=DA+EA$, $c(AB)=(cA)B=A(cB)$, $I_mA=A=AI_n$.
+\end{lem}
+\begin{proof}
+Easy, short: use the definition of matrix multiplication.
+\end{proof}
+\begin{corollary}
+For $A \in F^{m \times n}$, $B_1, \ldots,B_k \in F^{n \times p}$, $C_1, \ldots, C_k \in F^{q \times m}$, and $d_1, \ldots,d_k \in F$, we have $A \big( \sum_{j=1}^kd_jB_j \big)= \sum_{j=1}^kd_jAB_j$, and $\big( \sum_{j=1}^kd_jC_j \big) A= \sum_{j=1}^kd_jC_jA$
+\end{corollary}
+For $T \in \cl{L}(V)$, put $T^0:=I_V$ and inductively define $T^k:=T^{k-1} \circ T$ for $k \in \bb{Z}^+$. Eg for $T(f)=f'$, we have $T^2(f)=f''$. Similarly, for $A \in F^{n \times n}$, put $A^0:=I_n$ and inductively define $A^k:=A^{k-1}A$ for $k \in \bb{Z}^+$.
+Note that the cancellation law doesn't hold for matrix multiplication. Eg, for $A:=E_{21}\in \bb{R}^{2 \times 2}$, we have $A^2=\mb{0}_{2 \times 2}$, but $A \neq \mb{0}_{2 \times 2}$. 
+\begin{lem}\label{l:mat-mult-col}
+For $A \in F^{m \times n}$, $B \in F^{n \times p}$, let subscript j on a matrix denote its jth column. Then $(AB)_j=AB_j$, and $B_j=B \bvec{e}_j$.
+If we let subscript i on a matrix denote its ith row, then $(AB)_i=A_iB$ and $B_i= \bvec{e}_i^\top B$.
+\end{lem}
+\begin{proof}
+Easy, short: use the definition of matrix multiplication.
+\end{proof}
+\begin{exer}\label{e:col-space}
+$\img L_A$ is the span of the columns of $A$.
+\end{exer}
+\begin{proof}
+We have $\img L_A= \Span \{ A \mb{e}_1, \ldots,A \mb{e}_n \}$ by Lemma \ref{l:ker-img-linear}, ie the span of the columns of $A$ by Lemma \ref{l:mat-mult-col}.
+\end{proof}
+\begin{prop}\label{p:transform-coordinate-vector}
+If $V$ and $W$ are finite-dimensional vector spaces over $F$ with ordered bases $\beta$ and $\gamma$ respectively, and $T:V \to W$ is linear, then for $\mb{u}\in V$ we have $[T( \mb{u})]_\gamma =[T]_\beta^\gamma [ \mb{u}]_\beta$.
+\end{prop}
+\begin{proof}
+Easy, short: we can show this directly by bookkeeping, but Friedberg has a more interesting way to show it.\\
+Define the linear transformations $f:F \to V$, $c \mapsto c \mb{u}$, $g:F \to W$, $c \mapsto c \cdot T( \mb{u})$, then we see that $g=T \circ f$. Let $\alpha:= \{ 1 \}$, the standard ordered basis for $F$.
+Then by Lemma \ref{l:matrix-compose}, and identifying column vectors as matrices, we have $[T( \mb{u})]_\gamma =[g(1)]_\gamma =[g]_\alpha^\gamma =[T \circ f]_\alpha^\gamma =[T]_\beta^\gamma [f]_\alpha^\beta =[T]_\beta^\gamma [f(1)]_\beta =[T]_\beta^\gamma [ \mb{u}]_\beta$.
+\end{proof}
+This result is the fruit of all our previous bookkeepping. We now introduce perhaps the most important tool for transferring properties about linear transformations to analogous properties about matrices, and vice versa.
+\begin{defn}
+If $A \in F^{m \times n}$, then the \emph{left-multiplication transformation} for $A$ is $L_A:F^n \to F^m$, $\bvec{x}\mapsto A \bvec{x}$.
+\end{defn}
+\begin{lem}\label{l:left-mult-transform}
+If $A,B \in F^{m \times n}$, then $L_A$ is linear. If $\beta$ and $\gamma$ are the standard ordered bases for $F^n$ and $F^m$, respectively, then $[L_A]_\beta^\gamma =A$, $L_A=L_B$ iff $A=B$, $L_{A+B}=L_A+L_B$, $L_{cA}=cL_A$ for all $c \in F$, for all linear $T:F^n \to F^m$ we have that $C:=[T]_\beta^\gamma$ is the unique matrix such that $T=L_C$, $L_{AE}=L_A \circ L_E$ for any $E \in F^{n \times p}$, $L_{I_n}=I_{F_n}$. 
+\end{lem}
+\begin{proof}
+Easy, short: all are really just bookkeeping, though we can also use previous results.\\
+For item 1, use Lemma \ref{l:mat-mult-col}. Item 2 is a consequence of item 1. Item 4 uses Proposition \ref{p:transform-coordinate-vector} and item 2. Item 5 uses Lemma \ref{l:mat-mult-col} and Corollary \ref{l:lin-map-basis}.
+\end{proof}
+\begin{lem}\label{l:mat-mult-assoc}
+Matrix multiplication is associative: if $A \in F^{q \times m}$, $B \in F^{m \times n}$ and $C \in F^{n \times p}$, then $A(BC)=(AB)C$.
+\end{lem}
+\begin{proof}
+Easy, short: can be shown directly from the definition of matrix multiplication.\\
+From Lemma \ref{l:left-mult-transform}'s item 5 and the associativity of functional composition, we have that $L_{A(BC)}=L_AL_{BC}=L_AL_BL_C=L_{AB}L_C=L_{(AB)C}$. Lemma \ref{l:left-mult-transform}'s item 2 then says $A(BC)=(AB)C$.
+\end{proof}
+The proof above is a prototype of many of the arguments that use the relationship of linear transformations and matrices.
+\begin{exer}\label{e:tr-commute}
+The \emph{trace} of $A \in F^{n \times n}$ is $\tr A:= \sum_{j=1}^na_{jj}$. Then $\tr A= \tr A^\top$ and $\tr BC= \tr CB$ for $B \in F^{m \times n}$ and $C \in F^{n \times m}$.\footnote{direct computation, and trace only depends on the main diagonal, which the transpose does not affect}
+\end{exer}
+
+\section{Invertibility and isomorphisms}
+Invertibility is introduced early in the study of functions. Many intrinsic properties of functions carry over to their inverses, eg (usually) continuity and differentiability.
+\begin{defn}
+Let $V$ and $W$ be arbitrary sets, and $T:V \to W$ (not necessarily linear), then $S:W \to V$ is an \emph{inverse} of $T$ if $S \circ T=I_W$ and $T \circ S=I_V$. If $T$ has an inverse, we call it \emph{invertible}.
+\end{defn}
+Of course, our main focus will be on linear $T$, but the above definition holds for arbitrary functions.
+\begin{lem}\label{l:comp-fn}
+Let $V$, $W$ and $Z$ be arbitrary sets, and $T:V \to W$, $S:W \to Z$ (not necessarily linear). If $T$ has an inverse, then it's unique, and we denote it $T^{-1}$. $T$ is invertible iff it's 1 to 1 and onto. $(T^{-1})^{-1}=T$: in particular, $T^{-1}$ is invertible. $(S \circ T)^{-1}=T^{-1}\circ S^{-1}$. If $S \circ T$ is 1 to 1, then so is $T$. If $S \circ T$ is onto, then so is $S$.
+\end{lem}
+\begin{proof}
+For uniqueness, let $Q,R:W \to V$ be inverses of $T$. Then $Q=Q \circ I_W=Q \circ T \circ R=I_V \circ R=R$.
+\end{proof}
+Of course, our main focus will be on the case when $V$, $W$ and $Z$ are vector spaces and $T$ and $S$ are linear, but the statements above are general.
+\begin{lem}\label{l:inv-linear}
+Let $V$ and $W$ be vector spaces, $T:V \to W$ be linear and invertible, then $T^{-1}:W \to V$ is linear.
+\end{lem}
+\begin{proof}
+Easy, short.\\
+Fix $\mb{x}, \mb{y}\in W$, $c \in F$. Then $T \circ T^{-1}(c \mb{x}+ \mb{y})=c \mb{x}+ \mb{y}=T \big( c \cdot T^{-1}( \mb{x})+T^{-1}( \mb{y}) \big)$. Since $T$ is 1 to 1, we have that $T^{-1}(c \mb{x}+ \mb{y})=c \cdot T^{-1}( \mb{x})+T^{-1}( \mb{y})$.
+\end{proof}
+The fact that $T^{-1}$ is linear goes with our theme that a function's properties are usually retained by its inverse. It will also be helpful in the study of matrix inverses.
+\begin{corollary}\label{c:inv-same-dim}
+Let $V$ and $W$ be vector spaces, $T:V \to W$ be linear and invertible. Then either $\dim V= \dim W$, or $V$ and $W$ are both infinite-dimensional.
+\end{corollary}
+\begin{proof}
+Rating 2/2.\\
+If $V$ is finite-dimensional, then let $\beta= \{ \mb{v}_1, \ldots, \mb{v}_n \}$ be a basis for $V$. Then $T( \beta)$ spans $\img T$ by Lemma \ref{l:ker-img-linear}, so $W$ must be finite dimensional also, by Lemma \ref{l:reduce-span-to-basis}.
+Since $T^{-1}$ is linear by Lemma \ref{l:inv-linear}, we can swap the roles of $V$ and $W$, and use $T^{-1}$ instead of $T$ to show that if $W$ is finite-dimensional, $V$ must be also.
+Now assume both $V$ and $W$ are finite-dimensional. Then $\img T=W$ since $T$ is onto, so $\rank T= \dim W$. Also, $\ker T= \{ \mb{0}_V \}$ by Lemma \ref{l:1to1-ker0} since $T$ is 1 to 1. The dimension formula (Lemma \ref{l:dim-formula}) thus says $\dim V= \dim W$.
+\end{proof}
+\begin{lem}\label{l:inv-1to1-or-onto}
+Let $V$ and $W$ be vector spaces over a field $F$ with $\dim V= \dim W=n \in \bb{Z}^+$, and $T:V \to W$ be linear. Then $T$ is invertible iff it's 1 to 1 iff $\ker T= \{ \mb{0}_V \}$ iff it's onto iff $\rank T=n$.
+\end{lem}
+\begin{proof}
+Easy, short.\\
+$T$ is 1 to 1 iff $\ker T= \{ \mb{0}_V \}$ (Lemma \ref{l:1to1-ker0}) iff $\rank T=n$ (the dimension formula, Lemma \ref{l:dim-formula}) iff $\img T=W$ (Lemma \ref{l:subspace-dim}) iff $T$ is onto. Finally, $T$ is invertible iff it's 1 to 1 and onto.
+\end{proof}
+The equivalence of 1 to 1 and onto is somewhat surprising: it fails when $V$ and $W$ aren't finite-dimensional, eg $T:P( \bb{R}) \to P( \bb{R})$, $f \mapsto f'$ is onto but not 1 to 1, and $f \mapsto F$ where $F(x):= \int_0^xf$ is 1 to 1 but not onto.
+Even more fundamental to this equivalence is linearity: eg, for arbitrary functions $f: \bb{R}\to \bb{R}$, 1 to 1 and onto are certainly not equivalent concepts.
+\begin{defn}
+$A \in F^{n \times n}$ is \emph{invertible} if it has an \emph{inverse} $B \in F^{n \times n}$ such that $AB=BA=I_n$. The inverse is unique, so we can denote it by $B=A^{-1}$.
+\end{defn}
+The matrix inverse is seen to be unique the same way as for functions. If $C \in F^{n \times n}$ is another inverse, then $C=CI_n=CAB=I_nB=B$. Note we have used that matrix multiplication is associative (Lemma \ref{l:mat-mult-assoc}).\\
+Inverses of matrices and linear transformations are closely related:
+\begin{lem}\label{l:inv-mat-represent}
+Let $V,W$ be vector spaces with finite ordered bases $\beta, \gamma$ respectively, and $T:V \to W$ be linear. Then $T$ is invertible iff $[T]_\beta^\gamma$ is, in which case $[T^{-1}]_\gamma^\beta= ([T]_\beta^\gamma)^{-1}$.
+\end{lem}
+\begin{proof}
+Rating 1/2.\\
+"$\to$" By Corollary \ref{c:inv-same-dim}, we may put $n:= \dim V= \dim W$, so $[T]_\beta^\gamma \in F^{n \times n}$. Then we have (by Lemma \ref{l:matrix-compose}):
+\[ I_n= \begin{cases}[I_V]_\beta =[T^{-1}\circ T]_\beta =[T^{-1}]_\gamma^\beta [T]_\beta^\gamma \\
+[I_W]_\gamma =[T \circ T^{-1}]_\gamma =[T]_\beta^\gamma [T^{-1}]_\gamma^\beta \end{cases}\]
+Hence, $[T]_\beta^\gamma$ is invertible, and $([T]_\beta^\gamma)^{-1}=[T^{-1}]_\gamma^\beta$.\\
+"$\leftarrow$" Let $\beta= \{ \mb{v}_1, \ldots, \mb{v}_n\}$, and $\gamma= \{ \mb{w}_1, \ldots, \mb{w}_n \}$. If $A:=[T]_\beta^\gamma$ is invertible, then by Lemma \ref{l:lin-map-basis}, there exists $S \in \cl{L}(W,V)$ such that $S( \mb{w}_j)= \sum_{i=1}^n(A^{-1})_{ij}\mb{v}_i$ for $j=\ot{n}$, so $[S]_\gamma^\beta=A^{-1}$. Thus, by Lemma \ref{l:matrix-compose} again,
+\[ \begin{split}[S \circ T]_\beta =[S]_\gamma^\beta [T]_\beta^\gamma =A^{-1}A=[I_V]_\beta \\
+[T \circ S]_\gamma =[T]_\beta^\gamma [S]_\gamma^\beta =AA^{-1}=[I_W]_\gamma
+\end{split}\]
+Thus, $S \circ T=I_V$ and $T \circ S=I_W$, so $S=T^{-1}$.
+\end{proof}
+\begin{corollary}
+Let $V$ be a vector space with finite ordered basis $\beta$, $T:V \to V$ linear. Then $T$ is invertible iff $[T]_\beta$ is, in which case $[T^{-1}]_\beta =([T]_\beta)^{-1}$.
+Let $A \in F^{n \times n}$. Then $A$ is invertible iff $L_A$ is, in which case $L_A^{-1}=L_{A^{-1}}$.
+\end{corollary}
+\begin{proof}
+Easy, short: the 1st part is a special case of Lemma \ref{l:inv-mat-represent} where $W=V$ and $\gamma= \beta$. The 2nd part is a special case of the 1st part where $V=F^n$, $T=L_A$, and $\beta$ is the standard ordered basis for $F^n$. Lemma \ref{l:left-mult-transform} then says $[L_A]_\beta =A$.
+\end{proof}
+\begin{defn}
+A vector space $V$ is \emph{isomorphic} to a vector space $W$ if there exists an invertible linear transformation $T:V \to W$, in which case we call $T$ an \emph{isomorphism} from $V$ to $W$.
+\end{defn}
+\begin{exer}
+The property of a vector space being isomorphic to another is an equivalence relation. (This justifies why we can simply say $V$ and $W$ are isomorphic to each other)
+\end{exer}
+Isomorphic vector spaces strongly resemble each other except for the form of their vectors, which the notion of invertibility helps to formalize. Sums and scalar products associate in a similar manner between isomorphic vector spaces.
+\begin{lem}\label{l:isomorphic-same-dim}
+Let $V$ and $W$ be finite-dimensional vector spaces. Then $V$ is isomorphic to $W$ iff $\dim V= \dim W$.
+\end{lem}
+\begin{proof}
+Easy, short.\\
+"$\to$" If there exists invertible, linear $T:V \to W$, then $\dim V= \dim W$ by Corollary \ref{c:inv-same-dim}.
+"$\leftarrow$" Let $\beta= \{ \mb{v}_1, \ldots, \mb{v}_n\}$, and $\gamma= \{ \mb{w}_1, \ldots, \mb{w}_n \}$ be bases for $V$ and $W$, respectively. By Lemma \ref{l:lin-map-basis}, there exists a linear $T:V \to W$ such that $T( \mb{v}_j)= \mb{w}_j$ for $j=\ot{n}$.
+By Lemma \ref{l:ker-img-linear}, we have $\img T= \Span T( \beta)= \Span \gamma =W$, so $T$ is onto. By Lemma \ref{l:inv-1to1-or-onto}, we thus know that $T$ is invertible.
+\end{proof}
+\begin{corollary}
+Let $V$ be a vector space over $F$, then $V$ is isomorphic to $F^n$ iff $\dim V=n$.
+\end{corollary}
+\begin{example}
+$F^{m \times n}$ is isomorphic to $F^{mn}$. $P_n(F)$ is isomorphic to $F^{n+1}$.
+\end{example}
+Up until now, we have associated linear transformations with their matrix representation. We can now show they are in fact isomorphic.
+\begin{prop}\label{p:iso-linear-map-mat}
+Let $V$ and $W$ be vector spaces over $F$ with ordered bases $\beta$ and $\gamma$, respectively, and $\dim V=n$, $\dim W=m$. Then $\Phi_\beta^\gamma: \cl{L}(V,W) \to F^{m \times n}$, $T \mapsto [T]_\beta^\gamma$ is an isomorphism.
+\end{prop}
+\begin{proof}
+Easy, short.\\
+Let $\beta= \{ \mb{v}_1, \ldots, \mb{v}_n\}$, and $\gamma= \{ \mb{w}_1, \ldots, \mb{w}_n \}$. Fix $A \in F^{m \times n}$. By Lemma \ref{l:lin-map-basis}, there exists a unique $T \in \cl{L}(V,W)$ such that $T( \mb{v}_j)= \sum_{i=1}^mA_{ij}\mb{w}_i$.
+Then $[T]_\beta^\gamma =A$, so $\Phi_\beta^\gamma (T)=A$. In other words, we've shown that, for any $A \in F^{m \times n}$, there exists a unique $T \in \cl{L}(V,W)$ such that $\Phi_\beta^\gamma (T)=A$, ie that $\Phi_\beta^\gamma$ is 1 to 1 and onto.
+Since it's also linear by Lemma \ref{l:mat-represent-linear}, we conclude it's an isomorphism.
+\end{proof}
+\begin{corollary}\label{c:lin-trans-dim}
+If $V$ and $W$ are finite-dimensional vector spaces, then $\dim \cl{L}(V,W)= \dim V \cdot \dim W$.
+\end{corollary}
+\begin{proof}
+Easy, short.\\
+Put $n:= \dim V$ and $m:= \dim W$. By Proposition \ref{p:iso-linear-map-mat}, $\cl{L}(V,W)$ is isomorphic to $F^{m \times n}$. By Lemma \ref{l:isomorphic-same-dim} then Example \ref{ex:dim-basis}, $\dim \cl{L}(V,W)= \dim F^{m \times n}=m \cdot n$.
+\end{proof}
+This section's final goal is to see more clearly the relationship of linear transformations defined on abstract vector spaces to those from $F^n$ to $F^m$.
+\begin{defn}
+If $V$ is a vector space over $F$ with $\dim V=n \in \bb{Z}^+$ and ordered basis $\beta$, then the \emph{standard representation} of $V$ with respect to $\beta$ is $\phi_\beta:V \to F^n$, $\mb{x}\mapsto [ \mb{x}]_\beta$.
+\end{defn}
+\begin{lem}\label{l:std-repr-iso}
+If $V$ is a vector space over $F$ with finite ordered basis $beta$, then $\phi_\beta$ is an isomorphism.
+\end{lem}
+\begin{proof}
+Easy, short: exercise in Friedberg, closely matches that of Proposition \ref{p:iso-linear-map-mat}.\\
+Let $\beta= \{ \mb{v}_1, \ldots, \mb{v}_n \}$. Fix $\bvec{b}\in F^n$. Then if $\mb{x}:= \sum_{j=1}^nb_j \mb{v}_j$, we have that $[ \mb{x}]_\beta= \bvec{b}$. By Lemma \ref{l:basis-unique-lincomb}, if $\mb{y}\neq \mb{x}$, then we have that $[ \mb{y}]_\beta \neq [ \mb{x}]_\beta$.
+This shows that $\phi_\beta$ is 1 to 1 and onto. Since it's also linear by Lemma \ref{l:mat-represent-linear}, we conclude it's an isomorphism.
+\end{proof}
+We can now restate Proposition \ref{p:transform-coordinate-vector} using all the new notation we have.
+\begin{prop}
+If $V$ and $W$ are finite-dimensional vector spaces over $F$ with ordered bases $\beta$ and $\gamma$ respectively, $T:V \to W$ is linear, and $A:=[T]_\beta^\gamma$, then $\phi_\gamma \circ T=L_A \circ \phi_\beta$.
+\end{prop}
+Heuristically, the equation $\phi_\gamma \circ T=L_A \circ \phi_\beta$ says that, once $V$ and $W$ are identified with $F^n$ and $F^m$, respectively, we can identify $T$ with $L_A$. This allows us to transfer operations on abstract vector spaces to ones on $F^n$ and $F^m$.
+\begin{exer}\label{e:comp1to1}
+Let $V$, $W$, and $Z$ be vector spaces, $T:V \to W$ and $S:W \to Z$ be linear.
+\begin{itemize}
+\item We have $\ker T \subseteq \ker S \circ T$ and $\img S \circ T \subseteq \img S$. In particular, $\rank S \circ T \leq \rank S \wedge \rank T$.
+\item If the 3 vector spaces have the same dimension and $S \circ T$ is invertible, then $S$ and $T$ must be also. However, if $\dim W$ is bigger than the rest, then $S \circ T$ can be invertible even if neither $S$ nor $T$ are.
+\item If $V=Z$ and $W$ have the same dimensions, and $S \circ T=I_V$, then $S$ and $T$ are both invertible, and $S=T^{-1}$ (hence $T=S^{-1}$). This says that to show $S$ and $T$ are inverses of each other, we only need to show that 1 of $S \circ T$ or $T \circ S$ is the identity. If $A,B \in F^{n \times n}$ and $AB=I_n$, then $A$ and $B$ are both invertible and inverses of each other.
+\item ($V$ and $W$ need not have the same dimension) If $\beta$ and $\gamma$ are ordered bases of $V$ and $W$, and $A:=[T]_\beta^\gamma$, then $\rank T= \rank L_A$ (hence $\ker T$ and $\ker L_A$ also have the same dimensions).
+Hint: If $S:W \to Z$ is an isomorphism, and $W_0$ is a subspace of $W$, then $S(W_0)$ is a subspace of $Z$ satisfying $\dim S(W_0)= \dim W_0$.
+\end{itemize}
+When applicable, the corresponding statements of the above for matrices also hold.
+\end{exer}
+\begin{proof}
+Part 1: Both $\ker T \subseteq \ker S \circ T$ and $\img S \circ T \subseteq \img S$ (so $\rank S \circ T \leq \rank S$) follow from definition.
+To show $\rank S \circ T \leq \rank T$ is easy when $\rank T= \infty$. Else, let $\beta= \{ \mb{w}_1, \ldots, \mb{w}_k \}$ be a basis for $\img T$. Then $S( \beta)$ spans $\img S \circ T$, and Lemma \ref{l:reduce-span-to-basis} applies.\\
+Part 2: by Lemma \ref{l:comp-fn}, we have that $S$ is onto and $T$ is one-to-one. Since $\dim V= \dim W= \dim Z$, $S$ and $T$ are both invertible by Lemma \ref{l:inv-1to1-or-onto}.\\
+Part 4 hint: Pick a basis $\mb{w}_1, \ldots,\mb{w}_k$ of $W_0$. Then $T(\mb{w}_1), \ldots,T(\mb{w}_k)$ are LID in $T(W_0)$ by Exercise \ref{e:1to1-preserve-LID}, and they also span $T(W_0)$.
+\end{proof}
+\begin{exer}\label{e:transpose-inv}
+For arbitrary matrices, $(AB)^\top= B^\top A^\top$. If $A,B \in F^{n \times n}$ are invertible, then so are $AB$ and $A^\top$, with $(AB)^{-1}=B^{-1}A^{-1}$ and $(A^\top)^{-1}=(A^{-1})^\top$.
+\end{exer}
+
+\section{Change of Coordinate Matrix}
+A change of variables often simplifies an expression, eg to integrate $x \mapsto x \exp (x^2)$, or to see that $2x^2-4xy+5y^2=1$ is the equation of an ellipse. The next result answers the natural question of how to change the coordinate vector relative to one basis to another.
+\begin{lem}\label{l:change-coord}
+Let $V$ be a finite dimensional vector space with ordered bases $\beta$ and $\gamma$. Then $([I_V]_\beta^\gamma)^{-1}=[I_V]_\gamma^\beta$, and for any $\mb{v}\in V$ we have $\mb{v}_\gamma=[I_V]_\beta^\gamma \mb{v}_\beta$. Hence, we call $[I_V]_\beta^\gamma$ the \emph{change of coordinate matrix} from $\beta$ coordinates to $\gamma$ coordinates.\\
+If $T:V \to V$ is a linear operator. Then $[T]_\gamma=[I_V]_\beta^\gamma [T]_\beta [I_V]_\gamma^\beta$. In particular, if $A \in F^{n \times n}$, $\beta$ is an ordered basis for $F^n$, and $B \in F^{n \times n}$ with jth column as the jth vector in $\beta$, then $[L_A]_\beta=B^{-1}AB$
+\end{lem}
+\begin{proof}%easy, short
+This is a consequence of Lemma \ref{l:inv-mat-represent} (since $I_V$ is its own inverse), then Proposition \ref{p:transform-coordinate-vector}, and then Lemma \ref{l:matrix-compose} (noting $T=I_V \circ T \circ I_V$).
+\end{proof}
+\begin{example}\label{e:reflect}
+Consider the linear operator $T: \bb{R}^2 \to \bb{R}^2$ that reflects across the line $y=2x$. Let $\beta$ be the standard basis for $\bb{R}^2$, $\gamma:= \{ (1,2)^\top,(-2,1)^\top \}$. Then
+\[ [T]_\beta = [I_{\bb{R}^2}]_\gamma^\beta [T]_\gamma [I_{\bb{R}^2}]_\beta^\gamma = 
+\begin{pmatrix} 1 & -2 \\ 2 & 1 \end{pmatrix}
+\begin{pmatrix} 1 & 0 \\ 0 & -1 \end{pmatrix}
+\begin{pmatrix} 1 & -2 \\ 2 & 1 \end{pmatrix}^{-1}\]
+\end{example}
+\begin{defn}
+Matrices $A,B \in F^{n \times n}$ are \emph{similar} if there exists an invertible $Q \in F^{n \times n}$ such that $B=Q^{-1}AQ$. This forms an equivalence relation.
+\end{defn}
+In Lemma \ref{l:change-coord}, $[T]_\beta$ and $[T]_\gamma$ are similar. The Lemma can be generalized to $T:V \to W$.
+\begin{exer}
+Let $V$ be a vector space over a field $F$ with ordered basis $\beta:= \{ \mb{x}_1, \ldots, \mb{x}_n \}$, $Q \in F^{n \times n}$ invertible. If $\gamma:= \{ \mb{y}_1, \ldots, \mb{y}_n \}$ with $\mb{y}_k= \sum_{j=1}^nQ_{jk}\mb{x}_j$ for $k=\ot{n}$, then $Q=[I_V]_\gamma^\beta$ is a change of coordinates matrix. 
+\end{exer}
+
+\section{Dual Spaces*}
+\begin{defn}
+Let $V$ be a vector space over a field $F$. A \emph{linear functional} on $V$ is a linear transformation $h:V \to F$. The \emph{dual space} of $V$ is $V^*:= \cl{L}(V,F)$, ie the space of linear functionals on $V$.
+\end{defn}
+$V^*$ is itself a vector space. When $V$ is finite dimensional, Corollary \ref{c:lin-trans-dim} says that $\dim V^*= \dim V$.
+Definite integrals lead to some of the most important linear functionals. Eg, on $h:C[0,2 \pi] \to \bb{R}$, $f \mapsto (2 \pi)^{-1}\int_0^{2 \pi}fg$ is a linear functional. When $g(x)= \sin nx$ or $\cos nx$, this is the nth \emph{Fourier coefficient} of $f$. On $F^{n \times n}$, the trace is a linear functional. 
+\begin{lem}\label{l:dual-basis}
+Let $V$ be a finite dimensional vector space with ordered basis $\beta= \{ \mb{x}_1, \ldots,\mb{x}_n \}$. For $j,k=\ot{n}$, define the jth \emph{coordinate function} with respect to basis $\beta$ as the linear functional on $V$ satisfying $f_j(x_k)= \delta_{jk}$, the Kronecker delta.
+Then $\beta^*:= \{ f_1, \ldots,f_n \}$ is an ordered basis for $V^*$, and for any $f \in V^*$ we have $f= \sum_{j=1}^nf(x_j)f_j$. We call $\beta^*$ the \emph{dual basis} of $\beta$.
+\end{lem}
+\begin{proof}%easy, short
+$f$ and $\sum_{j=1}^nf(x_j)f_j$ clearly agree on $\beta$, so they are equal by Corollary \ref{c:lin-map-basis} 
+Since $\beta^*$ is a set of $n= \dim V^*$ vectors that spans $V^*$ (since $f$ is arbitrary), it is a basis by Corollary \ref{c:extend-LID2basis}.
+\end{proof}
+Given a linear transformation $T:V \to W$, we have seen how to associate it with a matrix. The question now arises what kind of linear transformation is associated with that matrix transpose.
+\begin{lem}
+Let $V,W$ be vector spaces with finite ordered bases $\beta, \gamma$ respectively, $S:V \to W$ a linear transformation. Define the \emph{transpose} of $S$ as $S^\top:W^* \to V^*$, $g \mapsto g \circ S$, which $S^\top$ is linear transformation with $[S^\top]_{\gamma^*}^{\beta^*}=([S]_\beta^\gamma)^\top$.
+\end{lem}
+\begin{proof}%Rating 1/2
+By Exercise \ref{e:compose-lin}, $S^\top$ is indeed a linear transformation. For concreteness, say $\beta:= \{ \mb{v}_1, \ldots \mb{v}_n \}$, $\gamma:= \{ \mb{w}_1, \ldots \mb{w}_m \}$, and $\gamma^*:= \{ g_1, \ldots g_m \}$. For $j=\ot{m}$ and $k=\ot{n}$, the kj entry of $[S^\top]_{\gamma^*}^{\beta^*}$ is the kth entry of $[S^\top(g_j)]_{\beta^*}=[g_j \circ S]_{\beta^*}$, which is $g_j \circ S(\mb{v}_k)$ (by Lemma \ref{l:dual-basis}), which is the jth entry of $[S(\mb{v}_k)]_\gamma$, which is the jk entry of $[S]_\beta^\gamma$.
+\end{proof}
+We conclude by identifying a finite dimensional vector space $V$ with its \emph{double dual} $V^{**}$, ie establishing an isomorphism between them that does not depend on any basis for either. If $V$ is infinite dimensional, then none of $V$, $V^*$, and $V^{**}$ are isomorphic to each other.
+\begin{lem}
+If $V$ is a vector space over a field $F$, and $\mb{x} \in V$, define $\hat{x}:V^* \to F$, $f \mapsto f(\mb{x})$. Then $\hat{x}\in V^{**}$.\\
+For the rest, let $V$ be finite dimensional. If $\hat{x}\equiv 0$, then $\mb{x}= \mb{0}_V$. $\psi:V \to V^{**}$, $\mb{x}\mapsto \hat{x}$ is an isomorphism.\\
+Every ordered basis of $V^*$ is the dual basis for some basis of $V$.
+\end{lem}
+\begin{proof}
+Clearly $\hat{x}$ and $\psi$ are linear transformations on $V^*$ and $V$.
+Say $\mb{x}\neq \mb{0}_V$. Pick an ordered basis $\beta$ for $V$ with $\mb{x}$ as the first element (Corollary \ref{c:extend-LID2basis}). Let $\beta^*$ be the dual basis with first element $f_1$. Then $\hat{x}(f_1)=f_1(\mb{x})=1 \neq 0$. This shows $\ker \psi= \{ \mb{0}_V \}$, so $\psi$ is one-to-one (Lemma \ref{l:1to1-ker0}), and hence an isomorphism (Lemma \ref{l:inv-1to1-or-onto} and $\dim V= \dim V^{**}$).
+If $\{ f_1, \ldots,f_n \}$ is a basis for $V^*$, let $\{ \hat{x}_1, \ldots, \hat{x}_n \}$ be its dual basis. For $j=\ot{n}$, put $\mb{x}_j:= \psi^{-1}(\hat{x}_j)$. These form a basis for $V$ by Exercise \ref{e:1to1-preserve-LID} and for $j,k=\ot{n}$, we have $f_j(\mb{x}_k)=\hat{x}_k(f_j)= \delta_{jk}$, ie $\{ \mb{x}_1, \ldots, \mb{x}_n \}$ is the desired basis of $V$ whose dual basis is $\{ f_1, \ldots,f_n \}$.
+\end{proof}
+
+\section{Differential Equations*}
+\begin{lem}
+For $y \in \cl{F}(\bb{R},\bb{C})$, ie $y=y_1+y_2i$ for some $y_1,y_2: \bb{R}\to \bb{R}$, it is differentiable at $t \in \cl{R}$ if $y_1$ and $y_2$ are, with $y'(t)=y'_1](t)+y'_2(t)i$.\\
+If $f:(a,b)\to \bb{C}$ can be extended to $g:D \to \bb{C}$ where $D \subseteq \bb{C}$ is a domain\footnote{an open, connected set} containing $(a,b)$, and $g$ is differentiable at some $t \in (a,b)$, then $f'(t)=g'(t)$.
+\end{lem}
+\begin{proof}
+We have $g'(t)= \lim_{z \to t}\{ g(z)-g(t) \}/(z-t)$. The same limit must hold if we approach $t$ with $z$ restricted to $(a,b)$, where $g=f$.
+\end{proof}
+This lets us use the rules of differentiation in Palka (stated for functions from $\bb{C}$ to $\bb{C}$) for functions from $\bb{R}$ to $\bb{C}$ without having to rederive them. These rules are themselves analogs of rules applicable to functions from $\bb{R}$ to $\bb{R}$ found in Rudin.
+The hope is to avoid having to provide 3 sets of differentiation rules, whose statements and proofs are basically identical.
+\begin{defn}
+An nth \emph{order linear differential equation} of $y$ has the form $\sum_{j=0}^na_jy^{(j)}=f$ where $f$ and each \emph{coefficient} $a_j \in \cl{F}(\bb{R},\bb{C})$, $a_n \not\equiv 0$. Any $y$ that satisfies the equation is a \emph{solution}. If $f \equiv 0$, the differential equation is \emph{homogeneous}.
+\end{defn}
+We apply linear algebra to solve homogeneous linear differential equations with constant coefficients, in which case we assume without loss of generality that $a_n=1$.\footnote{otherwise divide both sides by $a_n$}
+Even though all solutions to differential equations that are meaningful in some physical sense are real valued, it is convenient to regard $y \in \cl{F}(\bb{R},\bb{C})$.
+\begin{example}
+As a motivating example, consider an object with mass $m$ that hangs on a spring along the y axis. Say its position (height) at time $t$ is $y(t)$. From Hooke's Law with proportionality constant $k>0$ and Newton's second law of motion, we have $y''+ky/m=0$.
+\end{example}
+The next result lets us limit our study to a much smaller (though still infinite dimensional) vector space.
+\begin{lem}
+Any solution $y$ to $\sum_{j=0}^na_jy^{(j)}=f$ with constant coefficients has derivatives of all orders, ie $y \in C^\infty(\bb{R},\bb{C})$, provided $f \in C^\infty(\bb{R},\bb{C})$.
+\end{lem}
+\begin{proof}%Rating 2/1
+For $m \in \bb{Z}^+$, we show $y^{(m)}$ exists by induction on $m$. It clearly does when $m \leq n$. Fix $m>n$ and assume $y^{(m)}$ exists. Differentiate both sides $m-n$ times to get $\sum_{j=0}^na_jy^{(m-n+j)}=0$. Recall that $a_n=1$ so $y^{(m)}=- \sum_{j=0}^{n-1}a_jy^{(m-n+j)}$. The right hand side consists of derivatives of order at most $m-1$, so it is differentiable, ie $y^{(m+1)}$ exists.
+\end{proof}
+\begin{defn}
+Define $D:C^\infty(\bb{R},\bb{C}) \to C^\infty(\bb{R},\bb{C})$, $f \mapsto f'$. For a polynomial $p \in P(\bb{C})$ with $p(t)=\sum_{j=0}^na_jt^j$, define $p(D):= \sum_{j=0}^na_jD^j$, a \emph{differential operator} (with constant coefficients) of order $\deg p$. An nth order homogeneous linear differential equation with constant coefficients may thus be written $p(D)(y)=0$, and we call $p$ its \emph{auxiliary polynomial}. The set of solutions is thus $\ker p(D)$, ie a subspace of $C^\infty(\bb{R},\bb{C})$, which we call the \emph{solution space} of $p(D)(y)=0$.
+\end{defn}
+It is thus natural to seek a basis of the solution space. Exponential functions come in handy here.
+\begin{lem}\label{l:diff-eq-dim1}
+Let $f \in C^\infty(\bb{R},\bb{C})$ with $f(t)=e^{at}$. The solution space for $y'-ay=0$ has dimension 1 and basis $f$.
+$f$ is a solution to $p(D)(f)=0$ if and only if $a$ is a root of $p$.
+\end{lem}
+\begin{proof}
+Part 1 rating 3/1. Clearly $f$ is a solution. If $y$ is any solution, the trick is to note that the derivative of $t \mapsto e^{-at}y(t)$ vanishes (use the product rule), so it is a constant function, so $y(t)$ is a constant multiple of $f$.\\
+We have $p(D)(f)(t)=p(a)e^{at}$ from which the result follows. Friedberg proves 1 direction by using Corollary \ref{c:factor-c-poly} to pick $c_1, \ldots,c_n \in \bb{C}$ (not necessarily distinct) such that $p(t)= \prod_{j=1}^n(t-c_j)$. With Lemma \ref{l:poly-operator}, we have $p(D)(f)= \prod_{j=1}^n(D-c_jI)(f)$, and assuming $a$ is a root, we can take without loss of generality $c_n=a$. Then $f \in \ker (D-aI) \subseteq \ker p(D)$ by Exercise \ref{l:poly-operator}.
+\end{proof}
+As we seek a basis for $\ker p(D)$, the next result is helpful.
+\begin{lem}\label{l:particular-soln}
+\begin{itemize}
+\item For any $c \in \bb{C}$ and $f \in C^\infty (\bb{R}, \bb{C})$, a solution for $y'-cy=f$ is $y(t)=e^{ct}\int_0^te^{-cs}f(s)\mr{d}s$.\footnote{where $\int g:= \int \Re g+i \int \Im g$} In particular, the differential operator $D-cI$ is onto on $C^\infty (\bb{R}, \bb{C})$.
+\item If $V$ is a vector space with linear operators $S$ and $T$ with $T$ onto, then $\dim \ker S \circ T= \dim \ker S+ \dim \ker T$.
+\item For $m \in \bb{Z}^+$ and $c \in \bb{C}$, the functions $g_{j,c}(t):=t^{j-1}e^{ct}$ for $j=\ot{m}$ form a LID subset of $\ker (D-cI)^m$.%However, $g_{m,c}\notin \ker (D-cI)^j$ for any $j<m$.
+\item The collection $\{ g_{m,c_s}:m,s \in \bb{Z}^+ \}$ where each $c_s$ is distinct is a LID in $C^\infty(\bb{R},\bb{C})$.
+\end{itemize}
+\end{lem}
+\begin{proof}%Rating 1/3
+Part 1: To show the proposed $y$ is a solution is easy. Coming up with it is less trivial.\\
+Part 2 (Rating 1/3): Put $m:=\dim \ker S$ and $n:= \dim \ker T$. If $n=\infty$, then $\ker S \circ T$ is infinite dimensional too by Exercise \ref{e:comp1to1}.
+Assume $n,m<\infty$ (if $m=\infty$, just pretend $m \in \bb{Z}^+$ and is arbitrary). Pick a basis $\{ \mb{v}_1,\ldots,\mb{v}_n \}$ for $\ker T$ and a basis $\{ \mb{u}_1,\ldots,\mb{u}_m \}$ for $\ker S$ (or just a LID subset of $\ker T$ when it is infinite dimensional). Since $T$ is onto, we can write $T(\mb{w}_j)=\mb{u}_j$ for $j=\ot{m}$.
+We first claim that $\{ \mb{v}_1,\ldots,\mb{v}_n,\mb{w}_1, \ldots,\mb{w}_m \}$ is LID: assume $\sum_{j=1}^na_j \mb{v}_j+ \sum_{j=1}^mb_j \mb{w}_j= \mb{0}_V$. Apply $T$ to both sides to get $\sum_{j=1}^mb_j \mb{u}_j= \mb{0}_V$, so each $b_j=0$ since $\{ \mb{u}_1,\ldots,\mb{u}_m \}$ are a basis. We are left with $\sum_{j=1}^na_j \mb{v}_j= \mb{0}_V$, so each $a_j=0$ since $\{ \mb{v}_1,\ldots,\mb{v}_n \}$ are a basis. If $\ker S$ was infinite dimensional, $m \in \bb{Z}^+$ was arbitrary, showing we can have arbitrarily many LID vectors in $\ker S \circ T$.
+We now claim that $\{ \mb{v}_1,\ldots,\mb{v}_n,\mb{w}_1, \ldots,\mb{w}_m \}$ spans $\ker S \circ T$. Clearly each vector is an element of $\ker S \circ T$. If $\mb{x}\in \ker S \circ T$, then $T(\mb{x}) \in \ker S$, so we can pick $b_1, \ldots,b_m \in F$ such that $T(\mb{x})=\sum_{j=1}^mb_j \mb{u}_j$, so $T \big( \mb{x}- \sum_{j=1}^mb_j \mb{w}_j \big)= \mb{0}_V$, so $\mb{x}- \sum_{j=1}^mb_j \mb{w}_j \in \ker T$, so we can pick $a_1, \ldots,a_n \in F$ such that $\mb{x}- \sum_{j=1}^mb_j \mb{w}_j= \sum_{j=1}^na_j \mb{v}_j$. This shows $\mb{x}\in \Span \{ \mb{v}_1,\ldots,\mb{v}_n,\mb{w}_1, \ldots,\mb{w}_m \}$.\\
+Part 3 (Rating 1/2): Induction on $m$. The base case $m=1$ is again Lemma \ref{l:diff-eq-dim1}. Assume $g_{m,c}\in \ker (D-cI)^m$. Then $(D-cI)^{m+1}(g_{m+1,c})=m(D-cI)^m(g_{m,c})$, which vanishes by induction hypothesis. By Exercise \ref{e:comp1to1}, we also have $g_{m,c}\in \ker (D-cI)^k$ for $k \geq m$.
+To show LID, assume $\sum_{j=1}^mb_jg_{j,c}\equiv 0$ where each $b_j \in \bb{C}$, ie $e^{ct}\sum_{j=1}^mb_jt^{j-1}=0$ for all $t \in \bb{R}$. Ignoring the $e^{ct}\neq 0$, this is a polynomial of degree at most $m-1$, so by Corollary \ref{c:polyn0} it has at most that many zeros unless each $b_j=0$.\\
+Part 4 (Rating 3/4): most tedious. Since LID is checked using finite subsets, it is enough to show that $\{ g_{j,c_s}:j=\ot{m},s=\ot{k}\}$ is LID. We proceed by induction on $k$, where the base case is a consequence of Part 3. For the inductive step, the key observation is that, for any $j,m \in \bb{Z}^+$ and $c,d \in \bb{C}$ with $c \neq d$, we have that $(D-cI)^m(g_{j,d})$ is a linear combination of $g_{1,d}, \ldots,g_{j,d}$, where the coefficient of $g_{j,d}$ is $(c-d)^m \neq 0$. Assume $\sum_{s=1}^k \sum_{j=1}^mb_{j,s}g_{j,c_s}\equiv 0$. Apply $(D-c_kI)^m$ to both sides to eliminate the terms with $g_{j,c_k}$ (by Part 3):
+\[ 0=(D-c_kI)^m \big( \sum_{s=1}^k \sum_{j=1}^mb_{j,s}g_{j,c_s}\big)= (D-c_kI)^m \big( \sum_{s=1}^{k-1}\sum_{j=1}^mb_{j,s}g_{j,c_s}\big) \]
+This is a linear combination of $g_{j,c_s}$ for $s<k$. The induction hypothesis says that coefficient of each must be 0. The coefficient of $g_{m,c_s}$ is $b_{m,s}(c_s-c_k)^m$, so $b_{m,s}=0$. For $j<m$, the coefficient of $g_{j,c_s}$ is $b_{j,s}(c_s-c_k)^m$ (plus a linear combination of $b_{j+1,s}, \ldots,b_{m,s}$ which we know is 0), so $b_{j,s}=0$.
+Having shown each $b_{j,s}=0$ for $s<k$, we are left with $\sum_{j=1}^mb_{j,s}g_{j,c_k}\equiv 0$. Using Part 3 again, each $b_{j,k}=0$.
+\end{proof}
+\begin{remark}
+$g_{1,c}$ is an eigenvector of $D$, (with eigenvalue $c$), and for $m>1$, $g_{m,c}$ is a generalized eigenvector of $D$.
+\end{remark}
+\begin{prop}
+If $p(t)=\sum_{j=0}^na_jt^j$ has degree $n$, then the solution space of $p(D)(y)=0$ is an $n$ dimensional subspace of $C^\infty (\bb{R}, \bb{C})$. A basis can be constructed as follows: if $c_s$ is a root of $p$ with multiplicity $n_s$, add to the basis the functions $t \mapsto t^{j-1}e^{c_st}$ for $j=\ot{n_s}$. If $\bar{c}_s$ is also a root of $p$ with the same multiplicity and $c_s=a_s+b_si$, each $t^{j-1}e^{c_st}$ and $t^{j-1}e^{\bar{c}_st}$ can be replaced with $t^{j-1}e^{a_st}\cos b_st$ and $t^{j-1}e^{a_st}\sin b_st$.
+\end{prop}
+\begin{proof}%easy, short
+We use induction on $n$ to show $\dim \ker p(D)=n$. The base case $n=1$ is Lemma \ref{l:diff-eq-dim1}. For arbitrary $n \in \bb{Z}^+$, use Corollary \ref{c:factor-c-poly} to write $p(t)=q(t)(t-c)$ where $c \in \cl{C}$ and $q$ is a degree $n-1$ polynomial. Then by Lemma \ref{l:particular-soln} Part 2, $\dim \ker p(D)= \dim \ker q(D)+ \dim \ker (D-cI)=n$ using the induction hypothesis on $q(D)$ and base case on $(D-cI)$.\\
+By Lemma \ref{l:particular-soln} Part 3, each $g_{j,c_s}\in \ker (D-c_sI)^{n_s}\subseteq \ker p(D)$. By Part 4, they form a LID subset of size $n$, hence a basis by Corollary \ref{c:extend-LID2basis}. Finally, we have that $t^{j-1}e^{a_st}\cos b_st=\{ g_{j,c_s}(t)+g_{j,\bar{c}_s}(t)\}/2$ and $t^{j-1}e^{a_st}\sin b_st=\{ g_{j,c_s}(t)-g_{j,\bar{c}_s}(t)\}/(2i)$. Making these replacements is an invertible operation on $\ker p(D)$, so collectively these functions remain a basis for the solution space.
+\end{proof}
+%()9

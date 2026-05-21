@@ -1,0 +1,167 @@
+\chapter{Determinants}
+Determinants are less central to linear algebra and its applications than before, but we still give a systematic treatment. Our main use for them is to compute and establish the properties of eigenvalues. We start with $2 \times 2$ matrices with applications to geometry (eg area and orientation).
+Then we extend to $n \times n$ matrices, deriving its properties and developing an efficient computational algorithm. For brevity, a key section summarizes the essential properties again. A final optional section gives an axiomatic approach that characterizes the determinant from 3 of its properties.
+
+\section{Determinants of Order 2}
+\begin{defn}
+The \emph{determinant} of $A \in F^{2 \times 2}$ is the scalar $\det A:=a_{11}a_{22}-a_{12}a_{21}$. It will often be convenient to write $\det (\mb{u},\mb{v})$, where $\mb{u},\mb{v}\in F^2$ are the rows of a $2 \times 2$ matrix.
+\end{defn}
+The determinant is not a linear functional on $F^{2 \times 2}$, but has a linear property easily checked by computation.
+\begin{lem}
+The determinant is a linear function of each row if the other is held fixed: for $\mb{u},\mb{v},\mb{w}\in F^2$ and $c \in F$, we have $\det (\mb{u}+c \mb{v},\mb{w})= \det (\mb{u},\mb{w})+c \det (\mb{v},\mb{w})$ and $\det (\mb{w},\mb{u}+c \mb{v})= \det (\mb{w},\mb{u})+c \det (\mb{w},\mb{v})$.\footnote{Friedberg does it by row}
+%\[ \det \vect{\mb{u}+c \mb{v}}{\mb{w}}= \det \vect{\mb{u}}{\mb{w}}+c \det \vect{\mb{v}}{\mb{w}}, \; 
+%\det \vect{\mb{w}}{\mb{u}+c \mb{v}}= \det \vect{\mb{w}}{\mb{u}}+c \det \vect{\mb{w}}{\mb{v}}\]
+\end{lem}
+\begin{lem}
+A matrix $A \in F^{2 \times 2}$ is invertible if and only if $\det A \neq 0$, in which case
+\[ A^{-1}= \frac{1}{\det A}\tbtm{a_{22}}{-a_{21}}{-a_{12}}{a_{11}}\]
+\end{lem}
+\begin{proof}
+When $\det A \neq 0$, left or right multiplying $A$ by the proposed matrix gives $I_2$, so $A$ is invertible by Exercise \ref{e:comp1to1}.
+When $A$ is invertible, we have $\rank A=2$ (Lemma \ref{l:mat-inv-1to1}), so its columns are LID (Lemma \ref{l:rank-colspace}), so either $a_{11}\neq 0$ or $a_{21}\neq 0$. If the former, do an elementary row operation to zero out the 2,1 entry. The resulting matrix still has rank 2 (Lemma \ref{l:rank-preserve}), so the 2,2 entry is not 0 (Corollary \ref{c:rank-transpose}), ie $a_{22}-a_{12}a_{21}/a_{11}\neq 0$. This is equivalent to $\det A \neq 0$.
+\end{proof}
+We generalize both the above results to $n \times n$ matrices later. The rest of this section is optional and considers geometric aspects.
+\begin{defn}
+The \emph{orientation} of $\mb{u},\mb{v}\in \bb{R}^2$ is $\sign \det(\mb{u},\mb{v})$. When $\mb{u},\mb{v}$ are LD, it is convenient to understand the orientation to be 1. When $\mb{u},\mb{v}$ are LID, they form a \emph{right-handed} coordinate system if $\mb{u}$ can be made to point in the same direction as $\mb{v}$ by rotating CCW by some $\theta \in (0,\pi)$, else it is \emph{left-handed}.
+\end{defn}
+\begin{exer}
+When $\mb{u},\mb{v}$ are LID, they form a right-handed coordinate system if and only if their orientation is 1.
+The area of the parallelogram formed by $\mb{u},\mb{v}$ is $|\det(\mb{u},\mb{v}) |$.
+\end{exer}
+Remark: Friedberg's proof for area involves verifying the 3 properties that characterize the determinant. The linear property is quite tedious.
+
+\section{Determinants of Arbitrary Order}
+\begin{defn}%I prefer Munkres's treatment where he starts with the 3 properties that characterize the determinant']
+For a matrix $A \in F^{n \times n}$, let $\bar{A}_{jk}\in F^{(n-1) \times (n-1)}$ denote the matrix formed by deleting the jth row and kth column from $A$. Define the \emph{determinant} of $A$ recursively as 
+\[ \det A:= \begin{cases}a_{11}& \T{ when }n=1\\
+\sum_{k=1}^n(-1)^{k+1}a_{1k}\det \bar{A}_{1k}& \T{otherwise} \end{cases}\]
+In general $(-1)^{j+k}\det \bar{A}_{jk}$ is the jk \emph{cofactor} of $A$. Our formula for the determinant is the \emph{cofactor expansion} of $A$ along its 1st row.
+It is convenient to view the determinant as a function of $n$ vectors $\mb{u}_1, \ldots,\mb{u}_n \in F^n$, denoted $\det (\mb{u}_1, \ldots,\mb{u}_n)$, that form rows of a matrix.
+\end{defn}
+Since Friedberg's definition of determinant is recursive, just about every proof of facts about it use induction.
+\begin{example}
+Clearly the definition of determinant agrees with the one in the previous section when $n=2$. Show that $\det I_n=1$.
+\end{example}
+Determinants can be found more efficiently by combining cofactor expansions with elementary row operations, which Parts 1, 6, and 7 of the next lemma address. In fact, the usual way is to use operations of types 1 and 3 to turn $A$ upper triangular, then take the product along the main diagonal (Part 8). This is an $O(n^3)$ computation, whereas using cofactor expansions alone is $O(n!)$.
+\begin{lem}\label{l:det-elem}
+Let $A \in F^{n \times n}$
+\begin{itemize}
+\item The determinant is a linear function of each row with the remaining rows held fixed.
+\item If $A$ has a row of all zeros, then $\det A=0$.
+\item If the jth row of $A$ is $\mb{e}_k \in F^n$ with $n \geq 2$, then $\det A=(-1)^{j+k}\det \bar{A}_{jk}$.
+\item The determinant is the cofactor expansion along any row: for all $j=\ot{n}$ we have $\det A= \sum_{k=1}^n(-1)^{j+k}a_{jk}\det \bar{A}_{jk}$.
+\item If $A$ has 2 (or more) identical rows, then $\det A=0$.
+\item Interchanging 2 rows of $A$ causes the determinant to flip sign.
+\item The determinant is unchanged by adding a scalar multiple of 1 row onto another.
+\item If $A$ is upper triangular, then $\det A= \prod_{j=1}^na_{jj}$.
+\end{itemize}
+\end{lem}
+\begin{proof}%Rating 1/3
+Part 1: Tedious induction.
+Part 2: Say row $r$ of $A$ is $\mb{0}_n=0 \cdot \mb{0}_n$. Thus, by part 1, $\det A=0 \cdot \det A$.
+Part 3: The case $j=1$ is easy, otherwise tedious induction.
+Part 4: immediate from definition when $j=1$, else write the jth row as $\sum_{k=1}^na_{jk}\mb{e}_k$ and apply Part 1 then 3.
+Part 5: induction on $n$. The base case $n=2$ is verified straight from the definition. Fix any $n>2$, assume the result holds for $n-1$ and that rows $r$ and $s$ are identical. Pick any $j \notin \{ r,s \}$. Part 4 lets us perform the cofactor expansion along row $j$.
+Part 6: For $\mb{u}, \mb{v}\in F^n$, let $f(\mb{u}, \mb{v})$ be the determinant of $A$ after replacing its rth and sth rows by $\mb{u}$ and $\mb{v}$. By Parts 5 and 1, $0=f(\mb{u+v}, \mb{u+v})=f(\mb{u}, \mb{v})+f(\mb{v}, \mb{u})$.
+Part 7: follows by Parts 1 and 5.
+Part 8: induction on $n$. The base case $n=1$ is immediate. Fix $n>1$, Part 4 then the inductive hypothesis give $\det A=(-1)^{2n}a_{nn}\det \bar{A}_{nn}=a_{nn}\prod_{j=1}^{n-1}a_{jj}$.\\
+Parts 1 and 3 involve tedious, non enlightening, and brute force work that we now address.
+%Let $A$ have rows $\mb{a}_1, \ldots,\mb{a}_n$, $\mb{u},\mb{v}\in F^n$ and $s \in F$. If $\mb{a}_r= \mb{u}+s \mb{v}$ for some $r=\ot{n}$, and $B,C \in F^{n \times n}$ match $A$ except their rth rows are $\mb{u}$ and $\mb{v}$, respectively, then $\det A=\det B+s \det C$. handle 2 cases: $r=1$ and $r>1$, both are just computations/ arithmetic.
+For part 1, for $\mb{u},\mb{v}\in F^n$, let $f( \mb{u})$ denote the determinant of $A$ after the rth row is replaced by $\mb{u}$, and $\bar{f}_{jk}( \mb{u})$ the determinant of its jk cofactor (for convenience this notation suppresses the dependence on r).
+Fix $c \in F$. The base case $n=1$ is immediate. For $n>1$ and $r=1$ we do not need the inductive hypothesis:
+\[ f( \mb{u}+c \cdot\mb{v})= \sum_{k=1}^n(-1)^{k+1}(u_k+c \cdot v_k)\det \bar{A}_{1k}= f( \mb{u})+c \cdot f( \mb{v})\]
+When $r>1$ also, the inductive hypothesis applies to each $\bar{f}_{1k}( \mb{u}+c \cdot\mb{v})$:
+\[ f( \mb{u}+c \cdot\mb{v})= \sum_{k=1}^n(-1)^{k+1}a_{1k}\bar{f}_{1k}( \mb{u}+c \cdot\mb{v})= \sum_{k=1}^n(-1)^{k+1}a_{1k}\{ \bar{f}_{1k}( \mb{u})+c \cdot \bar{f}_{1k}( \mb{v}) \}= f( \mb{u})+c \cdot f( \mb{v})\]
+For part 3 when $j>1$, the base case $n=2$ is clear:
+\[ \det \tbtm{a}{b}{1}{0}=-b, \; \det \tbtm{a}{b}{0}{1}=a \]
+For $n>2$ and $s= \ot{n}$, the j-1 row of $\bar{A}_{1s}$ is $\mb{e}_{k-1}$ when $s<k$, $\mb{e}_k$ when $s>k$, and vanishes when $s=k$.
+Let $\tilde{A}_{js}\in F^{(n-2) \times (n-2)}$ be $A$ after dropping rows 1 and j, and columns k and s. Then by induction hypothesis and part 2
+\[ \det \bar{A}_{1k}= \begin{cases}(-1)^{j-1+k-1}\det \tilde{A}_{js}& \T{if $s<k$}\\
+0 & \T{if $s=k$}\\
+(-1)^{j-1+k}\det \tilde{A}_{js}& \T{if $s>k$}
+\end{cases}\]
+And
+\[ \det A= \sum_{s=1}^{k-1}(-1)^{1+s}a_{1s}(-1)^{j-1+k-1}\det \tilde{A}_{js}+ \sum_{s=k+1}^n(-1)^{1+s}a_{1s}(-1)^{j-1+k}\det \tilde{A}_{js} =(-1)^{j+k}\det \bar{A}_{jk}\qedhere \]
+\end{proof}
+
+\section{More properties of determinants}
+The fact that elementary row operations correspond to left multiplication by elementary matrices (Lemma \ref{l:ero}) is helpful in studying determinants.
+\begin{exer}
+For elementary matrices $E$, we have
+\[ \det E= \det E^\top = \begin{cases}-1 & \T{if type 1}\\
+c & \T{if type 2 with scalar multiplication by }$c$\\
+1 & \T{if type 3}
+\end{cases}\]
+\end{exer}
+\begin{lem}\label{l:det-mult}
+Let $A,B \in F^{n \times n}$.
+\begin{itemize}
+\item We have $\det AB= \det A \cdot \det B$.
+\item $A$ is invertible if and only if $\det A \neq 0$, in which case $\det A^{-1}=1/ \det A$.
+\item We have $\det A= \det A^\top$.
+\end{itemize}
+\end{lem}
+\begin{proof}
+If $A$ is not invertible, then $\rank A<n$ (Lemma \ref{l:mat-inv-1to1}), so the rows of $A$ are LD (Corollary \ref{c:rank-transpose}). Some row is a linear combination of the remaining (Lemma \ref{l:LD-lincomb}), and we can apply Lemma \ref{l:det-elem} parts 1 and 5  to get $\det A=0$.
+Further, if $A$ is not invertible, then neither are $AB$ (Lemma \ref{l:mat-inv-1to1}) nor $A^\top$ (Corollary \ref{c:rank-transpose}), so we have $\det AB=0$ and $\det A^\top =0$ too.\\
+If $A$ is invertible, we can write $A$ as a product of elementary matrices $A= \prod_{j=m}^1E_j$ (Corollary \ref{c:inv-prod-elem}). Lemma \ref{l:det-elem} and induction give $\det A= \prod_{j=m}^1 \det E_j$, which $\neq 0$ by the above Exercise. The same argument gives $\det AB= \prod_{j=m}^1 \det E_j \det B= \det A \cdot \det B$. From $A^\top = \prod_{j=1}^mE_j^\top$ (Exercise \ref{e:transpose-inv}) and again the above Exercise, we have $\det A^\top= \prod_{j=1}^m \det E_j= \det A$.\\
+Finally, we have $1= \det I_n= \det A \det A^{-1}$.
+\end{proof}
+Part 3 implies we can do cofactor expansions along any column, and that elementary column operations help with determinants too.
+\begin{lem}[Cramer's Rule]
+If $A \mb{x}= \mb{b}$ is a linear system with $A \in F^{n \times n}$, then it has a unique solution for all $\mb{b}\in F^n$ given by $x_k=f_k( \mb{b})/ \det A$ for $k= \ot{n}$, where $f_k( \mb{b})$ is the determinant of $A$ after replacing the kth column by $\mb{b}$.
+\end{lem}
+\begin{proof}%rating 2/2
+Existence and uniqueness follow from Lemmas \ref{l:inv-sys} and \ref{l:det-mult}. For $k= \ot{n}$, let $X_k$ denote $I_n$ with its kth column replaced by $\mb{x}$.
+Using cofactor expansion along row k, $\det X_k=x_k$.
+Also $AX_k$ is $A$ with its kth column replaced by $\mb{b}$. Using Lemma \ref{l:det-mult}, $f_k( \mb{b})= \det AX_k= \det A \cdot \det X_k= x_k \det A$.
+\end{proof}
+When the system has integer coefficients and $\det A= \pm 1$, we are guaranteed an integer solution. Cramer's rule is more of theoretical and aesthetic interest than oractical use since it requires computing n+1 determinants. This is much more computationally involved than Gaussian elimination.
+\begin{exer}\label{e:block-det}
+For $A \in F^{n \times n}$ and $B \in F^{m \times m}$, we have
+\[ \det \tbtm{A}{O}{*}{B}= \det A \cdot \det B \]
+where $O$ is any zero matrix of appropriate size and $*$ is any matrix of appropriate size that we do not care about.
+\end{exer}
+\begin{proof}
+Fix $m \in \bb{Z}^+$, do induction on n, cofactor expanding along the 1st column. The base case $n=1$ is immediate. For $n>1$, we have
+\[ \det \tbtm{A}{O}{*}{B}= \sum_{j=1}^n(-1)^{j+1}a_{j1}\det \tbtm{\bar{A}_{j1}}{O}{*}{B}= \sum_{j=1}^n(-1)^{j+1}a_{j1}\det \bar{A}_{1j} \det B= \det A \cdot \det B \]
+where the 2nd equality uses the inductive hypothesis.
+\end{proof}
+We can extend the notion of orientation from the $2 \times 2$ case. An ordered basis $\gamma$ for $\bb{R}^n$ induces a right hand coordinate system when the change of coordinate matrix from it to the standard basis has positive determinant, else it induces a left handed coordinate system.
+If $\beta$ is another ordered basis, the coordinate systems they induce have the same orientation if and only if the change of coordinate matrix from $\beta$ to $\gamma$ has positive determinant.
+
+\section{Characterizing the determinant*}
+The goal is to show how 3 of the determinant's properties we derived characterize it.
+\begin{defn}
+A function from $F^{n \times n}$ to $F$ is \emph{n-linear} if it is a linear function of each row with the remaining rows held fixed.
+It is \emph{alternating} if it vanishes whenever 2 adjacent rows are identical.
+\end{defn}
+\begin{example}
+The determinant is n-linear (Lemma \ref{l:det-elem} part 1) and perhaps the most important example. So are the zero function, and multiplying all entries along a fixed column or the main diagonal. Trace is not n-linear
+\end{example}
+Below we see that a n-linear and alternating function is already the determinant up to scalar multiples. The requirement $f(I_n)=1$ just fixes this at a particular value.
+\begin{lem}
+Let $f:F^{n \times n}\to F$ be n-linear and alternating. Then 
+\begin{itemize}
+\item Swapping 2 rows changes the sign.
+\item $f(A)=0$ if A has 2 (or more) identical rows.
+\item Adding a scalar multiple of 1 row onto another does not change the value.
+\item If $\rank A<n$, then $f(A)=0$.
+\item We have $f(E_1)=-f(I_n)$, $f(E_2)=c \cdot f(I_n)$ (for the elementary matrix corresponding to scaling a row by $c$), and $f(E_3)=f(I_n)$. In particular, if $f(I_n)=1$, then f is the determinant for all elementary matrices.
+\item If $f(I_n)=1$, then $f(AB)=f(A) \cdot f(B)$. In fact, $f(A)= \det A$.
+\end{itemize}
+\end{lem}
+\begin{proof}%rating 1/3
+This proof recycles ideas extensively from Lemma \ref{l:det-elem} and its proof. We use LPart m to refer to Part m of that Lemma.
+Part 1: We 1st prove the value changes sign from swapping 2 adjacent rows, and suppress the dependence on the others in our notation.
+Using the same proof idea as LPart 6, for $\mb{u}, \mb{v}\in F^n$, we have $0=f(\mb{u+v}, \mb{u+v})=f(\mb{u}, \mb{v})+f(\mb{v}, \mb{u})$, so $f(\mb{u}, \mb{v})=-f(\mb{v}, \mb{u})$.
+To swap 2 rows spaced $m$ positions apart requires $2m-1$ adjacent swaps.\\
+Part 2: Since swapping 2 identical rows both changes the sign but gives us the same value, that value must be 0.\\
+Part 3: For $\mb{u}, \mb{v}\in F^n$ and $c \in F$, we have $f(\mb{u}+ c \cdot \mb{v}, \mb{v})=f(\mb{u}, \mb{v})+c \cdot f(\mb{v}, \mb{v})=f(\mb{u}, \mb{v})$ by part 2.\\
+Part 4: basically same argument that proves Lemma \ref{l:det-mult} part 2. If $A$ $\rank A<n$ then the rows of $A$ are LD (Corollary \ref{c:rank-transpose}). Some row is a linear combination of the remaining (Lemma \ref{l:LD-lincomb}), and we can use part 3 and n-linearity to get $f(A)=0$.\\
+Part 5: these follow respectively from part 1, n-linearity, and part 3.\\
+Part 6: basically same argument that proves Lemma \ref{l:det-mult} part 1. if $\rank A<n$, then $\rank AB<n$ too (Lemma \ref{l:mat-inv-1to1}), so we have $f(AB)=0=f(A) \cdot f(B)$.
+If $A$ is invertible, we can write $A$ as a product of elementary matrices $A= \prod_{j=m}^1E_j$ (Corollary \ref{c:inv-prod-elem}).
+Then $f(AB)=f \big( \prod_{j=m}^1E_jB \big)= \prod_{j=m}^1f(E_j)$ by an induction arguments and using the the previous parts that describe how elementary row operations affect $f$.
+Plug in $B=I_n$ then use part 5, we have $f(A)= \prod_{j=m}^1f(E_j)= \prod_{j=m}^1 \det E_j= \det A$.
+\end{proof}
