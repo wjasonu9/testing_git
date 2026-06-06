@@ -40,6 +40,9 @@ jobs:
       - name: Setup Quarto
         uses: quarto-dev/quarto-actions/setup@v2
 
+      - name: Setup TinyTeX
+        uses: r-lib/actions/setup-tinytex@v2
+
       - name: Render Quarto Project
         run: |
           cd geom
