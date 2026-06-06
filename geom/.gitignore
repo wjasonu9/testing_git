@@ -6,8 +6,9 @@
 !*/
 
 # Allow only these file types
+!requirements.txt
 !*.qmd
-!*.html
+#!*.html
 !*.yml
 
 # Keep this ignore file tracked

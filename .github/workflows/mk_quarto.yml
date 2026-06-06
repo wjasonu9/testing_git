@@ -1,13 +1,11 @@
-#source: https://dev.to/vast-cow/publishing-a-non-docs-folder-with-github-pages-using-github-actions-5em1
-name: Deploy GitHub Pages (frontend)
+name: Deploy Quarto on GitHub (frontend)
 
 on:
   push:
     branches: ["main"]
-    # Deploy only when changes occur in frontend/ (skip condition)
     paths:
-      - "frontend/**"
-      - ".github/workflows/pages.yml"
+      - "geom/**"
+      - ".github/workflows/mk_quarto.yml" #references itself
   workflow_dispatch:
 
 permissions:
@@ -16,12 +14,13 @@ permissions:
   id-token: write
 
 concurrency:
-  group: "pages"
+  group: pages
   cancel-in-progress: true
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
+
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
@@ -30,11 +29,26 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      # Upload frontend/ as-is as the Pages site artifact
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install Python packages
+        run: pip install -r geom/requirements.txt
+
+      - name: Setup Quarto
+        uses: quarto-dev/quarto-actions/setup@v2
+
+      - name: Render Quarto Project
+        run: |
+          cd geom
+          quarto render
+
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: geom   # 👈 IMPORTANT: folder with htmlfrontend
+          path: geom
 
       - name: Deploy to GitHub Pages
         id: deployment

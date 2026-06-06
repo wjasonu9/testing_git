@@ -1,2 +1,3 @@
 .github/workflows/deploy.yml
+.github/workflows/pages.yml
 job_apply.sql
