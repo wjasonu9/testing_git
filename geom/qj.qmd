@@ -1,0 +1,22 @@
+---
+title: "Test"
+format:
+  html: default
+  pdf:
+    number-sections: true
+---
+
+::: {#thm-1}
+
+Given that $\overline{DE}$ is a diameter of $\odot O$, prove that $O$ is its midpoint, and that its length is twice the radius.
+
+:::
+
+
+::: {.theorem #thm-1}
+
+Given that $\overline{DE}$ is a diameter of $\odot O$, prove that $O$ is its midpoint, and that its length is twice the radius.
+
+:::
+
+see exercise #thm-1

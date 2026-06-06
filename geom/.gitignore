@@ -1,0 +1,16 @@
+# git clean -X -d -f #delete everything affected by .gitignore. Use -n to see what would be deleted 
+# Ignore everything in this folder
+*
+
+# But allow directories to be traversed
+!*/
+
+# Allow only these file types
+!*.qmd
+!*.html
+!*.yml
+
+# Keep this ignore file tracked
+!.gitignore
+/.quarto/
+**/*.quarto_ipynb

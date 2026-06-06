@@ -1,0 +1,10 @@
+---
+title: "Index"
+format:
+  html: default
+  pdf:
+    number-sections: true
+---
+
+
+see exercise

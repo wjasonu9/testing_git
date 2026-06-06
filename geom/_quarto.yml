@@ -1,0 +1,7 @@
+project:
+  output-dir: . 
+#  type: book
+#  type: website
+
+format:
+  html: default
