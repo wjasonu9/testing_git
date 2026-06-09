@@ -6,4 +6,5 @@ book:
   chapters:
     - index.qmd #required
     - geom.qmd
+    - geom2.qmd
     - qj.qmd

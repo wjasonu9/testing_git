@@ -6,4 +6,5 @@ website:
   sidebar:
     contents:
       - geom.qmd
+      - geom2.qmd
       - qj.qmd
