@@ -2,10 +2,10 @@ name: Deploy Quarto on GitHub (frontend)
 
 on:
   push:
-    branches: ["main"]
-    paths:
-      - "geom/**"
-      - ".github/workflows/mk_quarto.yml" #references itself
+    branches: ["master"]
+#    paths:
+#      - "geom/**"
+#      - ".github/workflows/mk_quarto.yml" #references itself
   workflow_dispatch:
 
 permissions:
