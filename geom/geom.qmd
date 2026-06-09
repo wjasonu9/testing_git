@@ -103,17 +103,24 @@ cv2.putText(img, "j", (610, 135), font, 0.6, color, 2)
 show_geometry_image(img)
 ```
 
-More text here.
-```{python, echo=F}
-#| label: fig-geometry-problem
-#| fig-cap: "Geometric configuration with congruence markings."
-#| echo: false #hide code block from output
-#| fig-width: 3.5
-#| fig-height: 2.0
-#| fig-align: center
-#| out-width: "50%"
-img = np.ones((400, 700, 3), dtype=np.uint8) * 255#Make a blank white canvas image
-```
-```{python, echo=F}
-img = np.ones((400, 700, 3), dtype=np.uint8) * 255
-```
+# 1.4 Construction
+Construction problems ask us to make precise geometric diagrams with 2 simple tools: a compass (for circles or arcs), and a straightedge (for segments). It is not a 'ruler' since we do not get to measure lengths. Similarly, we have no protractor to measure or make angles.
+Motivation: doing constructions reinforces geometric understanding.
+The only permitted operations are
+<ul><li>Given a point, draw any line through it.
+<li>Given 2 points, draw the line that passes through both.
+<li>Given a point, draw any circle centered at it.
+<li>Given a point and a segment, draw the circle centered at that point and with radius of equal length to the segment.
+<li>Given 2 points, draw the circle through 1 point such that the other is the center of the circle.</ul>
+We can draw any portion of a circle, not necessarily in its entirety.
+To start, given a segment, construct another with the same length. Given 2 segments, construct another whose length is the sum (or difference) of them.
+
+# 1.5 Proofs
+An <i>axiom</i> (or postulate) is a statement that must be regarded as fact without proof. Eg, while it feels obvious that any 2 points can be connected by a segment, it is impossible to prove, and must be simply accepted as a fact. When Euclid, the most famous geometer, stated 5 axioms in Elements:
+<ul><li>Any 2 points can be connected by a straight line segment.
+<li>Any line segment can be extended forever in both directions, forming a line.
+<li>Given any line segment, we can draw a circle with the segment as a radius (so an endpoint is the center).
+<li>All right angles are congruent. (we define these soon)
+<li>Given any line and a point not on the line, there is exactly 1 line that passes through the point and never meets the 1st line.</ul>
+He combined these axioms to prove ever more complicated mathematical statements. A <i>theorem</i> is a proven mathematical statement. A <i>conjecture</i> is a statement that is not an axiom but has not been proven false or true.
+Mathematicians since have shown that his arguments, to be fully valid, need many more axioms added to these 5. Some things even he did not realize are so 'obvious' that they could not be proved. When we reach these items, we give a 'common sense' explanation of why we accept these statements as facts, and try to distinguish them from theorems.
