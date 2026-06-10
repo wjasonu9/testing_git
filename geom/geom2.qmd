@@ -15,6 +15,14 @@ from helper import *
 # 2.1 Angles
 An <i>angle</i> is formed when 2 rays share an origin, or 2 segments share an endpoint. The common origin or endpoint is the <i>vertex</i>. The 2 rays or segments are the <i>sides</i>.
 Below, the angle formed by  $\overline{BF}$ and  $\overline{DF}$ is denoted $\angle BFD$ or $\angle DFB$, where the middle letter should denote the vertex. We can simply write $\angle F$ since it is unambiguous which angle it refers to, but $\angle E$ is ambiguous, so we should use 3 letters when E is the vertex.
+
+::: {#exr-2.1}
+
+Below, what are all the possible angles that have point E as a vertex? (Even before listing them, can we figure out how many there are?)
+
+:::
+
+
 ```{python}
 #| echo: false
 a = (200,250)
@@ -22,18 +30,19 @@ b = (600,250)
 c = (300,350)
 d = (500,150)
 e = (400,250)
-f = (700,150)
 img = np.ones((500, 800, 3), dtype=np.uint8) * 255
 cv2.line(img, a, b, color, thickness=2)
 cv2.line(img, c, d, color, thickness=2)
-cv2.line(img, b, f, color, thickness=2)
-cv2.line(img, d, f, color, thickness=2)
 for pt in [a, c]:
     cv2.circle(img, pt, radius=4, color=color, thickness=-1)
 cv2.putText(img, "A", (a[0] - 25, a[1] + 5), font, 0.6, color, 2)
 cv2.putText(img, "B", (b[0] - 10, b[1] + 25), font, 0.6, color, 2)
 cv2.putText(img, "C", (c[0] - 25, c[1] + 5), font, 0.6, color, 2)
 cv2.putText(img, "D", (d[0] - 10, d[1] - 15), font, 0.6, color, 2)
+img0=img.copy()
+f = (700,150)
+cv2.line(img, b, f, color, thickness=2)
+cv2.line(img, d, f, color, thickness=2)
 cv2.putText(img, "E", (e[0] - 20, e[1] - 15), font, 0.6, color, 2)
 cv2.putText(img, "F", (f[0] + 15, f[1] + 5), font, 0.6, color, 2)
 show_geometry_image(img)
@@ -69,10 +78,52 @@ cv2.putText(img, "D", (d[0] + 15, d[1] + 5), font, 0.6, color, 2)
 show_geometry_image(img)
 ```
 
-::: {#exr-2.2}
+# 2.3 Straight and Vertical angles
+This whole section uses this figure
+```{python}
+#| echo: false
+e = (400,250)
+img=img0.copy()
+# Center, axes (radius_x, radius_y), angle of rotation, start_angle, end_angle
+cv2.ellipse(img, e, (30, 30), 0, 135, 180, color, thickness=1)  # AEC
+cv2.ellipse(img, e, (30, 30), 0, 315, 360, color, thickness=1)  # BED
+cv2.ellipse(img, e, (30, 30), 0, 180, 315, color, thickness=1)  # AED
+cv2.line(img, (400 - 11, 250 - 26), (400 - 15, 250 - 35), color, thickness=1)  # AED tick
+cv2.ellipse(img, e, (30, 30), 0, 0, 135, color, thickness=1)  # BEC
+cv2.line(img, (400 + 11, 250 + 26), (400 + 15, 250 + 35), color, thickness=1)  # BEC tick
+cv2.putText(img, "E", (e[0] - 35, e[1] - 35), font, 0.6, color, 2)
+show_geometry_image(img)
+```
+A single line (segment) forms a <i>straight angle</i> that measures $180^\circ$. 2 angles whose measures add to $180^\circ$ are <i>supplementary</i>, and <i>complementary</i> if they add to $90^\circ$. <i>Vertical angles</i> are formed at opposite ends of 2 intersecting lines (or segments). Thus, we have 2 pairs of vertical angles at such an intersection.
+Above, $\angle AEB$ and $\angle BED$ are straight angles. $\angle AED$ and $\angle DEB$ are supplementary. $\angle DEB$ and $\angle AEC$ are vertical angles.
+
+::: {#exm-2.3}
+
+If $m \angle DEB=45^\circ$, find $m \angle AEC$.
+
+:::
+
+Using the exact same logic to solve this problem we can prove a more general result. As a warning, an example is not a proof.
+When problem solving, keep in mind that we usually cannot get the desired result in 1 step, and need to derive intermediate results that can be insightful in their own right.
+
+::: {#lem-2.3}
+
+If $\overline{AB}$ and $\overline{CD}$ intersect at point E, then $m \angle DEB=m \angle AEC$. Thus, vertical angles always have the same measure.
+
+:::
+
+::: {.proof}
+
+$\angle AEB$ and $\angle CED$ are both straight angles, so $180^\circ =m \angle AEB= m \angle AEC+m \angle CEB$ and $180^\circ =m \angle CED=m \angle CEB+m \angle DEB$, so $m \angle AEC+m \angle CEB=m \angle CEB+m \angle DEB$, so $m \angle AEC=m \angle DEB$.
+
+:::
+
+Just as with tick marks on segments, little arcs on angles mark those with equal measure.
+
+::: {#exr-2.3}
 
 Graph $y=3x/4$. Use a protractor to find the measure of the angle it forms with the $x$ axis? (It is not a whole number, so within $1^\circ$) Next, graph $y=4x/3$. Without using a protractor again, what is the measure of the angle it forms with the $x$ axis (hint: consider the angle it forms with the $y$ axis) and with $y=3x/4$?<br>
-Consider the figure below. Prove that (no matter how exactly $\overline{DE}$ intersects with $\overline{AB}$) the 2 angles $\angle AED$ and $\angle BED$ are either both right angles, or 1 is acute and the other is obtuse.
+Consider the figure above. Prove that (no matter how exactly $\overline{DE}$ intersects with $\overline{AB}$) the 2 angles $\angle AED$ and $\angle BED$ are either both right angles, or 1 is acute and the other is obtuse.
 
 :::
 

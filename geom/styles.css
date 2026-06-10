@@ -1,0 +1,15 @@
+.proof {
+  margin: 1em 0;
+}
+
+/*.proof::before {
+  content: "Proof.";
+  display: block;
+  font-style: italic;
+}*/
+
+.proof::after {
+  content: "\25A1"; /* qed box, \220E works too */
+/*  display: block;
+  text-align: right;*/
+}

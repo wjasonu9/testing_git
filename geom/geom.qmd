@@ -116,7 +116,7 @@ We can draw any portion of a circle, not necessarily in its entirety.
 To start, given a segment, construct another with the same length. Given 2 segments, construct another whose length is the sum (or difference) of them.
 
 # 1.5 Proofs
-An <i>axiom</i> (or postulate) is a statement that must be regarded as fact without proof. Eg, while it feels obvious that any 2 points can be connected by a segment, it is impossible to prove, and must be simply accepted as a fact. When Euclid, the most famous geometer, stated 5 axioms in Elements:
+An <i>axiom</i> (or postulate) is a statement that must be regarded as fact without proof. Eg, while it feels obvious that any 2 points can be connected by a segment, it is impossible to prove, and must be simply accepted as a fact. Euclid, the most famous geometer, stated 5 axioms in Elements:
 <ul><li>Any 2 points can be connected by a straight line segment.
 <li>Any line segment can be extended forever in both directions, forming a line.
 <li>Given any line segment, we can draw a circle with the segment as a radius (so an endpoint is the center).
