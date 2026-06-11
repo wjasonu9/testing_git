@@ -1,10 +1,2 @@
----
-title: "Index"
-format:
-  html: default
-  pdf:
-    number-sections: true
----
-
-
+# Home {.unnumbered}
 see exercise

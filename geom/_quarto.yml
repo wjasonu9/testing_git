@@ -1,9 +1,17 @@
 project:
   output-dir: . 
-#  type: book
+  type: book
 #  type: website
 
-format:
-  html: default
+book:
+  title: "My Notes"
+  chapters:
+    - index.qmd #required
+    - geom.qmd
+    - geom2.qmd
+    - qj.qmd
 
 number-sections: true
+
+execute:
+  freeze: auto #do not remake unchanged .qmd files

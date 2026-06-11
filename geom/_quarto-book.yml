@@ -1,10 +1,2 @@
 project:
   type: book
-
-book:
-  title: "My Notes"
-  chapters:
-    - index.qmd #required
-    - geom.qmd
-    - geom2.qmd
-    - qj.qmd

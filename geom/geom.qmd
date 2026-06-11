@@ -12,8 +12,10 @@ format:
 from helper import *
 ```
 
-# 1.2 Points, lines, planes
+## Intro
 We use special names and symbols to communicate mathematical ideas more simply.
+
+## Points, lines, planes
 A <i>point</i> has 0 <i>dimensions</i>. It is depicted by a dot and labeled by a capital letter, eg point Z below.
 A (line) <i>segment</i> is a straight path from one point to another, called its <i>endpoints</i>. Below, $\overline{ZX}$ (equivalently $\overline{XZ}$) is a segment with endpoints $Z$ and $X$. We write $ZX$ to denote its length.
 Any segment has a <i>midpoint</i> halfway between the 2 endpoints, ie <i>equidistant</i>. We use tick marks to indicate segments of equal length (pay attention to number of ticks). Below, $\overline{XY}$ has midpoint $M$, so $XM=MY$, with (single) tick marks on each. We also have $ZX=WY$, with (double) tick marks on each, but in general $ZX \neq XM$.
@@ -63,7 +65,7 @@ show_geometry_image(img)
 ```
 A <i>plane</i> has 2 dimensions. Most of our focus is on <i>planar</i> geometry. Finally, <i>space</i> has 3 dimensions.
 
-# 1.3 Circles
+## Circles
 The set of points equidistant from a point is a <i>circle</i>, with that latter point called the <i>center</i>. Below we have circle $O$, denoted $\odot O$.
 A <i>radius</i> is any segment connecting the center to any point on the circle. The radius can refer to its length too. Below, $\overline{OE}$ is a radius of $\odot O$. We can also say, eg its radius is 1 inch.
 A line can intersect a circle at 0 points (eg, line $k$ below), 1 point (in which case it is a <i>tangent</i> line or simply tangent to the circle), or 2 points (in which case it is a <i>secant</i> line), but not 3+ points. Below, line $j$ is tangent to $\odot O$ and  $\overleftrightarrow{BC}$ is a secant line.
@@ -103,7 +105,7 @@ cv2.putText(img, "j", (610, 135), font, 0.6, color, 2)
 show_geometry_image(img)
 ```
 
-# 1.4 Construction
+## Construction
 Construction problems ask us to make precise geometric diagrams with 2 simple tools: a compass (for circles or arcs), and a straightedge (for segments). It is not a 'ruler' since we do not get to measure lengths. Similarly, we have no protractor to measure or make angles.
 Motivation: doing constructions reinforces geometric understanding.
 The only permitted operations are
@@ -115,7 +117,7 @@ The only permitted operations are
 We can draw any portion of a circle, not necessarily in its entirety.
 To start, given a segment, construct another with the same length. Given 2 segments, construct another whose length is the sum (or difference) of them.
 
-# 1.5 Proofs
+## Proofs
 An <i>axiom</i> (or postulate) is a statement that must be regarded as fact without proof. Eg, while it feels obvious that any 2 points can be connected by a segment, it is impossible to prove, and must be simply accepted as a fact. Euclid, the most famous geometer, stated 5 axioms in Elements:
 <ul><li>Any 2 points can be connected by a straight line segment.
 <li>Any line segment can be extended forever in both directions, forming a line.

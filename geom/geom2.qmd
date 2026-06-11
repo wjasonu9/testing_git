@@ -12,7 +12,7 @@ format:
 from helper import *
 ```
 
-# 2.1 Angles
+## Angles intro
 An <i>angle</i> is formed when 2 rays share an origin, or 2 segments share an endpoint. The common origin or endpoint is the <i>vertex</i>. The 2 rays or segments are the <i>sides</i>.
 Below, the angle formed by  $\overline{BF}$ and  $\overline{DF}$ is denoted $\angle BFD$ or $\angle DFB$, where the middle letter should denote the vertex. We can simply write $\angle F$ since it is unambiguous which angle it refers to, but $\angle E$ is ambiguous, so we should use 3 letters when E is the vertex.
 
@@ -48,7 +48,7 @@ cv2.putText(img, "F", (f[0] + 15, f[1] + 5), font, 0.6, color, 2)
 show_geometry_image(img)
 ```
 
-# 2.2 Measuring Angles
+## Measuring Angles
 Use a <i>protractor</i> (shaped like a <i>semicircle</i>, ie half of a circle) to measure angles with an eye toward comparing them. The semicircle is split into 180 equal <i>degrees</i>, abbreviated ${}^\circ$. Hence, the whole circle is $360^\circ$. The Babylonians used base 60 and probably liked 360 since it has many factors.
 We use a 'm' before the angle to denote its measure, eg $m \angle BED=45^\circ$ above (the 'm' is commonly omitted).
 If an angle has measure $m$, it is a <i>right angle</i>, and its sides are <i>perpendicular</i>, often abbreviated $\perp$. It is <i>acute</i> if $m<90^\circ$, and <i>obtuse</i> if $90^\circ <m<180^\circ$.
@@ -81,7 +81,7 @@ img1=img.copy()
 show_geometry_image(img)
 ```
 
-# 2.3 Straight and Vertical angles
+## Straight and Vertical angles
 Unless otherwise stated, this whole section uses this figure
 ```{python}
 #| echo: false
