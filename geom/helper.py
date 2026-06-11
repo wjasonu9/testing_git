@@ -17,10 +17,11 @@ def add_tick(img, pt1, pt2, offset_px=0):
     length = np.hypot(dx, dy)
     nx, ny = int(-dy / length * 8), int(dx / length * 8)
     cv2.line(img, (mx - nx, my - ny), (mx + nx, my + ny), color, thickness=2)
-def show_geometry_image(img):
+def show_geometry_image(img,x_px=200,y_px=200):
+    # x_px, y_px: how many pixels correspond to 1 inch
     h_px, w_px, _ = img.shape
-    plt.figure(figsize=(w_px/2e2, h_px/2e2))
-    plt.imshow(img[:, :, ::-1])# Convert BGR to RGB color channels
+    plt.figure(figsize=(w_px/x_px, h_px/y_px))
+    plt.imshow(img[:, :, ::-1],aspect=x_px/y_px)# Convert BGR to RGB color channels
     plt.axis("off")
     plt.show()
     plt.close()
