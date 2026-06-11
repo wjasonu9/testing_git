@@ -57,6 +57,8 @@ Above, $\angle BED$ is acute, while $\angle AED$ is obtuse. We can also technica
 Let O be a circle's center, A,B be 2 points on $\odot$. If $\angle AOB$ cuts out proportion $p$ of the circle, then $m \angle AOB=p*360^\circ$. Common proportions are $p=1/3,1/4,1/6,1/8,1/12$, corresponding to angle measures $120^\circ, 90^\circ, 60^\circ, 45^\circ, 30^\circ$.<br>
 <i>Adjacent angles</i> share a side, and form a 'bigger' angle whose measure is the sum of them. Below, $m \angle ABD=m \angle ABC+m \angle CBD$. We frequently need to find 1 of these angles' measure given the other 2.
 ```{python}
+#| label: fig-2.2
+# fig-cap: 'figure caption'
 #| echo: false
 a = (80,110)
 b = (200,350)
@@ -75,11 +77,12 @@ cv2.putText(img, "A", (a[0] - 10, a[1] - 15), font, 0.6, color, 2)
 cv2.putText(img, "B", (b[0] - 10, b[1] + 25), font, 0.6, color, 2)
 cv2.putText(img, "C", (c[0] - 10, c[1] - 15), font, 0.6, color, 2)
 cv2.putText(img, "D", (d[0] + 15, d[1] + 5), font, 0.6, color, 2)
+img1=img.copy()
 show_geometry_image(img)
 ```
 
 # 2.3 Straight and Vertical angles
-This whole section uses this figure
+Unless otherwise stated, this whole section uses this figure
 ```{python}
 #| echo: false
 e = (400,250)
@@ -127,6 +130,16 @@ Consider the figure above. Prove that (no matter how exactly $\overline{DE}$ int
 
 :::
 
+::: {#exr-2.3.2}
+
+Below (@fig-2.2 repeated), prove that $\angle ABD$ and $\angle CBD$ are complementary.
+
+:::
+
+```{python}
+#| echo: false
+show_geometry_image(img1)
+```
 
 ```{python, echo=F}
 #| label: fig-geometry-problem

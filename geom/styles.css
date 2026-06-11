@@ -1,8 +1,8 @@
-.proof {
+/*.proof {
   margin: 1em 0;
 }
 
-/*.proof::before {
+.proof::before {
   content: "Proof.";
   display: block;
   font-style: italic;

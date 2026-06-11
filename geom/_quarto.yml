@@ -5,3 +5,5 @@ project:
 
 format:
   html: default
+
+number-sections: true
