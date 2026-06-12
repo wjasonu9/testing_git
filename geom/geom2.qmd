@@ -141,8 +141,11 @@ Below (@fig-2.2 repeated), prove that $\angle ABD$ and $\angle CBD$ are compleme
 show_geometry_image(img1)
 ```
 
-## p
-
+## Parallel lines
+2+ lines are <i>parallel</i> if they do not intersect (line segments/ rays are parallel if their line extensions are). A <i>transversal</i> is a line/ segment that cuts across 2+ parallel lines.
+Below, $\overleftrightarrow{AC}$ (line $k$) and $\overleftrightarrow{BD}$ (line $m$) are parallel. We write $\overleftrightarrow{AC}\parallel \overleftrightarrow{BD}$ or line $k \parallel m$. Note the '>' marks to indicate parallel lines. They can be omitted if they clutter the diagram. $\overline{EH}$ is a traversal of lines $k$ and $m$. For convenience, we can also indicate angle measures on diagrams, eg $m \angle CAH=x$ below.
+Recall the Parallel postulate (among Euclid's 5 axioms), which in this case says that there is a unique line passing through point B that is parallel to $\overleftrightarrow{AC}$.<br>
+<b>Axiom</b>: Given parallel lines $\overleftrightarrow{AC}$ and $\overleftrightarrow{BD}$, and a transversal $\overline{EH}$ (eg, as below), we have $m \angle HAG=m \angle ABF$.
 ```{python}
 #| echo: false
 def scale_pt(pt):
@@ -180,6 +183,19 @@ cv2.putText(img, "m", (675, 475), font, 0.6, color, 2)
 cv2.putText(img, "x", (a[0] - 10, a[1] - 10), font, 0.6, color, 2)
 show_geometry_image(img)
 ```
+
+::: {#lem-2.4}
+
+Given parallel lines $\overleftrightarrow{AC}$ and $\overleftrightarrow{BD}$, and a transversal $\overline{EH}$ (eg, as above), we have $m \angle HAG=m \angle ABF=m \angle EBD=m \angle BAC$, and $m \angle CAH=m \angle BAG=m \angle EBF=m \angle DBA$. Further, any angle in the 1st group is supplementary to any angle in the 2nd. The equal angle measures are marked as below.
+
+:::
+
+::: {.proof}
+
+By @lem-2.3, $m \angle HAG=m \angle BAC$ and $m \angle ABF=m \angle EBD$. By the axiom, $m \angle HAG=m \angle ABF$, so all 4 angles have equal measure. The same argument gives $m \angle CAH=m \angle BAG=m \angle EBF=m \angle DBA$. To see any angle in the 1st group is supplementary to any angle in the 2nd, we consider 1 representative angle per group, eg $\angle CAH$ and $\angle BAC$ clearly sum to $180^\circ$.
+
+:::
+
 ```{python}
 #| echo: false
 img=img0.copy()
@@ -191,6 +207,15 @@ cv2.line(img, (b[0] - 12, b[1] - 12), (b[0] - 24, b[1] - 24), color, thickness=1
 cv2.line(img, (b[0] + 12, b[1] + 12), (b[0] + 24, b[1] + 24), color, thickness=1)
 show_geometry_image(img)
 ```
+We now consider angle chasing problems, where we use information about some angles to deduce information about others. Angle chasing often involves building equations to solve for variables. To that end, 3 helpful tools so far (more to come) are supplementary angles, vertical angles, and parallel lines (so useful that we often introduce them).
+
+
+::: {#exm-2.4.1}
+
+Below, $m \angle CBD=x$, $m \angle BCD=y$, $m \angle BDF=3x-15$, and $m \angle DBE=3y+15$. Find $x,y$.
+
+:::
+
 ```{python}
 #| echo: false
 def scale_pt(x,y):
@@ -220,6 +245,14 @@ for lbl in list('ABCDEF'):
     cv2.putText(img, lbl, (p[0] + 20, p[1] + 20), font, 0.6, color, 2)
 show_geometry_image(img)
 ```
+There are multiple ways to find $x,y$. Taking 2 different approaches is a good way to confirm. In fact, we have 3 equations: $3x-15+3y+15=180$, $y+x+3y+15=180$, and $x+y=3x-15$. Any 2 of them are linearly independent, and lead to $x,y$.
+
+::: {#exm-2.4.3}
+
+Below, $m \angle CAE=140^\circ$, $m \angle FDG=x$, and $m \angle BDE=3x$. Find $x$.
+
+:::
+
 ```{python}
 #| echo: false
 img=img0.copy()
@@ -239,6 +272,14 @@ cv2.putText(img, 'D', (d[0] + 30, d[1] - 20), font, 0.6, color, 2)
 cv2.putText(img, 'G', (g[0] + 20, g[1] - 20), font, 0.6, color, 2)
 show_geometry_image(img)
 ```
+
+::: {#exm-2.4.3}
+
+Below, $m \angle BEG=130^\circ$. Find $m \angle GDC$. Hint: draw the line parallel to $\overleftrightarrow{AB}$ that passes through point $G$.
+In general, for 2 pairs of parallel lines (eg, as below), prove that $m \angle ABD=m \angle ACD$, and $m \angle CAB=m \angle CDB$.
+
+:::
+
 ```{python}
 #| echo: false
 img=img0.copy()
@@ -257,18 +298,8 @@ cv2.putText(img, 'D', (d[0] + 30, d[1] - 20), font, 0.6, color, 2)
 show_geometry_image(img,y_px=250)
 ```
 
-```{python, echo=F}
-#| label: fig-geometry-problem
-#| fig-cap: "Geometric configuration with congruence markings."
-#| echo: false #hide code block from output
-#| fig-width: 3.5
-#| fig-height: 2.0
-#| fig-align: center
-#| out-width: "50%"
-import cv2
-import numpy as np
-```
-```{python}
-#| echo: false
-img = np.ones((400, 700, 3), dtype=np.uint8) * 255
-```
+::: {#exr-2.4}
+
+If 2 line segments do not intersect, why are they not necessarily parallel?
+
+:::

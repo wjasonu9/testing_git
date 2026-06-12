@@ -123,6 +123,6 @@ An <i>axiom</i> (or postulate) is a statement that must be regarded as fact with
 <li>Any line segment can be extended forever in both directions, forming a line.
 <li>Given any line segment, we can draw a circle with the segment as a radius (so an endpoint is the center).
 <li>All right angles are congruent. (we define these soon)
-<li>Given any line and a point not on the line, there is exactly 1 line that passes through the point and never meets the 1st line.</ul>
+<li><i>Parallel Postulate</i>: Given any line and a point not on the line, there is exactly 1 line that passes through the point and never meets the 1st line.</ul>
 He combined these axioms to prove ever more complicated mathematical statements. A <i>theorem</i> is a proven mathematical statement. A <i>conjecture</i> is a statement that is not an axiom but has not been proven false or true.
 Mathematicians since have shown that his arguments, to be fully valid, need many more axioms added to these 5. Some things even he did not realize are so 'obvious' that they could not be proved. When we reach these items, we give a 'common sense' explanation of why we accept these statements as facts, and try to distinguish them from theorems.
