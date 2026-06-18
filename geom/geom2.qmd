@@ -57,9 +57,9 @@ Above, $\angle BED$ is acute, while $\angle AED$ is obtuse. We can also technica
 Let O be a circle's center, A,B be 2 points on $\odot$. If $\angle AOB$ cuts out proportion $p$ of the circle, then $m \angle AOB=p*360^\circ$. Common proportions are $p=1/3,1/4,1/6,1/8,1/12$, corresponding to angle measures $120^\circ, 90^\circ, 60^\circ, 45^\circ, 30^\circ$.<br>
 <i>Adjacent angles</i> share a side, and form a 'bigger' angle whose measure is the sum of them. Below, $m \angle ABD=m \angle ABC+m \angle CBD$. We frequently need to find 1 of these angles' measure given the other 2.
 ```{python}
+#| echo: false
 #| label: fig-2.2
 # fig-cap: 'figure caption'
-#| echo: false
 a = (80,110)
 b = (200,350)
 c = (320,110)
@@ -148,24 +148,24 @@ Recall the Parallel postulate (among Euclid's 5 axioms), which in this case says
 <b>Axiom</b>: Given parallel lines $\overleftrightarrow{AC}$ and $\overleftrightarrow{BD}$, and a transversal $\overline{EH}$ (eg, as below), we have $m \angle HAG=m \angle ABF$.
 ```{python}
 #| echo: false
-def scale_pt(pt):
-    return (250 + int(pt[0] * 150), 500 - int(pt[1] * 150))
-a = scale_pt((1, 2))
-b = scale_pt((0, 0))
-c = scale_pt((0, 2))
-d = scale_pt((-1, 0))
-e = scale_pt((-0.5,-1))
-f = scale_pt((1, 0))
-g = scale_pt((2, 2))
-h = scale_pt((1.5, 3))
+def scale_pt(x,y):
+    return (250 + int(x * 150), 500 - int(y * 150))
+a = scale_pt(1, 2)
+b = scale_pt(0, 0)
+c = scale_pt(0, 2)
+d = scale_pt(-1, 0)
+e = scale_pt(-0.5,-1)
+f = scale_pt(1, 0)
+g = scale_pt(2, 2)
+h = scale_pt(1.5, 3)
 img = np.ones((700, 700, 3), dtype=np.uint8) * 255
-double_arrow_line(img, scale_pt((-1.5, 2)), scale_pt((3.0, 2)))
-double_arrow_line(img, scale_pt((-1.5, 0)), scale_pt((3.0, 0)))
+double_arrow_line(img, scale_pt(-1.5, 2), scale_pt(3.0, 2))
+double_arrow_line(img, scale_pt(-1.5, 0), scale_pt(3.0, 0))
 cv2.line(img, e, h, color, thickness=2)
 # Parallel indicators (">" shapes on lines k and m), Draw a 1-pixel line segment to render only the arrowhead tip
-cv2.arrowedLine(img, scale_pt((9/4, 2.0)), scale_pt((2.26, 2.0)), color, thickness=2, tipLength=10.0)
-cv2.arrowedLine(img, scale_pt((9/4, 0.0)), scale_pt((2.26, 0.0)), color, thickness=2, tipLength=10.0)
-img0=img.copy()
+cv2.arrowedLine(img, scale_pt(9/4, 2.0), scale_pt(2.26, 2.0), color, thickness=2, tipLength=10.0)
+cv2.arrowedLine(img, scale_pt(9/4, 0.0), scale_pt(2.26, 0.0), color, thickness=2, tipLength=10.0)
+img2=img.copy()
 # Angle CAH marker (arc centered at A)
 #cv2.ellipse(img, a, (25, 25), 0, 243, 270, color, thickness=1)
 for pt in [c, d, e, f, g, h]:
@@ -198,7 +198,7 @@ By @lem-2.3, $m \angle HAG=m \angle BAC$ and $m \angle ABF=m \angle EBD$. By the
 
 ```{python}
 #| echo: false
-img=img0.copy()
+img=img2.copy()
 cv2.circle(img, a, radius=25, color=color, thickness=1)
 cv2.circle(img, b, radius=25, color=color, thickness=1)
 cv2.line(img, (a[0] - 12, a[1] - 12), (a[0] - 24, a[1] - 24), color, thickness=1)
@@ -212,7 +212,8 @@ We now consider angle chasing problems, where we use information about some angl
 
 ::: {#exm-2.4.1}
 
-Below, $m \angle CBD=x$, $m \angle BCD=y$, $m \angle BDF=3x-15$, and $m \angle DBE=3y+15$. Find $x,y$.
+Below, $m \angle CBD=x$, $m \angle BCD=y$, $m \angle BDF=3x-15$, and $m \angle DBE=3y+15$. Find $x,y$.<br>
+Variant: $m \angle CBD=x$, $m \angle BCD=x+10$, and $m \angle DBE=x^2/5-5$, find $m \angle BDF$.
 
 :::
 
@@ -301,5 +302,255 @@ show_geometry_image(img,y_px=250)
 ::: {#exr-2.4}
 
 If 2 line segments do not intersect, why are they not necessarily parallel?
+
+:::
+
+## Angles in a triangle
+A <i>triangle</i> is formed when segments connect 3 points (not collinear). The segments are the triangle's <i>sides</i>, and the points are its <i>vertices</i>.
+We write $\triangle ABC$ (sometimes just $ABC$) to denote the triangle below. Its vertices are $A,B,C$. Its sides are $\overline{AB}$, $\overline{AC}$, and $\overline{BC}$.
+
+::: {#lem-2.5}
+
+A triangle's 3 angles sum to $180^\circ$, ie $m \angle A+m \angle B+m \angle ACB=180^\circ$ below.
+
+:::
+
+This is among geometry's most used results. Try using it as an alternative to solving some of the previous problems (eg, in @exm-2.4.3, extend $\overline{EG}$ to $\overleftrightarrow{CD}$).
+
+::: {.proof}
+
+Use the parallel postulate to draw a line through point C parallel to $\overline{AB}$. Then $180^\circ =m \angle ACD+m \angle ACB+m \angle BCE$. By @lem-2.4, $m \angle ACD=m \angle A$, and $m \angle BCE=m \angle B$, so $m \angle A+m \angle ACB+m \angle B=180^\circ$ as desired.
+
+:::
+
+```{python}
+#| echo: false
+def scale_pt(x,y):
+    return (100 + int(x * 100), 700 - int(y * 100))
+img = np.ones((800, 800, 3), dtype=np.uint8) * 255
+a = scale_pt(0, 0)
+b = scale_pt(6, 0)
+c = scale_pt(4, 4)
+d = scale_pt(2, 4)
+e = scale_pt(6, 4)
+draw_path(img, a, b, c, a)
+img0=img.copy()
+double_arrow_line(img, scale_pt(-0.5, 4), scale_pt(6.5, 4), thickness=1)
+# Parallel markers
+cv2.arrowedLine(img, scale_pt(3, 0), scale_pt(3.1, 0), color, thickness=1, tipLength=2.0)
+cv2.arrowedLine(img, scale_pt(3, 4), scale_pt(3.1, 4), color, thickness=1, tipLength=2.0)
+#angle markers
+cv2.ellipse(img,c,(25,25),0,0,63,color,thickness=1)
+cv2.line(img,(c[0]+16,c[1]+12),(c[0]+24,c[1]+18), color,thickness=1)
+cv2.ellipse(img,b,(25,25),0,180,243,color,thickness=1)
+cv2.line(img,(b[0]-16,b[1]-12),(b[0]-24,b[1]-18), color,thickness=1)
+cv2.ellipse(img,c,(25,25),0,135,180,color,thickness=1)
+cv2.ellipse(img,a,(25,25),0,315,360,color,thickness=1)
+for pt in [d, e]:
+    cv2.circle(img, pt, radius=4, color=color, thickness=-1)
+for lbl in list('ABCDE'):
+    p=globals()[lbl.lower()]
+    cv2.putText(img, lbl, (p[0], p[1] - 20), font, 0.6, color, 2)
+show_geometry_image(img[200:,:,:])
+```
+
+::: {#exm-2.5}
+
+Below, $m \angle E=50^\circ$, $m \angle ECB=m \angle ADC=3x$, and $m \angle BCD=x$. Find $x$.
+
+:::
+
+```{python}
+#| echo: false
+img=img0.copy()
+d = scale_pt(2, 0)
+e = scale_pt(6, 6)
+draw_path(img,d,c,e,scale_pt(6,-0.5))
+cv2.line(img, (680,720), (680,700), color, thickness=1) #perp marker
+cv2.line(img, (680,720), (700,720), color, thickness=1)
+for lbl in list('ABDE'):
+    p=globals()[lbl.lower()]
+    cv2.putText(img, lbl, (p[0] + 20, p[1] + 20), font, 0.6, color, 2)
+cv2.putText(img, 'C', (c[0], c[1] - 20), font, 0.6, color, 2)
+show_geometry_image(img)
+```
+
+::: {#exr-2.5}
+
+If a triangle has a right angle, prove the other 2 are complementary.<br>
+In a triangle, 1 angle has twice the measure of a 2nd, and the 3rd is $54^\circ$. What is the smallest angle's measure?
+
+:::
+
+## Exterior angles
+2 sides of a triangle form an <i>interior angle</i>. Extending 1 of these sides past the vertex, we get an <i>exterior angle</i>. Below, $\angle ACB$ is an interior angle of $\triangle ABC$, and $\angle ECB$ is the corresponding exterior angle.
+
+::: {#lem-2.6}
+
+In any triangle, an interior angle and the corresponding exterior angle are supplementary. The exterior angle's measure is the sum of the measures of the other 2 interior angles (called the remote interior angles).
+Concretely (eg as below), $\angle ACB$ and $\angle ECB$ are supplementary, and $m \angle ECB=m \angle A+ \angle B$.
+
+:::
+
+::: {.proof}
+
+Clearly $m \angle ACB+m \angle ECB=180^\circ$. By @lem-2.5, $m \angle ACB+m \angle A+m \angle B=180^\circ$. Thus, $m \angle ECB=m \angle A+ \angle B$.
+
+:::
+
+```{python}
+#| echo: false
+img=img0.copy()
+e = scale_pt(6, 6)
+cv2.line(img,c,e,color,thickness=2)
+cv2.circle(img, e, radius=4, color=color, thickness=-1)
+for lbl in list('ABCE'):
+    p=globals()[lbl.lower()]
+    cv2.putText(img, lbl, (p[0], p[1] - 20), font, 0.6, color, 2)
+show_geometry_image(img)
+```
+
+::: {#exr-2.6}
+
+Given an interior angle of a triangle, either of its sides can be extended, so any interior angle has 2 exterior angles. Prove that both of these exterior angles have the same measure.<br>
+Find the sum of the measures of a triangle's 3 exterior angles.
+
+:::
+
+## Proving lines are parallel
+
+The <i>converse</i> of a statement 'if A then B' is the statement 'if B then A.' If the original statement is true, the converse is not necessarily true. So, even if it is true, it must be proven separately.
+Eg, given the statement 'if a pet is a cat, then it has 4 legs' (assume no missing limbs), its converse 'if a pet has 4 legs, then it is a cat' is false (could be a dog). We now show the converse to @lem-2.4 is true.
+
+::: {#lem-2.7}
+
+Below (left panel), if either $w=y$, $w=z$, or $x=y$, then $\overleftrightarrow{AB}\parallel \overleftrightarrow{CD}$.
+
+:::
+
+::: {.proof}
+
+Assume $x=y$, and for contradiction that $\overleftrightarrow{AB}$ intersects $\overleftrightarrow{CD}, say at point $E$, eg as below, right panel. (A full proof must also consider the case $w=y$ and $w=z$, and if point $E$ is to the right of $D$, ie 5 other cases).
+Then by @lem-2.6, $x=y+m \angle E$. Since $x=y$, this means $m \angle E=0^\circ$. But this contradicts the diagram.
+
+:::
+
+All our proofs before this have been direct proofs. Here we used a <i>proof by contradiction</i>, where, under the given conditions, assuming the opposite of the desired result leads to a contradiction (something impossible).
+
+```{python}
+#| echo: false
+img=img2.copy()
+a=(250,200)
+b=(550,200)
+c=(100,500)
+d=(400,500)
+for lbl in list('ABCD'):
+    p=globals()[lbl.lower()]
+    cv2.circle(img, p, radius=4, color=color, thickness=-1)
+    cv2.putText(img, lbl, (p[0], p[1] - 20), font, 0.6, color, 2)
+cv2.putText(img, "w", (380, 180), font, 0.6, color, 2)
+cv2.putText(img, "x", (420, 220), font, 0.6, color, 2)
+cv2.putText(img, "y", (230, 480), font, 0.6, color, 2)
+cv2.putText(img, "z", (270, 520), font, 0.6, color, 2)
+img3 = np.ones((700, 700, 3), dtype=np.uint8) * 255
+a=(550,275)
+b=(650,225)
+c=(425,500)
+d=(600,500)
+e=(100,500)
+double_arrow_line(img3, (50, 525), (680, 210))
+double_arrow_line(img3, (50, 500), (680, 500))
+double_arrow_line(img3, (425, 600), (650, 150))
+for lbl in list('ABCD'):
+    p=globals()[lbl.lower()]
+    cv2.circle(img3, p, radius=4, color=color, thickness=-1)
+    cv2.putText(img3, lbl, (p[0], p[1] - 20), font, 0.6, color, 2)
+cv2.putText(img3, 'E', (e[0], e[1] - 20), font, 0.6, color, 2)
+cv2.putText(img3, "w", (575, 225), font, 0.6, color, 2)
+cv2.putText(img3, "x", (625, 275), font, 0.6, color, 2)
+cv2.putText(img3, "y", (450, 475), font, 0.6, color, 2)
+cv2.putText(img3, "z", (500, 525), font, 0.6, color, 2)
+show_many_images(img,img3,nrows=1)
+```
+
+::: {#exr-2.7}
+
+Below, if $m \angle FAB=122^\circ$ and $m \angle ABC=m \angle CDE=30^\circ$, is $\angle BCE$ a right angle?
+
+:::
+
+```{python}
+#| echo: false
+def scale_pt(x,y):
+    return (300 + int(x * 100), 300 - int(y * 100))
+img = np.ones((600, 600, 3), dtype=np.uint8) * 255
+a=(200,300)
+b=(300,100)
+c=(300,300)
+d=(300,500)
+e=(400,300)
+f=(100,300)
+double_arrow_line(img, (50, 300), (550, 300))
+double_arrow_line(img, (300, 50), (300, 550))
+double_arrow_line(img, (100, 500), (325, 50))
+double_arrow_line(img, (500, 100), (275, 550))
+for lbl in list('ABCDEF'):
+    p=globals()[lbl.lower()]
+    cv2.putText(img, lbl, (p[0]+10, p[1] + 20), font, 0.6, color, 2)
+cv2.circle(img, f, radius=4, color=color, thickness=-1)
+cv2.ellipse(img, b, (30, 30), 0, 90, 117, color, thickness=1)
+cv2.ellipse(img, d, (30, 30), 0, 270, 297, color, thickness=1)
+show_geometry_image(img)
+```
+
+## More exercises
+
+::: {#exr-2.8.1}
+
+The hour and minute hand on a clock meet at 12:00 (noon or midnight). Find another time of day where they meet. (It will not be at a whole number of minutes or seconds, round to the nearest)
+
+:::
+
+::: {#exr-2.8.2}
+
+Given that $\overleftrightarrow{PQ}\parallel \overleftrightarrow{RS}$, $\overleftrightarrow{PQ}\perp \overleftrightarrow{TV}$, and $\overleftrightarrow{TV}$ intersects $\overleftrightarrow{PQ}$ at point $X$ and $\overleftrightarrow{RS}$ at point $Y$. Find $m \angle RYX$.
+
+:::
+
+::: {#exr-2.8.3}
+
+Below, is it possible for $m \angle CDE=x$, $m \angle DEB=x+2y$, and $m \angle EBA=y$?
+
+:::
+
+```{python}
+#| echo: false
+img = np.ones((600, 600, 3), dtype=np.uint8) * 255
+a=(200,500)
+b=(450,500)
+c=(200,100)
+d=(450,100)
+e=(300,300)
+draw_path(img,a,b,e,d,c)
+for p in [a,c]:
+    cv2.circle(img,p,radius=4,color=color,thickness=1)
+for lbl in list('ABCD'):
+    p=globals()[lbl.lower()]
+    cv2.putText(img,lbl,(p[0],p[1]+20),font,0.6,color,2)
+cv2.putText(img,'E',(e[0]-20,e[1]),font,0.6,color,2)
+cv2.arrowedLine(img, (300, 500), (310, 500), color, thickness=2, tipLength=1.0)
+cv2.arrowedLine(img, (300, 100), (310, 100), color, thickness=2, tipLength=1.0)
+show_geometry_image(img)
+```
+
+::: {#exr-2.8.4}
+
+Given a triangle with angle measures $x-2y$, $3x+5y$, and $5x-3y$, find $x$. If 1 of the angles is $10^\circ$, find all possible values of $y$.
+
+:::
+
+::: {#exr-2.8.5}
+
+$\overline{AD}$, $\overline{BE}$, and $\overline{CF}$ are concurrent at point $O$. The points are arranged clockwise around $O$ in order: A B C D E F. If $m \angle COD=m \angle DOE$, and the ratio of $m \angle COB$ and $m \angle BOF$ is $7:2$, find $m \angle COD$.
 
 :::

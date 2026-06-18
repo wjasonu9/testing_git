@@ -9,6 +9,7 @@ book:
     - index.qmd #required
     - geom.qmd
     - geom2.qmd
+    - geom3.qmd
     - qj.qmd
 
 number-sections: true

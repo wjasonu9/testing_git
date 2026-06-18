@@ -1,4 +1,5 @@
 import cv2
+import math
 import matplotlib.pyplot as plt
 import numpy as np
 
@@ -25,6 +26,26 @@ def show_geometry_image(img,x_px=200,y_px=200):
     plt.axis("off")
     plt.show()
     plt.close()
+def show_many_images(*imgs, nrows=1, x_px=200, y_px=200):
+    """Displays 2+ OpenCV images assumed to have the same dimensions
+    and physical sizing based on pixels-per-inch scaling."""
+    n=len(imgs)
+    ncols = math.ceil(n / nrows) #same int(np.ceil())
+    h_px, w_px, _ = imgs[0].shape
+    total_w_in = (w_px * ncols) / x_px
+    total_h_in = (h_px * nrows) / y_px
+    fig, axes = plt.subplots(nrows, ncols, figsize=(total_w_in, total_h_in))
+    axes_flat = axes.flatten()
+    #loop thru all of axes_flat so unneeded parts are cleanly hidden
+    for j in range(len(axes_flat)):
+        if j < len(imgs):
+            axes_flat[j].imshow(imgs[j][:, :, ::-1], aspect=x_px / y_px)
+            axes_flat[j].axis("off")
+        else:
+            axes_flat[j].axis("off")
+    plt.tight_layout()
+    plt.show()
+    plt.close()
 def get_intersection(p1, p2, p3, p4, Int=False):
     """Finds the intersection point of two lines defined by (p1, p2) and (p3, p4).
     Assumes lines are not parallel; no error handling for parallel/collinear lines."""
@@ -44,3 +65,9 @@ def draw_perp(img, pt, line_p1, line_p2, color=(0, 0, 0), thickness=1):
     perp_pt2 = (pt[0] - dy, pt[1] + dx) #another point on perpendicular line
     proj_pt = get_intersection(line_p1, line_p2, pt, perp_pt2,Int=True)
     cv2.line(img, pt, proj_pt, color, thickness)
+def draw_path(img, *pts, color=(0, 0, 0), thickness=2):
+    #Draws line segments sequentially through 2+ pts
+    if len(pts) < 2: #pts is a tuple
+        return None
+    for j in range(len(pts) - 1):
+        cv2.line(img, pts[j], pts[j + 1], color, thickness)
