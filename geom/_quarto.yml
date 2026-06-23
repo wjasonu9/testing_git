@@ -12,6 +12,9 @@ book:
     - geom3.qmd
     - qj.qmd
 
+#filters:
+#  - showids2.lua
+
 number-sections: true
 
 execute:

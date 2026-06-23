@@ -207,7 +207,7 @@ cv2.line(img, (b[0] - 12, b[1] - 12), (b[0] - 24, b[1] - 24), color, thickness=1
 cv2.line(img, (b[0] + 12, b[1] + 12), (b[0] + 24, b[1] + 24), color, thickness=1)
 show_geometry_image(img)
 ```
-We now consider angle chasing problems, where we use information about some angles to deduce information about others. Angle chasing often involves building equations to solve for variables. To that end, 3 helpful tools so far (more to come) are supplementary angles, vertical angles, and parallel lines (so useful that we often introduce them).
+We now consider angle chasing problems, where we use information about some angles to deduce information about others. Best practices for angle chasing (and problem solving in general): mark segments of the same length and angles of the same measure in diagrams. Assign variables for unknown quantities and build equations to solve for them. To that end, 3 helpful tools so far (more to come) are supplementary angles, vertical angles, and parallel lines (so useful that we often introduce them).
 
 
 ::: {#exm-2.4.1}
@@ -221,7 +221,7 @@ Variant: $m \angle CBD=x$, $m \angle BCD=x+10$, and $m \angle DBE=x^2/5-5$, find
 #| echo: false
 def scale_pt(x,y):
     return (60 + int(x * 120), 500 - int(y * 150))
-img = np.ones((720, 700, 3), dtype=np.uint8) * 255
+img = np.ones((700, 720, 3), dtype=np.uint8) * 255
 a = scale_pt(1, 2)
 b = scale_pt(4, 2)
 c = scale_pt(0, 0)
@@ -475,7 +475,7 @@ show_many_images(img,img3,nrows=1)
 
 ::: {#exr-2.7}
 
-Below, if $m \angle FAB=122^\circ$ and $m \angle ABC=m \angle CDE=30^\circ$, is $\angle BCE$ a right angle?
+Below, if $m \angle FAB=121^\circ$ and $m \angle ABC=m \angle CDE=29^\circ$, is $\angle BCE$ a right angle?
 
 :::
 

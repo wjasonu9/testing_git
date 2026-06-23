@@ -1,3 +1,8 @@
+.theorem::before {
+  content: attr(id);
+  display: block;
+}
+
 /*.proof {
   margin: 1em 0;
 }
