@@ -13,46 +13,406 @@ from helper import *
 ```
 
 ## Intro
-We use special names and symbols to communicate mathematical ideas more simply.
-
+2 figures are <i>congruent</i> if 1 can be obtained from the other by sliding, spinning, or flipping. The symbol for congruence is $\cong$. Below, $\triangle ACD \cong \triangle DBA$. We are careful to put corresponding vertices in the same order.
 ```{python}
 #| echo: false
-def scale_pt(x,y):
+def scale_p(x,y):
     return (60 + int(x * 120), 500 - int(y * 150))
 img = np.ones((720, 700, 3), dtype=np.uint8) * 255
-a = scale_pt(1, 2)
-b = scale_pt(4, 2)
-c = scale_pt(0, 0)
-d = scale_pt(3, 0)
+a = scale_p(1, 2)
+b = scale_p(4, 2)
+c = scale_p(0, 0)
+d = scale_p(3, 0)
 draw_path(img,a,b,d,a,c,d)
 cv2.putText(img, "A", (a[0], a[1] - 20), font, 0.6, color, 2)
 cv2.putText(img, "B", (b[0], b[1] - 20), font, 0.6, color, 2)
 cv2.putText(img, "C", (c[0], c[1] + 20), font, 0.6, color, 2)
 cv2.putText(img, "D", (d[0], d[1] + 20), font, 0.6, color, 2)
-cv2.line(img, (100,340), (140,360), color, thickness=2) #ticks
-cv2.line(img, (460,340), (500,360), color, thickness=2)
-cv2.line(img, (350,190), (350,210), color, thickness=2)
-cv2.line(img, (370,190), (370,210), color, thickness=2)
-cv2.line(img, (350,490), (350,510), color, thickness=2)
-cv2.line(img, (370,490), (370,510), color, thickness=2)
+cv2.line(img, (100,340), (140,360), color, thickness=1) #ticks
+cv2.line(img, (460,340), (500,360), color, thickness=1)
+cv2.line(img, (350,190), (350,210), color, thickness=1)
+cv2.line(img, (370,190), (370,210), color, thickness=1)
+cv2.line(img, (350,490), (350,510), color, thickness=1)
+cv2.line(img, (370,490), (370,510), color, thickness=1)
 cv2.ellipse(img, a, (25, 25), 0, 0, 117, color, thickness=1)
 cv2.line(img, (180,220), (180,230), color, thickness=1)
 cv2.ellipse(img, d, (25, 25), 0, 180, 297, color, thickness=1)
 cv2.line(img, (420,470), (420,480), color, thickness=1)
+imgp=img.copy()
 show_geometry_image(img)
 ```
+In general, $\triangle ABC \cong \triangle DEF$ if and only if 6 equalities hold: $AB=DE$, $BC=EF$, $CA=FD$, $m \angle A=m \angle D$, $m \angle B=m \angle E$, and $m \angle C=m \angle F$. Ie, the corresponding side lengths and angle measures are equal. Luckily we do not need to show all 6 things to conclude 2 triangles are congruent.
+Once we show 2 figures are congruent, we can carry over what what we know about 1 figure's sides and angles to the other. This logic for triangles is called 'corresponding parts of congruent triangles are congruent' (CPCTC).
+The end goal is rarely to show that 2+ triangles are congruent. Rather, congruent triangles are a powerful tool for problem solving (eg, angle chasing) and proving new results.
 
+## Congruence results
+
+<b>Axiom</b> (Side-angle-side, aka <i>SAS congruence</i>): If 2 sides of 1 triangle have equal length to 2 sides of another, and the angle formed has the same measure, then the 2 triangles are congruent.
+Ie, given triangles $\triangle ABC$ and $\triangle DEF$, if $AB=DE$, $AC=DF$, and $m \angle A=m \angle D$, then $\triangle ABC \cong \triangle DEF$.
+
+::: {#lem-3.sss}
+
+Side-side-side congruence theorem aka <i>SSS congruence</i>: If 3 sides of 1 triangle have equal length to 3 sides of another, then the 2 triangles are congruent.
+Ie, given triangles $\triangle ABC$ and $\triangle DEF$, if $AB=DE$, $AC=DF$, and $BC=EF$, then $\triangle ABC \cong \triangle DEF$.
+
+:::
+
+::: {#lem-3.asa}
+
+Angle-angle-side aka <i>AAS congruence</i>: If 2 angles of 1 triangle hav the same measures as 2 angles in another, and the side both angles share has the same length, then the 2 triangles are congruent.
+Ie, given triangles $\triangle ABC$ and $\triangle DEF$, if $AB=DE$, $m \angle A=m \angle D$, and $m \angle B=m \angle E$, then $\triangle ABC \cong \triangle DEF$.
+
+:::
+
+::: {#lem-3.aas}
+
+Angle-side-angle aka <i>ASA congruence</i>: given triangles $\triangle ABC$ and $\triangle DEF$, if $AB=DE$, $m \angle A=m \angle D$, and $m \angle C=m \angle F$, then $\triangle ABC \cong \triangle DEF$.
+
+:::
+
+::: {.proof}
+
+By @lem-2.5, if we know 2 the measures of 2 angles in a triangle, then we know the 3rd, ie $m \angle B=180^\circ -m \angle A-m \angle C=180^\circ -m \angle D-m \angle F=m \angle E$. We can now use ASA @lem-3.asa to conclude $\triangle ABC \cong \triangle DEF$.
+
+:::
+
+When using these congruence results, we should double check to match the 'correct' sides and angles. Eg, when using SAS congruence, the angles being matched from 1 triangle to another must be formed from the matching sides.
+David Hilbert placed geometry in a formal axiomatic framework. He built off of 21 axioms (instead of Euclid's 5). 1 of them is SAS congruence, which he used to prove the other congruence results we discuss (eg SSS). We do not (yet) have the tools to prove them, so give intuitive illustrations.<br>
+Given $\triangle ABC$, say $AB=5$, and either $AC=3$ and $BC=4$, $AC=3$ and $m \angle A=53^\circ$, or $m \angle A=37^\circ$ and $m \angle B=36^\circ$. 1st, draw $\overline{AB}$ to have length 5. $AC=3$ means $C$ can be anywhere on $\odot A$ with radius 3.
+If $AC=3$ and $BC=4$, then $C$ can be anywhere on $\odot A$ with radius 3, and must also be on $\odot B$ with radius 4, which narrows down the possible location of $C$ to 2 points (marked C and C' below, top left panel).
+If $AC=3$ and $m \angle A=53^\circ$, then $C$ must be on 1 of 2 possible rays with origin $A$. Together with $AC=3$, this again narrows down the possible location of $C$ to 2 points (marked C and C' below, top right panel).
+If $m \angle A=53^\circ$ and $m \angle B=37^\circ$, then $C$ must be on 1 of 2 possible rays with origin $B$. Together with $m \angle A=53^\circ$, this again narrows down the possible location of $C$ to 2 points (marked C and C' below, bottom left panel).
+Either way, it seems clear that $\triangle ABC$ and $\triangle ABC'$ have the same side lengths and angle measures, and are hence congruent (we are brushing aside some needed finesse here). This uniquely determines $\triangle ABC$ up to congruence.
 ```{python}
 #| echo: false
 img = np.ones((500, 700, 3), dtype=np.uint8) * 255
 a = (200, 250)
 b = (450, 250)
 cv2.line(img, a, b, color, thickness=2)
-cv2.circle(img, a, 150, color, thickness=1)
-cv2.circle(img, b, 200, color, thickness=1)
 cv2.putText(img, "A", (a[0] - 20, a[1]), font, 0.6, color, 2)
 cv2.putText(img, "B", (b[0] + 20, b[1]), font, 0.6, color, 2)
 cv2.putText(img, "C", (290, 110), font, 0.6, color, 2)
 cv2.putText(img, "C'", (280,400), font, 0.6, color, 2)
+img0=img.copy()
+cv2.arrowedLine(img0, a, (320, 90), color, thickness=1, tipLength=0.1)
+cv2.arrowedLine(img0, a, (320, 410), color, thickness=1, tipLength=0.1)
+img1=img0.copy()
+cv2.arrowedLine(img1, b, (250, 100), color, thickness=1, tipLength=0.1)
+cv2.arrowedLine(img1, b, (250, 400), color, thickness=1, tipLength=0.1)
+cv2.circle(img0, a, 150, color, thickness=1)
+cv2.circle(img, a, 150, color, thickness=1)
+cv2.circle(img, b, 200, color, thickness=1)
+show_many_images(img,img0,img1,nrows=2)
+```
+Recognizing 2 seemingly different situations as the same (eg, via symmetry) is a powerful simplifying tool in math.
+
+## SSA non congruence
+We give a counterexample to show why we do not have a 'SSA congruence' result. Given $\triangle ABC$, say $BC=4$, $AC=3$ and $m \angle B=37^\circ$. 1st, draw $\overline{BC}$ to have length 4. $AC=3$ means $A$ can be anywhere on $\odot V$ with radius 3.
+If $m \angle B=37^\circ$, then $A$ must be on 1 of 2 possible rays with origin $B$. Together with $AC=3$, this narrows down the possible location of $C$ to 4 points. 2 are marked A and A' below, and visually it seems clear that $\triangle ABC$ is not congruent to $\triangle ABC'$.
+```{python}
+#| echo: false
+img = np.ones((600, 600, 3), dtype=np.uint8) * 255
+c=(200,300)
+b=(400,300)
+cv2.line(img, c, b, color, thickness=2)
+cv2.circle(img, c, 150, color, thickness=1)
+cv2.arrowedLine(img, b, (160, 120), color, thickness=1, tipLength=0.1)
+cv2.arrowedLine(img, b, (160, 480), color, thickness=1, tipLength=0.1)
+cv2.circle(img, c, radius=4, color=color, thickness=-1)
+cv2.putText(img, "C", (c[0] - 20, c[1]), font, 0.6, color, 2)
+cv2.putText(img, "B", (b[0] + 20, b[1]), font, 0.6, color, 2)
+cv2.putText(img, "A", (220, 150), font, 0.6, color, 2)
+cv2.putText(img, "A'", (364,258), font, 0.6, color, 2)
 show_geometry_image(img)
+```
+Of course, for a different set of side lengths and angle measure, it is possible that each ray from point B is tangent to $\odot C$ (in which case we can uniquely determine $\triangle ABC$ up to congruence), or does not intersect $\odot C$ at all.<br>
+To <i>bisect</i> a segment or angle means to cut it in half. Eg, if $\overline{AB}$ intersects $\overline{CD}$ at point $M$ and $M$ is the midpoint of $\overline{AB}$, then $\overline{CD}$ bisects $\overline{AB}$.
+Given $\angle ABC$, then $\overline{BD}$ bisects it if $m \angle ABD=m \angle DBC$.
+$\overline{CD}$ is the <i>perpendicular bisector</i> of $\overline{AB}$ if it bisects $\overline{AB}$ and $\overline{CD}\perp \overline{AB}$.
+
+## Application 1
+
+::: {#exr-3.pgram}
+
+For the figure below, the following are equivalent.
+
+- $\triangle ABD \cong \triangle DCA$.
+- $\triangle ABE \cong \triangle DCE$ and $\triangle ACE \cong \triangle DBE$.
+- $\triangle ABE \cong \triangle DCE$.
+- $AB=CD$ and $AC=BD$.
+- $\overline{AB}\parallel \overline{CD}$ and $\overline{AC}\parallel \overline{BD}$.
+- $AB=CD$ and $\overline{AB}\parallel \overline{CD}$.
+- $m \angle ABD=m \angle ACD$ and $\overline{AB}\parallel \overline{CD}$.
+- $AE=ED$ and $BE=EC$.
+- $AE=ED$ and $\overline{AB}\parallel \overline{CD}$.
+
+By @lem-2.4 and @lem-2.7, $\overline{AB}\parallel \overline{CD}$ is equivalent to $m \angle BAD=m \angle ADC$ (so any statement about equal angle measures can substitute for any statement about parallel segments).
+
+:::
+
+```{python}
+#| echo: false
+img=imgp.copy()
+e=scale_p(2,1)
+cv2.putText(img, "E", (e[0], e[1] - 20), font, 0.6, color, 2)
+cv2.line(img, scale_p(4, 2), scale_p(0, 0), color, thickness=1)
+show_geometry_image(img)
+```
+
+## Application 2
+
+::: {#exm-3.3.3}
+
+Below, $AB=AD=7$, $DE=8$, $AE=3$, $EC=5$, and $m \angle D=m \angle BAE$. Prove that $BE=CD$ and $DF=EF$.
+
+:::
+
+```{python}
+#| echo: false
+img = np.ones((600, 600, 3), dtype=np.uint8) * 255
+a=(200,140)
+b=(560,140)
+c=(440,380)
+d=(40,460)
+e=(360,300)
+draw_path(img,a, b,c,a,d,e)
+cv2.putText(img, "A", (a[0], a[1]-20), font, 0.6, color, 2)
+cv2.putText(img, "B", (b[0], b[1]-20), font, 0.6, color, 2)
+cv2.putText(img, "C", (c[0], c[1]+20), font, 0.6, color, 2)
+cv2.putText(img, "D", (d[0], d[1]+20), font, 0.6, color, 2)
+cv2.putText(img, "E", (e[0]+20, e[1]), font, 0.6, color, 2)
+add_tick(img,a,b)
+add_tick(img,a,d)
+cv2.ellipse(img,a,(25,25),0,0,45,color,thickness=1) #angle markers
+cv2.ellipse(img,d,(25,25),0,297,333,color,thickness=1)
+show_geometry_image(img)
+```
+
+::: {#exm-3.4.4}
+
+Below, $AB=AC$ and $m \angle B=m \angle C$. Prove that $BE=CD$ and $DF=EF$.
+
+:::
+
+```{python}
+#| echo: false
+img = np.ones((600, 600, 3), dtype=np.uint8) * 255
+a=(300,100)
+b=(100,500)
+c=(500,500)
+d=(200,300)
+e=(400,300)
+draw_path(img,d,c,a,b,e)
+cv2.putText(img, "A", (a[0], a[1]-20), font, 0.6, color, 2)
+cv2.putText(img, "B", (b[0], b[1]+20), font, 0.6, color, 2)
+cv2.putText(img, "C", (c[0], c[1]+20), font, 0.6, color, 2)
+cv2.putText(img, "D", (d[0]-20, d[1]), font, 0.6, color, 2)
+cv2.putText(img, "E", (e[0]+20, e[1]), font, 0.6, color, 2)
+cv2.putText(img, "F", (300, 387), font, 0.6, color, 2)
+cv2.ellipse(img,b,(25,25),0,297,326,color,thickness=1) #angle markers
+cv2.ellipse(img,c,(25,25),0,214,243,color,thickness=1)
+show_geometry_image(img)
+```
+
+## Isosceles and equilateral triangles
+
+::: {#lem-3.6.isosc}
+
+Below, we have $AB=AC$ if and only if $m \angle B=m \angle C$, in which case the following are equivalent:
+
+- $\triangle AMB \cong \triangle AMC$.
+- $\overline{AM}$ bisects $\overline{BC}$.
+- $\overline{AM}$ bisects $\angle BAC$.
+- $\overline{AM}\perp \overline{BC}$.
+- $\overline{AM}$ is the perpendicular bisector of $\overline{BC}$.
+
+:::
+
+::: {.proof}
+
+We 1st note that $\triangle AMB \cong \triangle AMC$ implies all the other statements by CPCTC.
+If $AB=AC$, assume 1st that point $M$ is the midpoint of $\overline{BC}$. Then $BM=MC$, so $\triangle AMB \cong \triangle AMC$ by SSS @lem-3.sss. By CPCTC, $m \angle B=m \angle C$ (this does not depend on $M$ being the midpoint) and $\overline{AM}$ bisects $\angle BAC$.<br>
+Next, assume $m \angle B=m \angle C$ $\overline{AM}$ bisects $\angle BAC$, ie $m \angle BAM=m \angle CAM$, so $\triangle AMB \cong \triangle AMC$ by AAS @lem-3.aas. By CPCTC, $AB=AC$ (this does not depend on $\overline{AM}$ bisecting $\angle BAC$). This shows the equivalence of $AB=AC$ and $m \angle B=m \angle C$. Also by CPCTC, $m \angle AMB=m \angle AMC$. Since $m \angle AMB+m \angle AMC=180^\circ$, we have $m \angle AMB=m \angle AMC=90^\circ$, ie $\overline{AM}\perp \overline{BC}$.<br>
+Finally, assume $m \angle B=m \angle C$ and $\overline{AM}\perp \overline{BC}$. Then $\triangle AMB \cong \triangle AMC$ by AAS @lem-3.aas. By CPCTC, $BM=MC$, ie $\overline{AM}$ bisects $\overline{BC}$.
+
+:::
+
+A triangle where 2 sides have equal length is an <i>isosceles triangle</i>. The 2 sides of equal length are the <i>legs</i>, and the remaining side is the<i>base</i>. We just showed that a triangle is isosceles if and only if it has 2 angles with the same measure, called the <i>base angles</i>, opposite the 2 legs. The remaining angle is the <i>vertex angle</i>.
+Below, $\triangle ABC$ is an isosceles triangle. It 2 legs are $\overline{AB}$ and $\overline{AC}$. Its base is $\overline{BC}$. Its base angles are $\angle B$ and $\angle C$. Its vertex angle is $\angle BAC$.
+In general, forming the segment $\overline{AM}$ as below is useful when working with isosceles triangles.
+
+```{python}
+#| echo: false
+img = np.ones((600, 600, 3), dtype=np.uint8) * 255
+a=(300,100)
+b=(100,500)
+c=(500,500)
+m=(300,500)
+draw_path(img,a,b,c,a,m)
+cv2.putText(img, "A", (a[0], a[1]-20), font, 0.6, color, 2)
+cv2.putText(img, "B", (b[0], b[1]+20), font, 0.6, color, 2)
+cv2.putText(img, "C", (c[0], c[1]+20), font, 0.6, color, 2)
+cv2.putText(img, "M", (m[0], m[1]+20), font, 0.6, color, 2)
+cv2.line(img, (200,490), (200,510), color, thickness=1) #ticks
+cv2.line(img, (400,490), (400,510), color, thickness=1)
+for q in [-5,5]:
+    add_tick(img,a,b,offset_px=q)
+    add_tick(img,a,c,offset_px=q)
+cv2.line(img, (320,480), (300,480), color, thickness=1) #perp marker
+cv2.line(img, (320,480), (320,500), color, thickness=1)
+cv2.ellipse(img,a,(25,25),0,63,117,color,thickness=1) #angle markers
+cv2.ellipse(img,b,(25,25),0,297,360,color,thickness=1)
+cv2.line(img, (112,491), (128,479), color, thickness=1)
+cv2.ellipse(img,c,(25,25),0,180,243,color,thickness=1)
+cv2.line(img, (488,491), (472,479), color, thickness=1)
+show_geometry_image(img)
+```
+
+An <i>equilateral triangle</i> has all 3 sides of equal length. A <i>scalene triangle</i> has all 3 sides of different lengths.
+
+::: {#lem-3.6.eqtri}
+
+Given $\triangle ABC$, the following are equivalent:
+
+- $\triangle ABC$ is an equilateral triangle.
+- 2 of its angles measure $60^\circ$ (hence, so does the remaining angle).
+- $\triangle ABC$ is an isosceles triangle with vertex angle measuring $60^\circ$.
+
+:::
+
+::: {.proof}
+
+We use @lem-3.6.isosc and @lem-2.5 repeatedly. If $\triangle ABC$ is equilateral, then it is isosceles. 2 applications of @lem-3.6.isosc gives $m \angle A=m \angle B$ (with legs $\overline{BC}$ and $\overline{AC}$) and $m \angle B=m \angle C$ (with legs $\overline{AC}$ and $\overline{AB}$). By @lem-2.5, $m \angle A=m \angle B=m \angle C=60^\circ$, which shows items 2 and 3.<br>
+If 2 of its angles measure $60^\circ$ (hence, so does the remaining angle), $\triangle ABC$ is an isosceles triangle with vertex angle measuring $60^\circ$.<br>
+Finally, if $\triangle ABC$ is isosceles, without loss of generality say $\angle A$ is the vertex angle measuring $60^\circ$, and $AB=AC$. Since $m \angle B=m \angle C$, by @lem-2.5, $m \angle A=m \angle B=m \angle C=60^\circ$. But that means we may regard $\angle B$ as the vertex angle, giving $AB=BC$. Thus, $AB=AC=BC$, so $\triangle ABC$ is equilateral.
+
+:::
+
+::: {#exm-3.pb-chord}
+
+Below, given $\odot O$ with chord $\overline{AB}$ (not a diameter) and radius $\overline{OC}$, prove that $\overline{OC}\perp \overline{AB}$ if and only if $\overline{OC}$ bisects $\overline{AB}$, in which case $\overline{OC}$ is the perpendicular bisector of $\overline{AB}$.
+
+:::
+
+::: {.proof}
+
+Draw $\overline{OA}$ and $\overline{OB}$. Both are radii of $\odot O$, so $OA=OB$. $\triangle OAB$ is an isosceles triangle, so $\overline{OC}\perp \overline{AB}$ if and only if $\overline{OC}$ bisects $\overline{AB}$ by @lem3.6.isosc.
+
+:::
+
+```{python}
+#| echo: false
+img = np.ones((600, 600, 3), dtype=np.uint8) * 255
+o=(300,300)
+a=(420,140)
+b=(420,460)
+c=(500,300)
+#m=(420,300)
+cv2.circle(img, o, radius=4, color=color, thickness=-1)
+cv2.circle(img, o, radius=200, color=color, thickness=2)
+cv2.line(img, o, c, color, thickness=2)
+cv2.line(img, a, b, color, thickness=2)
+cv2.line(img, o, a, color, thickness=1)
+cv2.line(img, o, b, color, thickness=1)
+cv2.line(img, (410,220), (430,220), color, thickness=1) #tick
+cv2.line(img, (410,380), (430,380), color, thickness=1)
+cv2.line(img, (440,280), (440,300), color, thickness=1) #perp marker
+cv2.line(img, (440,280), (420,280), color, thickness=1)
+cv2.putText(img, "O", (o[0] - 20, o[1]), font, 0.6, color, 2)
+cv2.putText(img, "A", (a[0] + 20, a[1]), font, 0.6, color, 2)
+cv2.putText(img, "B", (b[0] + 20, b[1]), font, 0.6, color, 2)
+cv2.putText(img, "C", (c[0] + 20, c[1]), font, 0.6, color, 2)
+cv2.putText(img, "M", (400, 280), font, 0.6, color, 2)
+show_geometry_image(img)
+```
+
+::: {#exm-3.3.8}
+
+Below, given that $AD=DC$ and $AB=BC$, prove that $\overline{AC}\perp \overline{BD}$, and $\overline{BD}$ bisects $\overline{AC}$ (so $\overline{BD}$ is the perpendicular bisector of $\overline{AC}$), $\angle ABC$ and $\angle ADC$.
+
+:::
+
+```{python}
+#| echo: false
+img = np.ones((600, 600, 3), dtype=np.uint8) * 255
+a=(300,100)
+b=(200,400)
+c=(500,300)
+d=(500,100)
+draw_path(img,a,b,c,d,a)
+cv2.line(img, a, c, color, thickness=1)
+cv2.line(img, b, d, color, thickness=1)
+cv2.putText(img, "A", (a[0], a[1]-20), font, 0.6, color, 2)
+cv2.putText(img, "B", (b[0], b[1]+20), font, 0.6, color, 2)
+cv2.putText(img, "C", (c[0], c[1]+20), font, 0.6, color, 2)
+cv2.putText(img, "D", (d[0], d[1]-20), font, 0.6, color, 2)
+cv2.putText(img, "E", (375, 200), font, 0.6, color, 2)
+cv2.line(img, (400,90), (400,110), color, thickness=1) #ticks
+cv2.line(img, (490,200), (510,200), color, thickness=1)
+cv2.putText(img, "+", (350, 150), font, 0.6, color, 1)
+cv2.putText(img, "+", (450, 250), font, 0.6, color, 1)
+for q in [-5,5]:
+    add_tick(img,a,b,offset_px=q)
+    add_tick(img,b,c,offset_px=q)
+cv2.line(img, (428,200), (414,186), color, thickness=1) #perp marker
+cv2.line(img, (428,200), (414,214), color, thickness=1)
+cv2.ellipse(img,b,(25,25),0,288,342,color,thickness=1) #angle markers
+cv2.ellipse(img,d,(25,25),0,90,180,color,thickness=1)
+cv2.line(img, (d[0]-5,d[1]+15), (d[0]-11,d[1]+33), color, thickness=1)
+cv2.line(img, (d[0]-15,d[1]+5), (d[0]-33,d[1]+11), color, thickness=1)
+show_geometry_image(img)
+```
+
+## Construction: equilateral triangles and perpendicular bisectors
+In general, construction involves both stating an algorithm to perform a given task (using the allowed rules we previously stated), and proving the algorithm works.
+
+::: {#lem-3.7}
+
+Given that $\overline{AB}$ is a radius for both $\odot A$ and $\odot B$, and the 2 points of intersection for $\odot A$ and $\odot B$ are $C$ and $D$, then $\triangle ABC \cong \triangle ABD$ are both equilateral triangles, and $\overline{CD}$ is the perpendicular bisector of $\overline{AB}$.
+
+:::
+
+::: {.proof}
+
+As radii of $\odot A$, $AB=AC=AD$. As radii of $\odot B$, $AB=BC=BD$. Since all 5 of these sides have the same length, $\triangle ABC$ and $\triangle ABD$ are both equilateral triangles, and congruent by SSS @lem-3.sss.
+Also by SSS, $\triangle ACD \cong \triangle BCD$. By CPCTC, $\overline{CD}$ bisects $\angle ACB$. Since $\triangle ABC$ is isosceles, $\overline{CD}$ is the perpendicular bisector of $\overline{AB}$ by @lem-3.6.isosc.
+
+::: 
+
+```{python}
+#| echo: false
+img = np.ones((600, 600, 3), dtype=np.uint8) * 255
+a=(210,300)
+b=(380,300)
+c=(295,153)
+d=(295,447)
+draw_path(img,c,a,d,b,c,d,thickness=1)
+cv2.line(img, a, b, color, thickness=2)
+cv2.circle(img, a, radius=170, color=color, thickness=1)
+cv2.circle(img, b, radius=170, color=color, thickness=1)
+add_tick(img,a,c)
+add_tick(img,c,b)
+add_tick(img,b,d)
+add_tick(img,d,a)
+cv2.line(img, (315,280), (295,280), color, thickness=1) #perp marker
+cv2.line(img, (315,280), (315,300), color, thickness=1)
+cv2.putText(img, "A", (a[0]-20, a[1]), font, 0.6, color, 2)
+cv2.putText(img, "B", (b[0]+20, b[1]), font, 0.6, color, 2)
+cv2.putText(img, "C", (c[0], c[1]-20), font, 0.6, color, 2)
+cv2.putText(img, "D", (d[0], d[1]+20), font, 0.6, color, 2)
+show_geometry_image(img)
+```
+Given a segment $\overline{AB}$, we now know how to construct an equilateral triangle with $\overline{AB}$ as a side, and a perpendicular bisector for $\overline{AB}$.
+Namely, 1st draw $\odot A$ with radius $AB$, then  $\odot B$ with radius $AB$. Let $C$ and $D$ be the 2 points where $\odot A$ and $\odot B$ intersect. Draw $\overline{AC}$ and $\overline{BC}$ to form equilateral triangle $\triangle ABC$ (equivalently, $\overline{AD}$ and $\overline{BD}$ to form equilateral triangle $\triangle ABD$). Draw $\overline{CD}$ to get a perpendicular bisector of $\overline{AB}$.
+
+::: {#exr-3.7}
+
+Construct a right angle, and then a $30^\circ$ angle.<br>
+Given a segment $\overline{AB}$, prove the above construction algorithm still gives us a perpendicular bisector of $\overline{AB}$ if we draw $\odot A$ and $\odot B$ with radius $r>AB/2$.
+
+:::
+
+```{python}
+#| echo: false
+#Figure
 ```
