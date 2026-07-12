@@ -1,0 +1,814 @@
+---
+jupyter: python3
+---
+
+Pandas (Wes McKinney is BDFL) is key to the rest of our studies. It has data structures and manipulation tools to help clean and analyze data. It often goes in tandem with NumPy, SciPy, statsmodels, scikit-learn, and matplotlib. It adopts much of NumPy's idiomatic style of array-based computing, and to avoid manual <i>for</i> loops. The main difference with NumPy is that it is designed for tabular/ heterogeneous data (NumPy is best for homogeneously typed numeric arrays). Pandas's vibrant developer and user community is noteworthy too.
+
+```{python}
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+```
+
+The 1st step is to get comfortable with the 2 workhorse data structures: <i>pd.Series, pd.DataFrame</i>. The 1st is 1D, array-like, has a sequence of homogeneously typed values and an array-like index, ie the associated data labels (default: 0,1,etc). Its <i>array</i> attribute is a <i>PandasArray</i> that wraps a np array, but allows special extension data types too
+
+```{python}
+obj = pd.Series([4, 7, -5, 3]) #make a pd.Series
+obj
+obj.index
+type(obj.array)
+isinstance(obj.array,np.ndarray) #False
+```
+
+```{python}
+#make a pd.Series with index
+obj2 = pd.Series([4, 7, -5, 3], index=["c", "b", "a", "]"])
+obj2
+obj2[']'] #same obj2[3], use label or position (will be deprecated) to access values
+obj2[:3]
+obj2["]"] = 6
+obj2['q']=8 #assign to new label
+obj2[["c", "a", "]"]] #select multiple
+```
+
+pd.Series allow familiar NumPy(-like) operations (and indexing/ slicing as above, though that will be deprecated), the index-value link is preserved. NumPy ufuncs like np.exp let objects define how they should behave when the function is applied to them.
+
+```{python}
+obj2[obj2 > 0] #filter
+obj2 * 3 #scalar arithmetic
+np.exp(obj2) #result is still a pd.Series
+```
+
+Think of a pd.Series as a fixed length, ordered dict (nuance we ignore for now: the index need not be unique). It often can be used like, or made from 1
+
+```{python}
+"]" in obj2 #True, same: "]" in obj2.index
+"e" in obj2 #False
+```
+
+```{python}
+sdata = {"Ohio": 35000, "Texas": 71000, "Oregon": 16000, "Utah": 5000}
+obj3 = pd.Series(sdata)
+obj3.to_dict()==sdata #True
+#keep last occurrence per duplicate index
+pd.Series([4, 7, -5, 3], index=["c", "b", "]", "]"]).to_dict()
+```
+
+```{python}
+states = ["California", "Ohio", "Ohio", "Oregon", "Texas"]
+#labels without values in sdata become nan, accepts duplicate index
+obj4 = pd.Series(sdata, index=states)
+obj4
+```
+
+```{python}
+pd.isna(obj4) #check for missing values (handling missing data is a later topic)
+pd.notnull(obj4) #check the opposite
+obj4.isna() #instance method
+```
+
+Arithmetic automatically aligns by label. Data alignment is a later topic, for now think of it as like a join
+
+```{python}
+obj3 + obj4
+```
+
+```{python}
+qjx = pd.Series(range(6), index=list('qq]]]j'))
+jqx = pd.Series(range(6), index=list('j]]qqj'))
+qjx+jqx #len 12, gets annoying with duplicated labels
+```
+
+```{python}
+#| collapsed: true
+obj3.name is None and obj3.index.name is None #True unless assigned
+obj4.name = "population"
+obj4.index.name = "state"
+obj4 #the above are shown
+```
+
+```{python}
+obj.index = ["Bob", "Steve", "Jeff", "Ryan"] #alter the index in place
+obj
+```
+
+A <i>pd.DataFrame</i> represents a rectangular table. It has an ordered, named collection of columns (can have duplicates too), each can have its own type. It has both a row and column index. Think of it as a dictionary of <i>pd.Series</i>, all with the same index.<br>
+It can be made in many ways, most commonly from a dict of equal length iterables. Column order matches their insertion order. Here, the index is assigned automatically (as with <i>pd.Series</i>).<br>
+Aside: though a <i>pd.DataFrame</i> is 2D, it can represent higher dimensional data via hierarchical indexing. Using the commented line with id2 will make the index length 7, and error since state is length 6
+
+```{python}
+#| collapsed: true
+data = {"id": pd.Series(range(6),index=range(1,7)), #index used in frame
+        #"id2": pd.Series(range(6),index=range(2,8)), #error
+        "qjx": ']', #scalars ok if at least 1 other input is an iterable
+        "state": ["Ohio", "Ohio", "Ohio", "Nevada", "Nevada", "Nevada"],
+        "year": (2000, 2001, 2002, 2001, 2002, 2003),
+        "pop": [1.5, 1.7, 3.6, 2.4, 2.9, 3.2]}
+frame = pd.DataFrame(data)
+frame.columns #view column names
+frame
+```
+
+```{python}
+#| collapsed: true
+#when all input columns are pd.Series, the indices align, fails with duplicates
+pdata = {"Ohio": obj,"Nevada": pd.Series(obj,index=range(1,5))}
+pd.DataFrame(pdata)
+```
+
+```{python}
+pd.DataFrame(np.arange(9).reshape((3, 3)),
+  index=["a", "c", "d"],columns=["Ohio", "Ohio", "California"]) #duplicates allowed
+```
+
+When there are many rows, use <i>head()</i> or <i>tail()</i> to get the 1st/ last 5 (default)
+
+```{python}
+#| collapsed: true
+frame.head()
+frame.tail()
+obj.head() #works on pd.Series too
+```
+
+Use columns= to specify their order. If not in the dict, it will appear with nan
+
+```{python}
+#| collapsed: true
+frame2=pd.DataFrame(data, columns=["year", "state", "pop", "debt"])
+frame2 #.loc[3,'debt']
+```
+
+Retrieve a column as a <i>pd.Series</i> either by dict-like or dot attribute notation (this and tab completion of column names are a convenience. It only works for valid Python variable names that do not conflict with any other attribute/ method name. Eg, if the column name has whitespace, use dict-like to access). The index is the same and the <i>name</i> attribute is set accordingly.
+
+```{python}
+qjx=frame2["state"] #view, not a copy
+qjx.name #'state'
+frame2.state #same
+qjx[3]='Utah'
+frame2 #changes
+```
+
+```{python}
+qjx=pd.DataFrame(np.arange(9).reshape((3, 3)),
+  index=["a", "c", "d"],columns=["Ohio", "Ohio", "California"])
+qjx['Ohio']; qjx.Ohio #all occurrences selected
+```
+
+```{python}
+#Use iloc/loc to retrieve rows by position/ name (more later)
+frame2.loc[1]
+frame2.iloc[2]
+```
+
+Modify columns by assignment (type changes accordingly), eg replace all values with a scalar, or use an iterable of the same length. If using a <i>pd.Series</i>, indices are matched, where the <i>pd.DataFrame</i> may have duplicate indices, but the <i>pd.Series</i> may not
+
+```{python}
+#| collapsed: true
+frame2.debt = '16.5'
+frame2["id"] = range(6) #make new column, cannot use dot notation
+frame2["debt"] = pd.Series([-1.2, -1.5, -1.7], index=[1,3,5])
+frame2
+```
+
+```{python}
+qjx=pd.DataFrame(np.arange(9).reshape((3, 3)),
+  index=["a", "c", "d"],columns=["Ohio", "Ohio", "California"])
+qjx.Ohio=6 #both columns changed
+qjx.index=list('aad')
+qjx.Ohio=pd.Series([1,2,3],index=list('abd'))
+qjx
+```
+
+The <i>del</i> keyword can delete a column from a <i>pd.DataFrame</i> (but not a row). or entry from a <i>pd.Series</i> (recall it also deletes a key value pair from a dict, or elements/ slices from a list. However, with pd it fails with slices). Since <i>del</i> can seem arbitrary, the <i>drop()</i> method we see later is preferred
+
+```{python}
+#| collapsed: true
+frame2["eastern"] = frame2["state"] == "Ohio"
+del frame2["id"], obj[1]
+frame2
+```
+
+```{python}
+qjx=pd.DataFrame(np.arange(9).reshape((3, 3)),
+  index=["a", "a", "d"],columns=["Ohio", "Ohio", "California"])
+jqx=qjx.California.copy()
+del qjx['Ohio'] #ok, jqx['a'] fails
+qjx
+```
+
+Can also make a <i>pd.DataFrame</i> via a nested dict. Inner keys become row indices. An explicit <i>index</i> argument still takes precedence.
+
+```{python}
+#| collapsed: true
+populations = {"Ohio": {2000: 1.5, 2001: 1.7, 2002: 3.6},"Nevada": {2001: 2.4, 2002: 2.9}}
+frame3 = pd.DataFrame(populations)
+pd.DataFrame(populations, index=[2001, 2002, 2003])
+```
+
+<p><strong>Table 5.1:</strong> Possible data inputs to the DataFrame constructor</p>
+<table border="1" cellpadding="6" cellspacing="0">
+  <thead>
+    <tr><th>Type</th><th>Notes</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>2D ndarray</td><td>A matrix of data, passing optional row and column labels</td></tr>
+    <tr><td>Dictionary of arrays, lists, or tuples</td><td>Each sequence becomes a column in the DataFrame; all sequences must be the same length</td></tr>
+    <tr><td>NumPy structured/record array</td><td>Treated as the “dictionary of arrays” case</td></tr>
+    <tr><td>Dictionary of Series</td><td>Each value becomes a column; indexes from each Series are unioned together to form the result’s<br>
+    row index if no explicit index is passed</td></tr>
+    <tr><td>Dictionary of dictionaries</td><td>Each inner dictionary becomes a column; keys are unioned to form the row index as in the “dictionary of Series” case</td></tr>
+    <tr><td>List of dictionaries or Series</td><td>Each item becomes a row in the DataFrame; unions of dictionary keys or Series indexes become the DataFrame’s column labels</td></tr>
+    <tr><td>List of lists or tuples</td><td>Treated as the “2D ndarray” case</td></tr>
+    <tr><td>Another DataFrame</td><td>The DataFrame’s indexes are used unless different ones are passed</td></tr>
+    <tr><td>NumPy MaskedArray</td><td>Like the “2D ndarray” case except masked values are missing in the DataFrame result</td></tr>
+  </tbody>
+</table>
+
+A <i>pd.DataFrame</i> can be transposed, just as with np.array. If the <i>dtypes</i> are not all compatible within the new columns, values are converted to <i>object</i>, so type info can be lost
+
+```{python}
+#| collapsed: true
+frame2.transpose().dtypes #all object
+frame2.T #same convenient shorthand
+```
+
+```{python}
+#| collapsed: true
+qjx=pd.DataFrame({'q]':range(8),'j]':3.6})
+qjx.T.dtypes #all float64
+```
+
+```{python}
+frame.index.name is None and frame.columns.name is None #True unless assigned
+frame.index.name = "year"
+frame.columns.name = "state"
+frame #the above are shown
+```
+
+The <i>to_numpy</i> method gives a np.array. By default, it will pick a <i>dtype</i> that accommodates all columns.
+
+```{python}
+#| collapsed: true
+qjx.to_numpy(dtype=np.int8)#2D
+obj.to_numpy() #1D
+```
+
+Many users ignore the capabilities of indices, but since many operations yield results using them, we should understand them.<br>
+As we have seen, we can pass an iterable to the <i>index</i> argument, which is internally converted to another immutable iterable. Being immutable makes it easier to share indices between pd objects
+
+```{python}
+obj = pd.Series(np.arange(3), index=["a", "b", "c"])
+index = obj.index
+#index[1]=']' #TypeError: immutable
+index[1:]
+```
+
+```{python}
+labels = pd.Index(range(3)) #define an index
+obj2 = pd.Series([1.5, -2.5, 0], index=obj.index)
+obj2.index is obj.index #True, immutability helps here
+```
+
+A <i>pd.Index</i> behaves like a fixed-size set, eg (as we have seen) to check if it contains some label
+
+```{python}
+"Ohio" in frame3.columns and 2002 in frame3.index
+```
+
+Unlike a set, an index can have duplicates as we have seen. All their occurrences are selected, which unfortunately can complicate code since the output type depends on if the index is repeated
+
+```{python}
+#| collapsed: true
+qjx=pd.Series(range(3),index=["foo", "foo", "bar"])
+qjx['foo']
+```
+
+Common index methods for set logic<br>
+<table border="1">
+<tr><th>Method/Property</th><th>Description</th></tr>
+<tr><td>append()</td><td>Concatenate with additional Index objects,<br>producing a new Index</td></tr>
+<tr><td>difference()</td><td>Compute set difference as an Index</td></tr>
+<tr><td>intersection()</td><td>Compute set intersection</td></tr>
+<tr><td>union()</td><td>Compute set union</td></tr>
+<tr><td>isin()</td><td>Compute Boolean array indicating whether<br>each value is contained in the passed collection</td></tr>
+<tr><td>delete()</td><td>Compute new Index with element at Index i deleted</td></tr>
+<tr><td>drop()</td><td>Compute new Index by deleting passed values</td></tr>
+<tr><td>insert()</td><td>Compute new Index by inserting element at Index i</td></tr>
+<tr><td>is_monotonic</td><td>Returns True if each element is greater than or equal to<br>the previous element</td></tr>
+<tr><td>is_unique</td><td>Returns True if the Index has no duplicate values</td></tr>
+<tr><td>unique()</td><td>Compute the array of unique values in the Index</td></tr>
+</table>
+
+We now walk thru the key mechanics of interacting with pd data. The 1st is the <i>reindex()</i> method, which makes a new object with the rows rearranged accordingly, and introducing nan (or fill_value if specified) for any label not already present. The original index may not have duplicates, but the new index may.
+
+```{python}
+#| collapsed: true
+obj = pd.Series([4.5, 7.2, -5.3, 3.6], index=["d", "b", "a", "c"])
+obj2 = obj.reindex(["a", "b", "b", "d", "e"]) #ok
+obj.reindex(["a", "b", "c", "d", "e"],fill_value=6)
+```
+
+When the index has a natural ordering (eg, time series), we can forward fill missing values, ie use the last valid entry (eg index 1 is not already present, so it repeats index 0 data)
+
+```{python}
+obj3 = pd.Series(["blue", "purple", "yellow"], index=[0, 2, 4])
+obj3.reindex(np.arange(6), method="ffill") #same: method='pad'
+```
+
+For a <i>pd.DataFrame, reindex()</i> can rearrange rows, columns, or both simultaneously
+
+```{python}
+#| collapsed: true
+frame = pd.DataFrame(np.arange(9).reshape((3, 3)),
+  index=["a", "c", "d"],columns=["Ohio", "Texas", "California"])
+states = ["Texas", "Utah", "California"]
+frame.reindex(columns=states) #rearrange columns
+frame.reindex(states, axis="columns") #same
+```
+
+```{python}
+#| collapsed: true
+#if just 1 argument passed, reindex works with rows
+qjx=pd.DataFrame({'c1':obj,'c2':3.6})
+qjx.reindex(["a", "b", "c", "d", "e"])
+```
+
+Other arguments for <i>reindex()</i><br>
+<table border="1">
+<tr><th>Argument</th><th>Description</th></tr>
+<tr><td>labels</td><td>New sequence to use as an index. Can be Index instance or any other sequence-like Python data structure.<br>An Index will be used exactly as is without any copying.</td></tr>
+<tr><td>index</td><td>Use the passed sequence as the new index labels.</td></tr>
+<tr><td>columns</td><td>Use the passed sequence as the new column labels.</td></tr>
+<tr><td>axis</td><td>The axis to reindex, whether "index" (rows) or "columns". The default is "index".<br>You can alternately do reindex(index=new_labels) or reindex(columns=new_labels).</td></tr>
+<tr><td>method</td><td>Interpolation (fill) method; "ffill" fills forward,<br>while "bfill" fills backward.</td></tr>
+<tr><td>fill_value</td><td>Substitute value to use when introducing missing data by reindexing.<br>Use fill_value="missing" (the default behavior) when you want absent labels to have null values in the result.</td></tr>
+<tr><td>limit</td><td>When forward filling or backfilling, the maximum size gap (in number of elements) to fill.</td></tr>
+<tr><td>tolerance</td><td>When forward filling or backfilling, the maximum size gap (in absolute numeric distance)<br>to fill for inexact matches.</td></tr>
+<tr><td>level</td><td>Match simple Index on level of MultiIndex;<br>otherwise select subset of.</td></tr>
+<tr><td>copy</td><td>If True, always copy underlying data even if the new index is equivalent to the old index;<br>if False, do not copy the data when the indexes are equivalent.</td></tr>
+</table>
+
+<i>loc/ iloc</i> are commonly used to rearrange rows and/ or columns too, but it works only if all input values already exist.
+
+```{python}
+frame.loc[["a", "d", "c"], ["California", "Texas"]]
+```
+
+While <i>reindex(), loc, iloc, del</i> can help remove entries from an axis, using the <i>drop()</i> method is more direct. It gives a new object. The syntax is less repetitive than with <i>del</i>. The arguments <i>labels, axis, index, columns</i> are interpreted just as in <i>reindex()</i>
+
+```{python}
+#| collapsed: true
+obj = pd.Series(range(5), index=["a", "c", "c", "d", "e"])
+new_obj = obj.drop("c")
+obj.drop(["d", "c"])
+```
+
+```{python}
+qjx=obj.copy() #similar operation, need to call qjx multiple times
+del qjx['d'], qjx['a']
+qjx
+```
+
+```{python}
+#| collapsed: true
+frame.drop(index=["d", "a"]) #same frame.drop(["d", "a"])
+frame.drop(columns=["Ohio"])
+frame.drop("Ohio", axis=1) #same, or axis="columns"
+```
+
+```{python}
+qjx=pd.DataFrame(np.arange(9).reshape((3, 3)),
+  index=["a", "a", "d"],columns=["Ohio", "Ohio", "California"])
+qjx.drop(index="a",columns="Ohio") #removes all duplicates
+```
+
+Recall that indexing for <i>pd.Series</i> works just as with np.array, except we can also use the labels (using integer positions without <i>iloc</i> will be deprecated). Even when selecting by labels, <i>loc</i> (works exclusively with labels, while <i>iloc</i> works exclusively with positions) is preferred since the behavior of [] by itself depends on whether the labels are themselves integers.<br>
+A common beginner error is to call <i>loc/iloc</i> like functions rather than using [] notation
+
+```{python}
+obj1 = pd.Series([1, 2, 3], index=[2, 0, 1])
+obj2 = pd.Series([1, 2, 3], index=["a", "b", "c"])
+obj1[[0, 1, 2]] #by label
+obj2[[0, 1, 2]] #by position
+obj2.loc[["b", "a", "d"]]
+obj1.iloc[[0, 1, 2]] #differs from obj1.loc[[0, 1, 2]]
+```
+
+You can slice with labels, beware the right endpoint is inclusive (including in the case of integers)
+
+```{python}
+obj2.loc["b":"c"] = 5
+obj2
+```
+
+Indexing with a <i>pd.DataFrame</i> retrieves 1+ columns, though you cannot use the position. Slicing and selection with booleans work on rows
+
+```{python}
+frame["Ohio"]
+#frame[1] #KeyError
+frame[["Ohio", "Texas"]]
+frame[1:]
+frame[frame['Ohio']<6]
+```
+
+```{python}
+frame < 6 #pd.DataFrame of booleans
+#frame[frame < 5] = 0 #replace where True
+frame[frame > 3]=2*frame #double the values >3 via index/ column matching
+```
+
+```{python}
+qjx = pd.DataFrame(np.arange(9).reshape((3, 3)),
+  index=["c", "a", "d"],columns=["Ohio", "California", "Texas"])
+qjx[qjx>3]=frame #another example of replacement by index/ column matching
+qjx
+```
+
+Selecting a single row via <i>loc/iloc</i> (but not the above ways) gives a <i>pd.Series</i> whose index has the column labels, the <i>take()</i> method is an alternative to <i>iloc</i>, but it cannot handle slicing
+
+```{python}
+frame[frame['Ohio']==6] #pd.DataFrame with 1 row
+frame.loc["d"] #pd.Series
+frame2.loc[3] #even if not all types are the same (becomes 'object')
+frame.loc[["d"]] #pd.DataFrame with 1 row
+frame.loc[["d", "a"]] #select multiple rows by label
+frame.loc['d',['Ohio','California']] #combine row and column selection
+frame.loc['d',:'Texas'] #use a slice
+```
+
+```{python}
+#same things with iloc
+frame[frame['Ohio']==6] #pd.DataFrame with 1 row
+frame.iloc[2] #pd.Series
+frame2.iloc[3] #even if not all types are the same (becomes 'object')
+frame.iloc[[2]] #pd.DataFrame with 1 row
+frame.iloc[[2,0]] #select multiple rows by label
+frame.iloc[2,[0,2]] #combine row and column selection
+frame.iloc[2,:2] #use a slice
+```
+
+```{python}
+#booleans can be used in loc but not iloc
+frame.loc[frame['Ohio']<6,:'Texas']
+#frame.iloc[frame['Ohio']<6,:2] #ValueError
+frame.iloc[:,2:][frame['Ohio']<6] #same with iloc
+```
+
+```{python}
+#loc gets all occurrences of duplicates
+qjx=pd.DataFrame(np.arange(9).reshape((3, 3)),
+  index=["a", "a", "d"],columns=["Ohio", "Ohio", "California"])
+qjx.loc['a']
+qjx.iloc[1]
+qjx.loc['a','Ohio'] #2x2
+```
+
+```{python}
+qjx=frame['Ohio']
+qjx.iloc[[2,1]]==qjx.take([2,1]) #all True
+frame.iloc[[2,1]]==frame.take([2,1]) #all True
+frame.iloc[:,[2,1]]==frame.take([2,1],axis=1) #all True
+frame.iloc[[-1,1]]==frame.take([-1,1]) #all True, can handle negative indices
+```
+
+<i>at/iat</i> are special cases of <i>loc/iloc</i> for accessing a single entry, but are faster
+
+```{python}
+frame.at['d','Ohio']==frame.loc['d','Ohio'] #True
+qjx.at['a','Ohio'] #2x2, iat guarantees a scalar
+```
+
+```{python}
+obj = pd.Series([1, 2, 3])
+obj1 = pd.Series([1, 2, 3], index=[2, 0, 1])
+obj2 = pd.Series([1, 2, 3], index=["a", "b", "c"])
+#obj[-1] #KeyError: too much ambiguity, same with obj1[-1]
+obj.iloc[-1] #another reason to prefer loc/iloc
+obj2[-1] #no ambiguity
+obj1[1:-1] #slicing is ok since always integer oriented
+```
+
+```{python}
+qjx=frame.copy()
+qjx.loc[:, "Utah"] = 6 #make new column
+qjx.iloc[2] = 8
+qjx.loc[qjx["Ohio"]>6] = 6
+```
+
+```{python}
+qjx=pd.DataFrame(np.arange(9).reshape((3, 3)),
+  index=["a", "a", "d"],columns=["Ohio", "Ohio", "California"])
+qjx['Ohio']>6 #3x2 boolean, qjx[qjx['Ohio']>6] fails
+```
+
+```{python}
+#Beginners often try to chain selections when assigning
+qjx.loc[qjx.Texas == 1]["Texas"] = 6 #SettingWithCopyWarning
+qjx #unchanged
+qjx.loc[qjx.Texas == 1,"Texas"] = 6 #ok with a single loc operation
+```
+
+For most operations involving multiple pd objects (eg, addition), the index of the result is the union of the input indices. Missing values propagate: the result at an index is nan if any input lacks that index or has nan there. With a <i>pd.DataFrame</i>, the alignment occurs on both rows and columns
+
+```{python}
+s1 = pd.Series([7.3, -2.5, 3.4, 1.5], index=["a", "c", "d", "e"])
+s2 = pd.Series([-2.1, 3.6, -1.5, 4, 3.1] ,index=["a", "c", "e", "f", "g"])
+s1+s2
+```
+
+```{python}
+df1 = pd.DataFrame(np.arange(9.).reshape((3, 3)), columns=list("bcd"),
+                   index=["Ohio", "Texas", "Colorado"])
+df2 = pd.DataFrame(np.arange(12.).reshape((4, 3)), columns=list("bde"),
+                   index=["Utah", "Ohio", "Texas", "Oregon"])
+df1+df2
+```
+
+If you want to use a <i>fill_value</i> in place of nan, use the <i>add()</i> method. There is also <i>radd()</i> to add in the reverse order. This is important, eg in `1+df1` where the int class does not know how to add a pd object. Also, which object comes 1st matters for other arithmetic operations, eg <i>div(),rdiv()</i>
+
+```{python}
+df1 = pd.DataFrame(np.arange(12.).reshape((3, 4)),columns=list("abcd"))
+df2 = pd.DataFrame(np.arange(20.).reshape((4, 5)),columns=list("abcde"))
+df2.loc[1, "b"] = np.nan
+df1+df2
+df1.add(df2, fill_value=0)
+df1.rdiv(1) #same 1/df1
+```
+
+<table>
+<tr><th>Method</th>
+<th>Description</th></tr>
+<tr><td>add, radd</td>
+<td>Methods for addition (+)</td></tr>
+<tr><td>sub, rsub</td>
+<td>Methods for subtraction (-)</td></tr>
+<tr><td>div, rdiv</td>
+<td>Methods for division (/)</td></tr>
+<tr><td>floordiv, rfloordiv</td>
+<td>Methods for floor division (//)</td></tr>
+<tr><td>mul, rmul</td>
+<td>Methods for multiplication (*)</td></tr>
+<tr><td>pow, rpow</td>
+<td>Methods for exponentiation (**)</td></tr>
+</table>
+
+Broadcasting occurs in pd just as in np. An operation between a 2D object and a 1D object is performed per row of the former. In pd, it matches the <i>pd.Series</i> index to the <i>pd.DataFrame</i> columns (taking the union as before), and broadcasts down the rows. To match on the <i>pd.DataFrame</i> index and broadcast across columns, use an explicit arithmetic method with `axis='index'`
+
+```{python}
+arr = np.arange(12.).reshape((3, 4))
+arr - arr[0]
+```
+
+```{python}
+frame = pd.DataFrame(np.arange(12.).reshape((4, 3)),columns=list("bde"),
+                     index=["Utah", "Ohio", "Texas", "Oregon"])
+series = frame.iloc[0]
+frame-series
+```
+
+```{python}
+series2 = pd.Series(np.arange(3), index=["b", "e", "f"])
+frame + series2
+```
+
+```{python}
+series3 = frame["d"]
+frame.sub(series3, axis="index") #match by frame's index, broadcast across columns
+```
+
+```{python}
+np.abs(frame) #np ufuncs work on pd.DataFrames
+frame.abs() #same: pd has some ufuncs built in
+def f1(x): #intended for a 1D array
+    return x.max() - x.min()
+frame.apply(f1) #applied to each column
+frame.apply(f1, axis=1) #applied to each row
+def f2(x): #the function to apply need not be restricted to scalar return value
+    return pd.Series([x.min(), x.max()], index=["min", "max"])
+frame.apply(f2)
+```
+
+```{python}
+#for functions that accept and return a scalar, use map instead of apply
+def my_format(x):
+    return f"{x:.2f}"
+frame.map(my_format)
+frame["e"].map(my_format)
+```
+
+```{python}
+obj = pd.Series(np.arange(4), index=["d", "a", "b", "c"])
+obj.sort_index() #sort alphabetically by index
+frame = pd.DataFrame(np.arange(8).reshape((2, 4)),index=["three", "one"],
+                     columns=["d", "a", "b", "c"])
+frame.sort_index()
+frame.sort_index(axis="columns") #rearrange columns alphabetically
+frame.sort_index(axis="columns", ascending=False) #reverse alphabetically
+```
+
+```{python}
+obj = pd.Series([4, np.nan, 7, np.nan, -3, 2])
+obj.sort_values() #index rearranged, nan appears last (regardless of ascending)
+obj.sort_values(na_position="first")
+```
+
+```{python}
+frame = pd.DataFrame({"b": [4, 7, -3, 2,np.nan,np.nan], "a": [6, 8, 6, 8,6,np.nan]})
+frame.sort_values("b") #sort by column 'b'
+frame.sort_values(["a", "b"]) #by 'a' then 'b'
+```
+
+```{python}
+obj = pd.Series([7, -5, 7, 4, 2, 0, 4,np.nan])
+obj.rank() #1=smallest, mean rank for ties, nan left alone
+obj.rank(method="first") #break ties by order in data
+obj.rank(ascending=False) #1=largest
+frame = pd.DataFrame({"b": [4.3, 7, -3, 2], "a": [0, 1, 0, 1],
+                      "c": [-2, 5, 8, -2.5]})
+frame.rank(axis="columns") #get ranks per row
+```
+
+tie breaking methods
+<table>
+<tr><th>Method</th><th>Description</th></tr>
+<tr><td>"average"</td><td>Default: assign the average rank to each entry in the equal group</td></tr>
+<tr><td>"min"</td><td>Use the minimum rank for the whole group</td></tr>
+<tr><td>"max"</td><td>Use the maximum rank for the whole group</td></tr>
+<tr><td>"first"</td><td>Assign ranks in the order the values appear in the data</td></tr>
+<tr><td>"dense"</td><td>Like method="min", but ranks always increase by 1 between groups<br> rather than the number of equal elements in a group</td></tr>
+</table>
+
+```{python}
+#example with index having duplicates
+obj = pd.Series(np.arange(5), index=["a", "a", "b", "b", "c"])
+obj.index.is_unique #check if index has no duplicates
+obj["a"] #type pd.Series
+obj["c"] #type np.int64
+```
+
+```{python}
+']' in obj.index
+```
+
+```{python}
+obj.to_dict()
+```
+
+```{python}
+df = pd.DataFrame(np.random.standard_normal((5, 3)),
+                  index=["a", "a", "b", "b", "c"])
+df.loc["b"] #type pd.DataFrame
+df.loc["c"] #type pd.Series
+```
+
+pd has many methods that do reductions or find summmary stats. These extract 1 value from a <i>pd.Series</i>, or per row/ column of a <i>pd.DataFrame</i>. Compared with np counterparts, they have built-in handling for nan and aggregate per column by default (np flattens by default). If all entries are nan, <i>sum()</i> returns 0, but <i>mean()</i> returns nan (like R)
+
+```{python}
+df = pd.DataFrame([[1.4, np.nan], [7.1, -4.5],[np.nan, np.nan], [0.75, -1.3]],
+                  index=["a", "b", "c", "d"],columns=["one", "two"])
+df.sum() #pd.Series of column sums, nan ignored
+qjx=df.to_numpy()
+qjx.sum() #sum of all entries
+df.sum(axis=1) #same axis="columns"
+df.sum(skipna=False) #make nan propagate as in np
+df.mean(axis=1) #still nan at index 'c'
+df.idxmax() #index of max per column
+```
+
+Even when skipna=True, <i>cumsum()</i> leaves nan in place (the cumsum up to a nan is nan, but subsequent cumsums ignore that nan)
+
+```{python}
+df.cumsum()
+```
+
+```{python}
+df.describe() #get multiple summary stats
+obj = pd.Series(["a", "a", "b", "c"] * 4)
+obj.describe() #works with object data too
+```
+
+other summary methods
+<table>
+<tr><th>Method</th><th>Description</th></tr>
+<tr><td>count</td>
+<td>Number of non-NA values</td></tr>
+<tr><td>describe</td>
+<td>Compute set of summary statistics</td></tr>
+<tr><td>min, max</td>
+<td>Compute minimum and maximum values</td></tr>
+<tr><td>argmin, argmax</td>
+<td>Compute index locations (integers) at which minimum or maximum value is obtained, respectively; not available on DataFrame objects</td></tr>
+<tr><td>idxmin, idxmax</td>
+<td>Compute index labels at which minimum or maximum value is obtained, respectively</td></tr>
+<tr><td>quantile</td>
+<td>Compute sample quantile ranging from 0 to 1 (default: 0.5)</td></tr>
+<tr><td>sum</td>
+<td>Sum of values</td></tr>
+<tr><td>mean</td>
+<td>Mean of values</td></tr>
+<tr><td>median</td>
+<td>Arithmetic median (50% quantile) of values</td></tr>
+<tr><td>mad</td>
+<td>Mean absolute deviation from mean value</td></tr>
+<tr><td>prod</td>
+<td>Product of all values</td></tr>
+<tr><td>var</td>
+<td>Sample variance of values</td></tr>
+<tr><td>std</td>
+<td>Sample standard deviation of values</td></tr>
+<tr><td>skew</td>
+<td>Sample skewness (third moment) of values</td></tr>
+<tr><td>kurt</td>
+<td>Sample kurtosis (fourth moment) of values</td></tr>
+<tr><td>cumsum</td>
+<td>Cumulative sum of values</td></tr>
+<tr><td>cummin, cummax</td>
+<td>Cumulative minimum or maximum of values, respectively</td></tr>
+<tr><td>cumprod</td>
+<td>Cumulative product of values</td></tr>
+<tr><td>diff</td>
+<td>Compute first arithmetic difference (useful for time series)</td></tr>
+<tr><td>pct_change</td>
+<td>Compute percent changes</td></tr>
+</table>
+
+```{python}
+price = pd.read_pickle("https://github.com/wesm/pydata-book/raw/refs/heads/3rd-edition/examples/yahoo_price.pkl")
+volume = pd.read_pickle("https://github.com/wesm/pydata-book/raw/refs/heads/3rd-edition/examples/yahoo_volume.pkl")
+price.head() #AAPL GOOG IBM MSFT from 20100104 to 20161021
+price.index[[0,-1]]==volume.index[[0,-1]] #length 2 array
+volume.head() #same 4 stocks and date range
+```
+
+```{python}
+returns = price.pct_change() #per column s, compute (s[j]-s[j-1])/s[j-1] where [] means iloc
+qjx=price.head().copy()
+qjx.index=[0,2,3,4,5]
+qjx.pct_change() #index ignored
+```
+
+```{python}
+returns["MSFT"].corr(returns["IBM"]) #correlation np.float64
+returns["MSFT"].cov(returns["IBM"]) #covariance
+returns.corr() #pairwise correlations between columns
+returns.cov() #pairwise covariances between columns
+returns.corrwith(returns["IBM"]) #pairwise correlations between columns and IBM
+returns.corrwith(volume) #pairwise correlations between columns with same name
+returns.corrwith(volume,axis=1) #pairwise correlations between rows with same index
+```
+
+```{python}
+obj = pd.Series(["c", "a", "d", "a", None, None, "b", "c", "c"])
+obj.unique() #np.array, values in order they appear, None appears once
+obj.unique().sort() #often together
+qjx = pd.Series([8,6, None]*2)
+uniques = qjx.unique() #None -> np.nan
+```
+
+The <i>value_counts()</i> method counts the \# of appearances of each unique value. By default it sorts in descending order of frequency (use <i>sort=False</i> to keep in original order of appearance), and drops missing values before counting
+
+```{python}
+obj.value_counts()
+obj.value_counts(sort=False,dropna=False)
+```
+
+```{python}
+mask = obj.isin(["b", "c"]) #vectorized membership check
+obj[mask] #useful for filtering
+```
+
+```{python}
+to_match = pd.Series(["c", "a", "b", "b", "c", "a"])
+idx = pd.Index(["c", "b", "a"])
+#jth value is k such that idx[k]=target[j], or -1 if target[j] is not in idx
+idx.get_indexer(obj) #np.array
+```
+
+summary
+<table border="1">
+<tr><th>Method</th><th>Description</th></tr>
+<tr><td>isin</td>
+<td>Compute a Boolean array indicating whether each Series or DataFrame value is contained<br>in the passed sequence of values</td></tr>
+<tr><td>get_indexer</td>
+<td>Compute integer indices for each value in an array into another array of distinct values;<br>helpful for data alignment and join-type operations</td></tr>
+<tr><td>unique</td>
+<td>Compute an array of unique values in a Series, returned in the order observed</td></tr>
+<tr><td>value_counts</td>
+<td>Return a Series containing unique values as its index and frequencies as its values,<br>ordered count in descending order</td></tr>
+</table>
+
+```{python}
+#| colab: {background_save: true}
+data = pd.DataFrame({"Qu1": [1, 3, 4, 3, 4],
+                     "Qu2": [2, 3, 1, 2, 3],
+                     "Qu3": [1, 5, 2, 4, 4]})
+data["Qu1"].value_counts().sort_index() #counts for 1 column
+data.apply(pd.value_counts).fillna(0) #counts for all columns, fillna replaces nan
+```
+
+```{python}
+data = pd.DataFrame({"a": [1, 1, 1, 2, 2], "b": [0, 0, 1, 0, 0]})
+data.value_counts() #counts distinct rows, treated as tuples, with a hierarchical index
+```
+
+
